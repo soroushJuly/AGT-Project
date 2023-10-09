@@ -176,14 +176,32 @@ void example_layer::on_render()
 	glm::mat4 tree_transform(1.0f);
 	tree_transform = glm::translate(tree_transform, glm::vec3(4.f, 0.5, -5.0f));
 	tree_transform = glm::rotate(tree_transform, m_tree->rotation_amount(), m_tree->rotation_axis());
+	tree_transform = glm::scale(tree_transform, glm::vec3(1.f,6.f,1.f));
 	tree_transform = glm::scale(tree_transform, m_tree->scale());
 	engine::renderer::submit(mesh_shader, tree_transform, m_tree);
+
+	for (int i = 0; i < 10; i++)
+	{
+		glm::mat4 tree_transform(1.0f);
+		tree_transform = glm::translate(tree_transform, glm::vec3(4.f, 0.5, -5.0f));
+		tree_transform = glm::rotate(tree_transform, m_tree->rotation_amount(), m_tree->rotation_axis());
+		tree_transform = glm::scale(tree_transform, glm::vec3(1.f, 6.f, 1.f));
+		tree_transform = glm::scale(tree_transform, m_tree->scale());
+		engine::renderer::submit(mesh_shader, tree_transform, m_tree);
+	}
 	
 	glm::mat4 cow_transform(1.0f);
 	cow_transform = glm::translate(cow_transform, m_cow->position());
-	cow_transform = glm::rotate(cow_transform, m_cow->rotation_amount(), m_cow->rotation_axis());
+	cow_transform = glm::translate(cow_transform, glm::vec3(0.f, 2.f, 0.f));
+	cow_transform = glm::rotate(cow_transform, 1.57f, m_cow->rotation_axis());
 	cow_transform = glm::scale(cow_transform, m_cow->scale());
 	engine::renderer::submit(mesh_shader, cow_transform, m_cow);
+
+	glm::mat4 cow_transform_1(1.0f);
+	cow_transform_1 = glm::translate(cow_transform_1, m_cow->position());
+	cow_transform_1 = glm::rotate(cow_transform_1, m_cow->rotation_amount(), m_cow->rotation_axis());
+	cow_transform_1 = glm::scale(cow_transform_1, m_cow->scale());
+	engine::renderer::submit(mesh_shader, cow_transform_1, m_cow);
 
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
