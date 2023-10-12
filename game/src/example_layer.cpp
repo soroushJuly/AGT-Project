@@ -180,29 +180,44 @@ void example_layer::on_render()
 	tree_transform = glm::scale(tree_transform, m_tree->scale());
 	engine::renderer::submit(mesh_shader, tree_transform, m_tree);
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 1; i < 11; i++)
 	{
 		glm::mat4 tree_transform(1.0f);
-		tree_transform = glm::translate(tree_transform, glm::vec3(4.f, 0.5, -5.0f));
+		tree_transform = glm::translate(tree_transform, glm::vec3(i * 4.f, 0.5, -5.0f));
 		tree_transform = glm::rotate(tree_transform, m_tree->rotation_amount(), m_tree->rotation_axis());
-		tree_transform = glm::scale(tree_transform, glm::vec3(1.f, 6.f, 1.f));
-		tree_transform = glm::scale(tree_transform, m_tree->scale());
+		tree_transform = glm::scale(tree_transform, glm::vec3(1.f, 2.f, 1.f));
 		engine::renderer::submit(mesh_shader, tree_transform, m_tree);
 	}
 	
 	glm::mat4 cow_transform(1.0f);
 	cow_transform = glm::translate(cow_transform, m_cow->position());
-	cow_transform = glm::translate(cow_transform, glm::vec3(0.f, 2.f, 0.f));
 	cow_transform = glm::rotate(cow_transform, 1.57f, m_cow->rotation_axis());
 	cow_transform = glm::scale(cow_transform, m_cow->scale());
 	engine::renderer::submit(mesh_shader, cow_transform, m_cow);
 
 	glm::mat4 cow_transform_1(1.0f);
-	cow_transform_1 = glm::translate(cow_transform_1, m_cow->position());
+	cow_transform_1 = glm::translate(cow_transform_1, m_cow->position() + glm::vec3(0.f, .5f, 0.f));
 	cow_transform_1 = glm::rotate(cow_transform_1, m_cow->rotation_amount(), m_cow->rotation_axis());
 	cow_transform_1 = glm::scale(cow_transform_1, m_cow->scale());
 	engine::renderer::submit(mesh_shader, cow_transform_1, m_cow);
 
+	// location of the camera cow
+	glm::vec3 p = glm::vec3(0.f, 2.f, 5.f);
+	// getting v = c - p
+	glm::vec3 v = m_3d_camera.position() - p;
+	// calculating theta - (the cow is looking in the z-axis at the start)
+	glm::vec3 normal = glm::normalize(v);
+
+	//double angle = atan2(v.x, v.z);
+	double angle = acos(glm::dot(normal, glm::vec3(0.f, 0.f, 1.f)));
+	glm::vec3 rotation_axis = glm::cross(normal, glm::vec3(0.f, 0.f, 1.f));
+
+	glm::mat4 cow_transform_2(1.0f);
+	cow_transform_2 = glm::translate(cow_transform_2, p);
+	cow_transform_2 = glm::rotate(cow_transform_2, (float)(-1*angle), rotation_axis);
+	cow_transform_2 = glm::scale(cow_transform_2, m_cow->scale());
+	engine::renderer::submit(mesh_shader, cow_transform_2, m_cow);
+	
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
 
