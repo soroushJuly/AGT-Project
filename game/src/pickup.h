@@ -6,6 +6,7 @@ public:
 	pickup(const engine::game_object_properties props);
 	~pickup();
 	void init();
+	void deactive();
 	void update(glm::vec3 c, float dt);
 	bool active() const { return m_is_active; }
 

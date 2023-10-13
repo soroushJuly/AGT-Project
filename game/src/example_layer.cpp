@@ -153,6 +153,8 @@ void example_layer::on_update(const engine::timestep& time_step)
 {
 	m_3d_camera.on_update(time_step);
 
+	m_pickup->update(m_3d_camera.position(), time_step);
+
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
 	m_mannequin->animated_mesh()->on_update(time_step);
@@ -230,13 +232,16 @@ void example_layer::on_render()
 	cow_transform_2 = glm::scale(cow_transform_2, m_cow->scale());
 	engine::renderer::submit(mesh_shader, cow_transform_2, m_cow);
 
-	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", true);
-	m_pickup->textures().at(0)->bind();
-	glm::mat4 pickup_transform(1.0f);
-	pickup_transform = glm::translate(pickup_transform, m_pickup->position());
-	pickup_transform = glm::rotate(pickup_transform, m_pickup->rotation_amount(), m_pickup->rotation_axis());
-	engine::renderer::submit(mesh_shader, m_pickup->meshes().at(0), pickup_transform);
-	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", false);
+	if (m_pickup->active())
+	{
+		std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", true);
+		m_pickup->textures().at(0)->bind();
+		glm::mat4 pickup_transform(1.0f);
+		pickup_transform = glm::translate(pickup_transform, m_pickup->position());
+		pickup_transform = glm::rotate(pickup_transform, m_pickup->rotation_amount(), m_pickup->rotation_axis());
+		engine::renderer::submit(mesh_shader, m_pickup->meshes().at(0), pickup_transform);
+		std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", false);
+	}
 
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
