@@ -5,16 +5,17 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "engine/events/key_event.h"
 #include "engine/utils/track.h"
+#include "pickup.h"
 
-example_layer::example_layer() 
-    :m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f), 
-    m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height())
+example_layer::example_layer()
+	:m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f),
+	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height())
 
 
 {
-    // Hide the mouse and lock it inside the window
-    //engine::input::anchor_mouse(true);
-    engine::application::window().hide_mouse_cursor();
+	// Hide the mouse and lock it inside the window
+	//engine::input::anchor_mouse(true);
+	engine::application::window().hide_mouse_cursor();
 
 	// Initialise audio and play background music
 	m_audio_manager = engine::audio_manager::instance();
@@ -46,7 +47,7 @@ example_layer::example_layer()
 	std::dynamic_pointer_cast<engine::gl_shader>(text_shader)->bind();
 	std::dynamic_pointer_cast<engine::gl_shader>(text_shader)->set_uniform("projection",
 		glm::ortho(0.f, (float)engine::application::window().width(), 0.f,
-		(float)engine::application::window().height()));
+			(float)engine::application::window().height()));
 	m_material = engine::material::create(1.0f, glm::vec3(1.0f, 0.1f, 0.07f),
 		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
 
@@ -73,11 +74,22 @@ example_layer::example_layer()
 
 	engine::game_object_properties mannequin_props;
 	mannequin_props.animated_mesh = m_skinned_mesh;
-	mannequin_props.scale = glm::vec3(1.f/ glm::max(m_skinned_mesh->size().x, glm::max(m_skinned_mesh->size().y, m_skinned_mesh->size().z)));
+	mannequin_props.scale = glm::vec3(1.f / glm::max(m_skinned_mesh->size().x, glm::max(m_skinned_mesh->size().y, m_skinned_mesh->size().z)));
 	mannequin_props.position = glm::vec3(3.0f, 0.5f, -5.0f);
 	mannequin_props.type = 0;
 	mannequin_props.bounding_shape = m_skinned_mesh->size() / 2.f * mannequin_props.scale.x;
 	m_mannequin = engine::game_object::create(mannequin_props);
+
+	// creating the pickup object
+	engine::ref<engine::cuboid> pickup_shape = engine::cuboid::create(glm::vec3(0.5f), false);
+	engine::ref<engine::texture_2d> pickup_texture =
+		engine::texture_2d::create("assets/textures/medkit.jpg", true);
+	engine::game_object_properties pickup_props;
+	pickup_props.position = { 5.f, 1.f, 5.f };
+	pickup_props.meshes = { pickup_shape->mesh() };
+	pickup_props.textures = { pickup_texture };
+	m_pickup = pickup::create(pickup_props);
+	m_pickup->init();
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
 	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/terrain.bmp", false) };
@@ -137,9 +149,9 @@ example_layer::example_layer()
 
 example_layer::~example_layer() {}
 
-void example_layer::on_update(const engine::timestep& time_step) 
+void example_layer::on_update(const engine::timestep& time_step)
 {
-    m_3d_camera.on_update(time_step);
+	m_3d_camera.on_update(time_step);
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
@@ -148,12 +160,12 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_audio_manager->update_with_camera(m_3d_camera);
 
 	check_bounce();
-} 
+}
 
-void example_layer::on_render() 
+void example_layer::on_render()
 {
-    engine::render_command::clear_color({0.2f, 0.3f, 0.3f, 1.0f}); 
-    engine::render_command::clear();
+	engine::render_command::clear_color({ 0.2f, 0.3f, 0.3f, 1.0f });
+	engine::render_command::clear();
 
 	// Set up  shader. (renders textures and materials)
 	const auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
@@ -176,7 +188,7 @@ void example_layer::on_render()
 	glm::mat4 tree_transform(1.0f);
 	tree_transform = glm::translate(tree_transform, glm::vec3(4.f, 0.5, -5.0f));
 	tree_transform = glm::rotate(tree_transform, m_tree->rotation_amount(), m_tree->rotation_axis());
-	tree_transform = glm::scale(tree_transform, glm::vec3(1.f,6.f,1.f));
+	tree_transform = glm::scale(tree_transform, glm::vec3(1.f, 6.f, 1.f));
 	tree_transform = glm::scale(tree_transform, m_tree->scale());
 	engine::renderer::submit(mesh_shader, tree_transform, m_tree);
 
@@ -188,7 +200,7 @@ void example_layer::on_render()
 		tree_transform = glm::scale(tree_transform, glm::vec3(1.f, 2.f, 1.f));
 		engine::renderer::submit(mesh_shader, tree_transform, m_tree);
 	}
-	
+
 	glm::mat4 cow_transform(1.0f);
 	cow_transform = glm::translate(cow_transform, m_cow->position());
 	cow_transform = glm::rotate(cow_transform, 1.57f, m_cow->rotation_axis());
@@ -214,33 +226,41 @@ void example_layer::on_render()
 
 	glm::mat4 cow_transform_2(1.0f);
 	cow_transform_2 = glm::translate(cow_transform_2, p);
-	cow_transform_2 = glm::rotate(cow_transform_2, (float)(-1*angle), rotation_axis);
+	cow_transform_2 = glm::rotate(cow_transform_2, (float)(-1 * angle), rotation_axis);
 	cow_transform_2 = glm::scale(cow_transform_2, m_cow->scale());
 	engine::renderer::submit(mesh_shader, cow_transform_2, m_cow);
-	
+
+	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", true);
+	m_pickup->textures().at(0)->bind();
+	glm::mat4 pickup_transform(1.0f);
+	pickup_transform = glm::translate(pickup_transform, m_pickup->position());
+	pickup_transform = glm::rotate(pickup_transform, m_pickup->rotation_amount(), m_pickup->rotation_axis());
+	engine::renderer::submit(mesh_shader, m_pickup->meshes().at(0), pickup_transform);
+	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", false);
+
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_mannequin);
 
-    engine::renderer::end_scene();
+	engine::renderer::end_scene();
 
 	// Render text
 	const auto text_shader = engine::renderer::shaders_library()->get("text_2D");
-	m_text_manager->render_text(text_shader, "Orange Text", 10.f, (float)engine::application::window().height()-25.f, 0.5f, glm::vec4(1.f, 0.5f, 0.f, 1.f));
-} 
+	m_text_manager->render_text(text_shader, "Orange Text", 10.f, (float)engine::application::window().height() - 25.f, 0.5f, glm::vec4(1.f, 0.5f, 0.f, 1.f));
+}
 
-void example_layer::on_event(engine::event& event) 
-{ 
-    if(event.event_type() == engine::event_type_e::key_pressed) 
-    { 
-        auto& e = dynamic_cast<engine::key_pressed_event&>(event); 
-        if(e.key_code() == engine::key_codes::KEY_TAB) 
-        { 
-            engine::render_command::toggle_wireframe();
-        }
-    } 
+void example_layer::on_event(engine::event& event)
+{
+	if (event.event_type() == engine::event_type_e::key_pressed)
+	{
+		auto& e = dynamic_cast<engine::key_pressed_event&>(event);
+		if (e.key_code() == engine::key_codes::KEY_TAB)
+		{
+			engine::render_command::toggle_wireframe();
+		}
+	}
 }
 
 void example_layer::check_bounce()

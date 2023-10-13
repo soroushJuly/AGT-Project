@@ -1,4 +1,5 @@
 #include "pickup.h"
+
 pickup::pickup(const engine::game_object_properties props) : engine::game_object(props)
 {}
 pickup::~pickup()
