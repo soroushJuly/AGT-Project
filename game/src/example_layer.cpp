@@ -135,6 +135,18 @@ example_layer::example_layer()
 	sphere_props.mass = 0.000001f;
 	m_ball = engine::game_object::create(sphere_props);
 
+	std::vector<glm::vec3> tetrahedron_vertices;
+	tetrahedron_vertices.push_back(glm::vec3(0.f, 10.f, 0.f)); //0
+	tetrahedron_vertices.push_back(glm::vec3(0.f, 0.f, 10.f)); //1
+	tetrahedron_vertices.push_back(glm::vec3(-10.f, 0.f, -10.f)); //2
+	tetrahedron_vertices.push_back(glm::vec3(10.f, 0.f, -10.f)); //3
+	engine::ref<engine::tetrahedron> tetrahedron_shape = engine::tetrahedron::create(tetrahedron_vertices);
+
+	engine::game_object_properties tetrahedron_props;
+	tetrahedron_props.position = { 0.f, 0.5f, -20.f };
+	tetrahedron_props.meshes = { tetrahedron_shape->mesh() };
+	m_tetrahedron = engine::game_object::create(tetrahedron_props);
+
 	m_game_objects.push_back(m_terrain);
 	m_game_objects.push_back(m_ball);
 	//m_game_objects.push_back(m_cow);
@@ -245,6 +257,8 @@ void example_layer::on_render()
 
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
+
+	engine::renderer::submit(mesh_shader, m_tetrahedron);
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_mannequin);
