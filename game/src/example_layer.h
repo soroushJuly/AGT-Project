@@ -25,6 +25,7 @@ private:
 	engine::ref<engine::game_object>	m_tetrahedron{};
 
 	engine::ref<engine::material>		m_material{};
+	engine::ref<engine::material>		m_tetrahedron_material{};
 	engine::ref<engine::material>		m_mannequin_material{};
 
 	engine::DirectionalLight            m_directionalLight;

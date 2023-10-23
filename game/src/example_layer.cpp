@@ -51,6 +51,9 @@ example_layer::example_layer()
 	m_material = engine::material::create(1.0f, glm::vec3(1.0f, 0.1f, 0.07f),
 		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
 
+	m_tetrahedron_material = engine::material::create(32.0f, glm::vec3(1.0f, 0.1f, 0.07f),
+		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 0.5f);
+
 	m_mannequin_material = engine::material::create(1.0f, glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
 
@@ -258,6 +261,7 @@ void example_layer::on_render()
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
 
+	m_tetrahedron_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_tetrahedron);
 
 	m_mannequin_material->submit(mesh_shader);
