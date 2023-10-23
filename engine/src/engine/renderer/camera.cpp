@@ -100,6 +100,14 @@ void engine::perspective_camera::on_update(const timestep& timestep)
 	update_camera_vectors();
 
     //float y_value = m_position.y;
+    if (input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
+    {
+        set_movement_speed(8.f);
+    }
+    else
+    {
+        set_movement_speed(1.f);
+    }
 
     if(input::key_pressed(engine::key_codes::KEY_A)) // left
         move(e_direction::left, timestep);

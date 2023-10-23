@@ -53,6 +53,8 @@ example_layer::example_layer()
 
 	m_tetrahedron_material = engine::material::create(32.0f, glm::vec3(1.0f, 0.1f, 0.07f),
 		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 0.5f);
+	std::vector<engine::ref<engine::texture_2d>> tetrahedron_textures =
+	{ engine::texture_2d::create("assets/textures/texture_stone.bmp", false) };
 
 	m_mannequin_material = engine::material::create(1.0f, glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
@@ -148,6 +150,7 @@ example_layer::example_layer()
 	engine::game_object_properties tetrahedron_props;
 	tetrahedron_props.position = { 0.f, 0.5f, -20.f };
 	tetrahedron_props.meshes = { tetrahedron_shape->mesh() };
+	tetrahedron_props.textures = tetrahedron_textures;
 	m_tetrahedron = engine::game_object::create(tetrahedron_props);
 
 	m_game_objects.push_back(m_terrain);
