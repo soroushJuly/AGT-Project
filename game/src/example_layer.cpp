@@ -120,7 +120,7 @@ example_layer::example_layer()
 	m_cow = engine::game_object::create(cow_props);
 
 	// Load the jeep model
-	engine::ref < engine::model> jeep_model = engine::model::create("assets/models/static/jeep1.3ds");
+	engine::ref < engine::model> jeep_model = engine::model::create("assets/models/static/jeep1.obj");
 	engine::game_object_properties jeep_props;
 	jeep_props.meshes = jeep_model->meshes();
 	jeep_props.textures = jeep_model->textures();
@@ -233,21 +233,10 @@ void example_layer::on_render()
 	// Jeep car
 	glm::mat4 jeep_transform_1(1.0f);
 	jeep_transform_1 = glm::translate(jeep_transform_1, m_jeep->position());
-	jeep_transform_1 = glm::rotate(jeep_transform_1, -glm::pi<float>()/2, glm::vec3(1.f, 0.f, 0.f));
-	jeep_transform_1 = glm::scale(jeep_transform_1, m_jeep->scale() * 0.125f);
+	//jeep_transform_1 = glm::rotate(jeep_transform_1, -glm::pi<float>()/2, glm::vec3(1.f, 0.f, 0.f));
+	jeep_transform_1 = glm::rotate(jeep_transform_1, m_jeep->rotation_amount(), m_jeep->rotation_axis());
+	jeep_transform_1 = glm::scale(jeep_transform_1, m_jeep->scale());
 	engine::renderer::submit(mesh_shader, jeep_transform_1, m_jeep);
-
-	glm::mat4 cow_transform(1.0f);
-	cow_transform = glm::translate(cow_transform, m_cow->position());
-	cow_transform = glm::rotate(cow_transform, 1.57f, m_cow->rotation_axis());
-	cow_transform = glm::scale(cow_transform, m_cow->scale());
-	engine::renderer::submit(mesh_shader, cow_transform, m_cow);
-
-	glm::mat4 cow_transform_1(1.0f);
-	cow_transform_1 = glm::translate(cow_transform_1, m_cow->position() + glm::vec3(0.f, .5f, 0.f));
-	cow_transform_1 = glm::rotate(cow_transform_1, m_cow->rotation_amount(), m_cow->rotation_axis());
-	cow_transform_1 = glm::scale(cow_transform_1, m_cow->scale());
-	engine::renderer::submit(mesh_shader, cow_transform_1, m_cow);
 
 	// location of the cow
 	glm::vec3 p = glm::vec3(0.f, 2.f, 5.f);
