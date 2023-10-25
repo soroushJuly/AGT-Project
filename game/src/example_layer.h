@@ -1,5 +1,6 @@
 #pragma once
 #include <engine.h>
+#include <player.h>
 
 class pickup;
 
@@ -15,6 +16,7 @@ public:
 
 private:
 	void check_bounce();
+	player m_player{};
 
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};
