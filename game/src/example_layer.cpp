@@ -84,6 +84,7 @@ example_layer::example_layer()
 	mannequin_props.type = 0;
 	mannequin_props.bounding_shape = m_skinned_mesh->size() / 2.f * mannequin_props.scale.x;
 	m_mannequin = engine::game_object::create(mannequin_props);
+	m_player.initialise(m_mannequin);
 
 	// creating the pickup object
 	engine::ref<engine::cuboid> pickup_shape = engine::cuboid::create(glm::vec3(0.5f), false);
@@ -184,7 +185,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
-	m_mannequin->animated_mesh()->on_update(time_step);
+	m_player.on_update(time_step);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
 
@@ -273,7 +274,7 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, m_tetrahedron);
 
 	m_mannequin_material->submit(mesh_shader);
-	engine::renderer::submit(mesh_shader, m_mannequin);
+	engine::renderer::submit(mesh_shader, m_player.object());
 
 	engine::renderer::end_scene();
 
