@@ -55,6 +55,10 @@ example_layer::example_layer()
 		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 0.5f);
 	std::vector<engine::ref<engine::texture_2d>> tetrahedron_textures =
 	{ engine::texture_2d::create("assets/textures/texture_stone.bmp", false) };
+	//std::vector<engine::ref<engine::texture_2d>> coin_textures =
+	//{ engine::texture_2d::create("assets/textures/texture_gold.jpg", false) };
+	std::vector<engine::ref<engine::texture_2d>> coin_textures =
+	{ engine::texture_2d::create("assets/textures/texture_gold_2.jpg", false) };
 
 	m_mannequin_material = engine::material::create(1.0f, glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
@@ -179,6 +183,14 @@ example_layer::example_layer()
 	tetrahedron_props.textures = tetrahedron_textures;
 	m_tetrahedron = engine::game_object::create(tetrahedron_props);
 
+	// coin shape
+	engine::ref<engine::coin> coin_shape = engine::coin::create();
+	engine::game_object_properties coin_props;
+	coin_props.position = { -10.f, 4.f, -10.f };
+	coin_props.meshes = { coin_shape->mesh() };
+	coin_props.textures = coin_textures;
+	m_coin = engine::game_object::create(coin_props);
+
 	m_game_objects.push_back(m_terrain);
 	m_game_objects.push_back(m_ball);
 	//m_game_objects.push_back(m_cow);
@@ -289,6 +301,11 @@ void example_layer::on_render()
 
 	m_tetrahedron_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_tetrahedron);
+
+	glm::mat4 coin_transform(1.0f);
+	coin_transform = glm::translate(coin_transform, m_coin->position());
+	coin_transform = glm::rotate(coin_transform, engine::PI * 22.5f / 180, glm::vec3(0.f, 0.f, -1.f));
+	engine::renderer::submit(mesh_shader, coin_transform, m_coin);
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_player.object());

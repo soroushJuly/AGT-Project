@@ -1368,6 +1368,9 @@
     <ClInclude Include="src\engine\entities\shapes\tetrahedron.h">
       <Filter>src\engine\entities\shapes</Filter>
     </ClInclude>
+    <ClInclude Include="src\engine\entities\shapes\coin.h">
+      <Filter>src\engine\entities\shapes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\core\application.cpp">
@@ -1497,6 +1500,9 @@
       <Filter>src\platform\windows</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\entities\shapes\tetrahedron.cpp">
+      <Filter>src\engine\entities\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\entities\shapes\coin.cpp">
       <Filter>src\engine\entities\shapes</Filter>
     </ClCompile>
   </ItemGroup>
