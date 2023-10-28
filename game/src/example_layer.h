@@ -45,4 +45,5 @@ private:
     engine::perspective_camera        m_3d_camera;
 
 	engine::ref<pickup> m_pickup{};
+	engine::ref<pickup> m_pickup_2{};
 };
