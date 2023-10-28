@@ -1,8 +1,10 @@
 #pragma once
 #include <engine.h>
 #include <player.h>
+#include "pickup_coin.h"
 
 class pickup;
+class pickup_coin;
 
 class example_layer : public engine::layer
 {
@@ -17,6 +19,7 @@ public:
 private:
 	void check_bounce();
 	player m_player{};
+	pickup_coin m_pickup_coin{};
 
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};
@@ -45,5 +48,5 @@ private:
     engine::perspective_camera        m_3d_camera;
 
 	engine::ref<pickup> m_pickup{};
-	engine::ref<pickup> m_pickup_2{};
+	//engine::ref<pickup> m_pickup_2{};
 };

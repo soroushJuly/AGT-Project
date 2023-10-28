@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\example_layer.cpp" />
+    <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\pickup.cpp" />
+    <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\pickup_coin.cpp">
+      <Filter>pickupables</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\example_layer.h" />
+    <ClInclude Include="src\pickup.h" />
+    <ClInclude Include="src\player.h" />
+    <ClInclude Include="src\pickup_coin.h">
+      <Filter>pickupables</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="pickupables">
+      <UniqueIdentifier>{caa6f12c-75d1-4f63-8b51-51740fdf3906}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
