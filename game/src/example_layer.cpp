@@ -61,13 +61,29 @@ example_layer::example_layer()
 
 
 	// Skybox texture from http://www.vwall.it/wp-content/plugins/canvasio3dpro/inc/resource/cubeMaps/
+	//m_skybox = engine::skybox::create(50.f,
+	//	{ engine::texture_2d::create("assets/textures/skybox/SkyboxFront.bmp", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxRight.bmp", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxBack.bmp", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxLeft.bmp", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxTop.bmp", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxBottom.bmp", true)
+	//	});
+	//m_skybox = engine::skybox::create(50.f,
+	//	{ engine::texture_2d::create("assets/textures/skybox/skybox_front.png", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/skybox_right.png", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/skybox_back.png", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/skybox_left.png", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/skybox_top.png", true),
+	//	  engine::texture_2d::create("assets/textures/skybox/skybox_bottom.png", true)
+	//	});
 	m_skybox = engine::skybox::create(50.f,
-		{ engine::texture_2d::create("assets/textures/skybox/SkyboxFront.bmp", true),
-		  engine::texture_2d::create("assets/textures/skybox/SkyboxRight.bmp", true),
-		  engine::texture_2d::create("assets/textures/skybox/SkyboxBack.bmp", true),
-		  engine::texture_2d::create("assets/textures/skybox/SkyboxLeft.bmp", true),
-		  engine::texture_2d::create("assets/textures/skybox/SkyboxTop.bmp", true),
-		  engine::texture_2d::create("assets/textures/skybox/SkyboxBottom.bmp", true)
+		{ engine::texture_2d::create("assets/textures/skybox/skybox_front_1.png", true),
+		  engine::texture_2d::create("assets/textures/skybox/skybox_right_1.png", true),
+		  engine::texture_2d::create("assets/textures/skybox/skybox_back_1.png", true),
+		  engine::texture_2d::create("assets/textures/skybox/skybox_left_1.png", true),
+		  engine::texture_2d::create("assets/textures/skybox/skybox_top_1.png", true),
+		  engine::texture_2d::create("assets/textures/skybox/skybox_bottom_1.png", true)
 		});
 
 	engine::ref<engine::skinned_mesh> m_skinned_mesh = engine::skinned_mesh::create("assets/models/animated/mannequin/free3Dmodel.dae");

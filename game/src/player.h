@@ -15,6 +15,7 @@ public:
 	void turn(float angle);
 	void update_camera(engine::perspective_camera& camera);
 	void jump();
+	void walk(const engine::timestep& time_step);
 private:
 	float m_speed{ 0.f };
 	float m_timer;
