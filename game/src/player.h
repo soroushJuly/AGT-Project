@@ -18,6 +18,8 @@ public:
 	void walk(const engine::timestep& time_step);
 private:
 	float m_speed{ 0.f };
+	// probably should use these variables to control the character
+	bool isWalking{false}, isRunning{false}, isJumping{false}, isStanding{false};
 	float m_timer;
 	engine::ref< engine::game_object> m_object;
 };

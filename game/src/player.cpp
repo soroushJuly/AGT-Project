@@ -21,9 +21,7 @@ void player::initialise(engine::ref<engine::game_object> object)
 }
 void player::on_update(const engine::timestep& time_step)
 {
-	// forward
-	if (engine::input::key_pressed(engine::key_codes::KEY_W))
-		walk(time_step);
+	
 
 	m_object->animated_mesh()->on_update(time_step);
 	// x is where he looks at in the beginning and the z is the direction it walks to we want him to
@@ -45,6 +43,12 @@ void player::on_update(const engine::timestep& time_step)
 			m_object->animated_mesh()->switch_animation(m_object->animated_mesh()->default_animation());
 			m_speed = 1.0f;
 		}
+	}
+	else
+	{
+		// forward
+		if (engine::input::key_pressed(engine::key_codes::KEY_W))
+			walk(time_step);
 	}
 }
 

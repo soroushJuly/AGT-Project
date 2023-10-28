@@ -195,14 +195,14 @@ example_layer::~example_layer() {}
 
 void example_layer::on_update(const engine::timestep& time_step)
 {
-	//m_3d_camera.on_update(time_step);
+	m_3d_camera.on_update(time_step);
 
 	m_pickup->update(m_3d_camera.position(), time_step);
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
 	m_player.on_update(time_step);
-	m_player.update_camera(m_3d_camera);
+	//m_player.update_camera(m_3d_camera);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
 
