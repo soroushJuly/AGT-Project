@@ -16,10 +16,11 @@ public:
 	void update_camera(engine::perspective_camera& camera);
 	void jump();
 	void walk(const engine::timestep& time_step);
+	void run(const engine::timestep& time_step);
 private:
-	float m_speed{ 0.f };
-	// probably should use these variables to control the character
-	bool isWalking{false}, isRunning{false}, isJumping{false}, isStanding{false};
+	float m_speed;
 	float m_timer;
+	// probably should use these variables to control the character
+	bool is_walking{false}, is_running{false}, is_jumping{false}, is_standing{false};
 	engine::ref< engine::game_object> m_object;
 };

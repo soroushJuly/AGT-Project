@@ -5,7 +5,7 @@
 #include "engine/key_codes.h"
 
 
-player::player() : m_speed(1.f), m_timer(0.f)
+player::player() : m_speed(0.f), m_timer(0.f)
 {
 
 }
@@ -21,8 +21,6 @@ void player::initialise(engine::ref<engine::game_object> object)
 }
 void player::on_update(const engine::timestep& time_step)
 {
-	
-
 	m_object->animated_mesh()->on_update(time_step);
 	// x is where he looks at in the beginning and the z is the direction it walks to we want him to
 	// be aligned with the walking direction
@@ -33,6 +31,15 @@ void player::on_update(const engine::timestep& time_step)
 		turn(-1.0f * time_step);
 	if (engine::input::key_pressed(engine::key_codes::KEY_SPACE))
 		jump();
+	// forward
+	if (engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
+	{
+		run(time_step);
+	}
+	else if (engine::input::key_pressed(engine::key_codes::KEY_W))
+	{
+		walk(time_step);
+	}
 
 	if (m_timer > 0.0f)
 	{
@@ -41,14 +48,8 @@ void player::on_update(const engine::timestep& time_step)
 		{
 			m_object->animated_mesh()->switch_root_movement(false);
 			m_object->animated_mesh()->switch_animation(m_object->animated_mesh()->default_animation());
-			m_speed = 1.0f;
+			m_timer = 0.0f;
 		}
-	}
-	else
-	{
-		// forward
-		if (engine::input::key_pressed(engine::key_codes::KEY_W))
-			walk(time_step);
 	}
 }
 
@@ -79,17 +80,34 @@ void player::jump()
 {
 	m_object->animated_mesh()->switch_root_movement(true);
 	m_object->animated_mesh()->switch_animation(3);
-	m_speed = 0.0f;
+	m_speed = 0.5f;
 	m_timer = m_object->animated_mesh()->animations().at(3)->mDuration;
 
 }
 
 void player::walk(const engine::timestep& time_step)
 {
-	//m_object->animated_mesh()->switch_root_movement(true);
-	m_object->animated_mesh()->switch_animation(1);
+	is_walking = true;
+	m_speed = 1.0f;
 	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
 		(float)time_step);
-	m_timer = m_object->animated_mesh()->animations().at(3)->mDuration;
+	if (m_timer > 0.0f)
+	{
+		return;
+	}
+	m_object->animated_mesh()->switch_animation(1);
+	m_timer = m_object->animated_mesh()->animations().at(1)->mDuration;
+}
 
+void player::run(const engine::timestep& time_step)
+{
+	m_speed = 3.0f;
+	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
+		(float)time_step);
+	if (m_timer > 0.0f)
+	{
+		return;
+	}
+	m_object->animated_mesh()->switch_animation(4);
+	m_timer = m_object->animated_mesh()->animations().at(4)->mDuration;
 }
