@@ -3,14 +3,14 @@
 #include "engine.h"
 
 
-engine::coin::coin() : m_size(0.1f), m_radius(0.2f)
+engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 {
 	std::vector<engine::mesh::vertex> coin_vertices;
 	//	// position			normal			text coordinates
 	// Front Octagon
 	for (int i = 0; i < 8; i++)
 	{
-		float theta = i * (360 / 8) * (engine::PI / 180);
+		float theta = i * (360 / 8) * (engine::PI / 180) + (engine::PI / 8);
 		engine::mesh::vertex vertex(
 			glm::vec3(m_radius * cos(theta), m_radius * sin(theta), m_size),
 			glm::vec3(0.f, 0.f, -1.f),
@@ -22,7 +22,7 @@ engine::coin::coin() : m_size(0.1f), m_radius(0.2f)
 	// Back of the octagon
 	for (int i = 0; i < 8; i++)
 	{
-		float theta = i * (360 / 8) * (engine::PI / 180);
+		float theta = i * (360 / 8) * (engine::PI / 180) + (engine::PI / 8);
 		engine::mesh::vertex vertex(
 			glm::vec3(m_radius * cos(theta), m_radius * sin(theta), -1 * m_size),
 			glm::vec3(0.f, 0.f, 1.f),
