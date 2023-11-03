@@ -9,7 +9,7 @@ namespace engine
 	{
 	public:
 		/// \brief Constructor
-		cuboid(glm::vec3 half_extents, bool inwards);
+		cuboid(glm::vec3 half_extents, bool inwards, int repeat = 1);
 
 		/// \brief Destructor
 		~cuboid();
@@ -27,6 +27,7 @@ namespace engine
 
 		// Boolean recording if the cube should be inverted (used in skybox)
 		bool m_inwards;
+		int m_repeat;
 
 		ref<engine::mesh> m_mesh;
 	};
