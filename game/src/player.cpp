@@ -5,7 +5,7 @@
 #include "engine/key_codes.h"
 
 
-player::player() : m_speed(0.f), m_timer(0.f)
+player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0.f), x_angle_x_mouse(0.f)
 {
 
 }
@@ -59,21 +59,42 @@ void player::turn(float angle)
 		0.f)));
 }
 
-void player::update_camera(engine::perspective_camera& camera)
+void player::update_camera(engine::perspective_camera& camera, const engine::timestep& time_step)
 {
-	const float looking_at = 6;
-	const float camera_distance_height = 2;
-	const float camera_distance_back = 3;
-	// the camera position
-	float height = m_object->position().y + camera_distance_height;
-	float camera_position_x = m_object->position().x - camera_distance_back * m_object->forward().x;
-	float camera_position_z = m_object->position().z - camera_distance_back * m_object->forward().z;
+	auto [mouse_delta_x, mouse_delta_y] = engine::input::mouse_position();
+
+	const float camera_distance_height = 1.5;
+	const float radius = 3;
+
+	// Camera's default position
+	float camera_position_y = m_object->position().y + camera_distance_height;
+	float camera_position_x = m_object->position().x + radius * glm::normalize(m_object->forward()).x;
+	float camera_position_z = m_object->position().z + radius * glm::normalize(m_object->forward()).z;
+
 	// the camera viewpoint
-	float camera_look_x = m_object->position().x + looking_at * m_object->forward().x;
-	float camera_look_z = m_object->position().z + looking_at * m_object->forward().z;
-	//camera.position(glm::vec3(camera_x, height, camera_z));
-	camera.set_view_matrix(glm::vec3(camera_position_x, height, camera_position_z),
-		glm::vec3(camera_look_x, 0, camera_look_z));
+	float camera_look_x = m_object->position().x + glm::normalize(m_object->forward()).x;
+	float camera_look_z = m_object->position().z + glm::normalize(m_object->forward()).z;
+	glm::vec3 look_at = glm::vec3(camera_look_x, m_object->animated_mesh()->size().y / 4, camera_look_z);
+
+	// mouse movement in y direction
+	y_angle_y_mouse = y_angle_y_mouse + mouse_delta_y * 0.03f * time_step;
+	m_mouse_y = radius * sin(y_angle_y_mouse);
+	if (m_mouse_y < -m_object->animated_mesh()->size().y / 4 + 0.1f)
+		m_mouse_y = -m_object->animated_mesh()->size().y / 4 + 0.1f;
+	if (m_mouse_y > m_object->animated_mesh()->size().y / 4)
+		m_mouse_y = m_object->animated_mesh()->size().y / 4;
+
+	// mouse movement in x direction
+	x_angle_x_mouse = x_angle_x_mouse + mouse_delta_x * 0.03f * time_step;
+	//LOG_INFO("x_angle_x_mouse: [{}]", x_angle_x_mouse);
+	glm::vec2 camera_dis_surface = glm::vec2(m_object->position().x - camera_position_x, m_object->position().z - camera_position_z);
+	glm::vec2 camera_dis_rotated = glm::rotate<float>(camera_dis_surface, x_angle_x_mouse);
+	camera_position_x = m_object->position().x + camera_dis_rotated.x;
+	camera_position_z = m_object->position().z + camera_dis_rotated.y;
+
+	camera.set_view_matrix(
+		glm::vec3(camera_position_x, camera_position_y + m_mouse_y, camera_position_z),
+		look_at);
 }
 
 void player::jump()
