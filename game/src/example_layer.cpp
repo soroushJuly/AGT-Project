@@ -113,6 +113,8 @@ example_layer::example_layer()
 	// creating another pickup object
 	m_pickup_coin.on_initialize();
 	bush.on_initialize("assets/models/FBX/SM_Plant_01.fbx", "assets/textures/grass.png");
+	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png");
+	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png");
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
 	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/mud.png", false) };
@@ -283,6 +285,8 @@ void example_layer::on_render()
 	// pickup_coin rendering
 	m_pickup_coin.on_render();
 	bush.on_render(mesh_shader);
+	tree_01.on_render(mesh_shader);
+	tree_02.on_render(mesh_shader);
 
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
