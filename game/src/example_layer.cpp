@@ -6,6 +6,7 @@
 #include "engine/events/key_event.h"
 #include "engine/utils/track.h"
 #include "pickup.h"
+#include "static_object.h"
 
 example_layer::example_layer()
 	:m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f),
@@ -121,8 +122,8 @@ example_layer::example_layer()
 	m_pickup_coin.on_initialize();
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
-	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/terrain.bmp", false) };
-	engine::ref<engine::terrain> terrain_shape = engine::terrain::create(100.f, 0.5f, 100.f);
+	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/mud.png", false) };
+	engine::ref<engine::terrain> terrain_shape = engine::terrain::create(100.f, 0.5f, 100.f, 70);
 	engine::game_object_properties terrain_props;
 	terrain_props.meshes = { terrain_shape->mesh() };
 	terrain_props.textures = terrain_textures;
@@ -132,16 +133,6 @@ example_layer::example_layer()
 	terrain_props.restitution = 0.92f;
 	m_terrain = engine::game_object::create(terrain_props);
 
-	// Load the cow model. Create a cow object. Set its properties
-	engine::ref <engine::model> cow_model = engine::model::create("assets/models/static/cow4.3ds");
-	engine::game_object_properties cow_props;
-	cow_props.meshes = cow_model->meshes();
-	cow_props.textures = cow_model->textures();
-	float cow_scale = 1.f / glm::max(cow_model->size().x, glm::max(cow_model->size().y, cow_model->size().z));
-	cow_props.position = { -4.f,0.5f, -5.f };
-	cow_props.scale = glm::vec3(cow_scale);
-	cow_props.bounding_shape = cow_model->size() / 2.f * cow_scale;
-	m_cow = engine::game_object::create(cow_props);
 
 	// Load the jeep model
 	engine::ref < engine::model> jeep_model = engine::model::create("assets/models/static/jeep1.obj");
@@ -219,7 +210,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
 	m_player.on_update(time_step);
-	m_player.update_camera(m_3d_camera);
+	m_player.update_camera(m_3d_camera, time_step);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
 
@@ -284,11 +275,6 @@ void example_layer::on_render()
 	double angle = acos(glm::dot(normal, glm::vec3(0.f, 0.f, 1.f)));
 	glm::vec3 rotation_axis = glm::cross(normal, glm::vec3(0.f, 0.f, 1.f));
 
-	glm::mat4 cow_transform_2(1.0f);
-	cow_transform_2 = glm::translate(cow_transform_2, p);
-	cow_transform_2 = glm::rotate(cow_transform_2, (float)(-1 * angle), rotation_axis);
-	cow_transform_2 = glm::scale(cow_transform_2, m_cow->scale());
-	engine::renderer::submit(mesh_shader, cow_transform_2, m_cow);
 
 	if (m_pickup->active())
 	{
