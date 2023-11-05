@@ -106,6 +106,12 @@ example_layer::example_layer()
 
 	// creating another pickup object
 	m_pickup_coin.on_initialize();
+	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 2.f, -1.f));
+	m_pickup_coin_03.on_initialize(glm::vec3(0.f, 2.5f, -2.f));
+	m_pickup_coin_04.on_initialize(glm::vec3(0.f, 3.f, -3.f));
+	m_pickup_coin_05.on_initialize(glm::vec3(0.f, 2.5f, -4.f));
+	m_pickup_coin_06.on_initialize(glm::vec3(0.f, 2.f, -5.f));
+	m_pickup_coin_07.on_initialize(glm::vec3(0.f, 1.f, -6.f));
 	bush.on_initialize("assets/models/static/SM_Env_Bush_01.fbx", "assets/textures/grass.png", glm::vec3(4.f, .45f, -3.5f));
 	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(4.f, 0, -2.f));
 	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -2.f));
@@ -161,6 +167,12 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	m_pickup->update(m_3d_camera.position(), time_step);
 	m_pickup_coin.on_update(m_3d_camera.position(), time_step);
+	m_pickup_coin_02.on_update(m_3d_camera.position(), time_step);
+	m_pickup_coin_03.on_update(m_3d_camera.position(), time_step);
+	m_pickup_coin_04.on_update(m_3d_camera.position(), time_step);
+	m_pickup_coin_05.on_update(m_3d_camera.position(), time_step);
+	m_pickup_coin_06.on_update(m_3d_camera.position(), time_step);
+	m_pickup_coin_07.on_update(m_3d_camera.position(), time_step);
 	/*m_pickup_2->update(m_3d_camera.position(), time_step);*/
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
@@ -210,6 +222,12 @@ void example_layer::on_render()
 
 	// pickup_coin rendering
 	m_pickup_coin.on_render();
+	m_pickup_coin_02.on_render();
+	m_pickup_coin_03.on_render();
+	m_pickup_coin_04.on_render();
+	m_pickup_coin_05.on_render();
+	m_pickup_coin_06.on_render();
+	m_pickup_coin_07.on_render();
 	bush.on_render(mesh_shader);
 	// rotated bush
 	bush.on_render(mesh_shader, glm::vec3(4.f, .45f, -6.25f), engine::PI / 2, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .01f, .013f));

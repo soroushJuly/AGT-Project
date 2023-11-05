@@ -22,6 +22,12 @@ private:
 	void check_bounce();
 	player m_player{};
 	pickup_coin m_pickup_coin{};
+	pickup_coin m_pickup_coin_02{};
+	pickup_coin m_pickup_coin_03{};
+	pickup_coin m_pickup_coin_04{};
+	pickup_coin m_pickup_coin_05{};
+	pickup_coin m_pickup_coin_06{};
+	pickup_coin m_pickup_coin_07{};
 	static_object bush{};
 	static_object tree_01{};
 	static_object tree_02{};

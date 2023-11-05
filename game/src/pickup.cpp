@@ -21,10 +21,6 @@ void pickup::update(glm::vec3 c, float dt)
 	{
 		deactive();
 	}
-	//else if (!active())
-	//{
-	//	init();
-	//}
 }
 engine::ref<pickup> pickup::create(const engine::game_object_properties& props)
 {
