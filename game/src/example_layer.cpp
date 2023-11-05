@@ -56,10 +56,6 @@ example_layer::example_layer()
 		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 0.5f);
 	std::vector<engine::ref<engine::texture_2d>> tetrahedron_textures =
 	{ engine::texture_2d::create("assets/textures/texture_stone.bmp", false) };
-	//std::vector<engine::ref<engine::texture_2d>> coin_textures =
-	//{ engine::texture_2d::create("assets/textures/texture_gold.jpg", false) };
-	std::vector<engine::ref<engine::texture_2d>> coin_textures =
-	{ engine::texture_2d::create("assets/textures/texture_gold_2.jpg", false) };
 
 	m_mannequin_material = engine::material::create(1.0f, glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
@@ -115,6 +111,8 @@ example_layer::example_layer()
 	bush.on_initialize("assets/models/FBX/SM_Plant_01.fbx", "assets/textures/grass.png");
 	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png");
 	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png");
+	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png");
+	//fence.on_initialize("assets/models/FBX/SM_Plant_01.fbx", "assets/textures/grass.png");
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
 	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/mud.png", false) };
@@ -127,18 +125,6 @@ example_layer::example_layer()
 	terrain_props.bounding_shape = glm::vec3(100.f, 0.5f, 100.f);
 	terrain_props.restitution = 0.92f;
 	m_terrain = engine::game_object::create(terrain_props);
-
-
-	// Load the tree model. Create a tree object. Set its properties
-	engine::ref <engine::model> tree_model = engine::model::create("assets/models/static/elm.3ds");
-	engine::game_object_properties tree_props;
-	tree_props.meshes = tree_model->meshes();
-	tree_props.textures = tree_model->textures();
-	float tree_scale = 3.f / glm::max(tree_model->size().x, glm::max(tree_model->size().y, tree_model->size().z));
-	tree_props.position = { 4.f, 0.5f, -5.f };
-	tree_props.bounding_shape = tree_model->size() / 2.f * tree_scale;
-	tree_props.scale = glm::vec3(tree_scale);
-	m_tree = engine::game_object::create(tree_props);
 
 	engine::ref<engine::sphere> sphere_shape = engine::sphere::create(10, 20, 0.5f);
 	engine::game_object_properties sphere_props;
@@ -162,14 +148,6 @@ example_layer::example_layer()
 	tetrahedron_props.meshes = { tetrahedron_shape->mesh() };
 	tetrahedron_props.textures = tetrahedron_textures;
 	m_tetrahedron = engine::game_object::create(tetrahedron_props);
-
-	// coin shape
-	engine::ref<engine::coin> coin_shape = engine::coin::create();
-	engine::game_object_properties coin_props;
-	coin_props.position = { -10.f, 4.f, -10.f };
-	coin_props.meshes = { coin_shape->mesh() };
-	coin_props.textures = coin_textures;
-	m_coin = engine::game_object::create(coin_props);
 
 	m_game_objects.push_back(m_terrain);
 	m_game_objects.push_back(m_ball);
@@ -226,34 +204,6 @@ void example_layer::on_render()
 
 	engine::renderer::submit(mesh_shader, m_terrain);
 
-	glm::mat4 tree_transform(1.0f);
-	tree_transform = glm::translate(tree_transform, glm::vec3(4.f, 0.5, -5.0f));
-	tree_transform = glm::rotate(tree_transform, m_tree->rotation_amount(), m_tree->rotation_axis());
-	tree_transform = glm::scale(tree_transform, glm::vec3(1.f, 5.f, 1.f));
-	tree_transform = glm::scale(tree_transform, m_tree->scale());
-	engine::renderer::submit(mesh_shader, tree_transform, m_tree);
-
-	for (int i = 1; i < 4; i++)
-	{
-		glm::mat4 tree_transform(1.0f);
-		tree_transform = glm::translate(tree_transform, glm::vec3(i * 4.f, 0.5, -5.0f));
-		tree_transform = glm::rotate(tree_transform, m_tree->rotation_amount(), m_tree->rotation_axis());
-		tree_transform = glm::scale(tree_transform, glm::vec3(.01f));
-		engine::renderer::submit(mesh_shader, tree_transform, m_tree);
-	}
-
-
-	// location of the cow
-	glm::vec3 p = glm::vec3(0.f, 2.f, 5.f);
-	// getting v = c - p
-	glm::vec3 v = m_3d_camera.position() - p;
-	// calculating theta - (the cow is looking in the z-axis at the start)
-	glm::vec3 normal = glm::normalize(v);
-
-	//double angle = atan2(v.x, v.z);
-	double angle = acos(glm::dot(normal, glm::vec3(0.f, 0.f, 1.f)));
-	glm::vec3 rotation_axis = glm::cross(normal, glm::vec3(0.f, 0.f, 1.f));
-
 
 	if (m_pickup->active())
 	{
@@ -271,6 +221,7 @@ void example_layer::on_render()
 	bush.on_render(mesh_shader);
 	tree_01.on_render(mesh_shader);
 	tree_02.on_render(mesh_shader);
+	tree_03.on_render(mesh_shader);
 
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
@@ -278,10 +229,7 @@ void example_layer::on_render()
 	m_tetrahedron_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_tetrahedron);
 
-	glm::mat4 coin_transform(1.0f);
-	coin_transform = glm::translate(coin_transform, m_coin->position());
-	coin_transform = glm::rotate(coin_transform, engine::PI * 22.5f / 180, glm::vec3(0.f, 0.f, -1.f));
-	engine::renderer::submit(mesh_shader, coin_transform, m_coin);
+	//coin_transform = glm::rotate(coin_transform, engine::PI * 22.5f / 180, glm::vec3(0.f, 0.f, -1.f));
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_player.object());

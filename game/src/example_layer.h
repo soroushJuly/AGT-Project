@@ -30,11 +30,9 @@ private:
 
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};
-	engine::ref<engine::game_object>	m_tree{};
 	engine::ref<engine::game_object>	m_ball{};
 	engine::ref<engine::game_object>	m_mannequin{};
 	engine::ref<engine::game_object>	m_tetrahedron{};
-	engine::ref<engine::game_object>	m_coin{};
 
 	engine::ref<engine::material>		m_material{};
 	engine::ref<engine::material>		m_tetrahedron_material{};
