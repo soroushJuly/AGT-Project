@@ -54,8 +54,6 @@ example_layer::example_layer()
 
 	m_tetrahedron_material = engine::material::create(32.0f, glm::vec3(1.0f, 0.1f, 0.07f),
 		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 0.5f);
-	std::vector<engine::ref<engine::texture_2d>> tetrahedron_textures =
-	{ engine::texture_2d::create("assets/textures/texture_stone.bmp", false) };
 
 	m_mannequin_material = engine::material::create(1.0f, glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
@@ -89,7 +87,7 @@ example_layer::example_layer()
 	engine::game_object_properties mannequin_props;
 	mannequin_props.animated_mesh = m_skinned_mesh;
 	mannequin_props.scale = glm::vec3(1.f / glm::max(m_skinned_mesh->size().x, glm::max(m_skinned_mesh->size().y, m_skinned_mesh->size().z)));
-	mannequin_props.position = glm::vec3(3.0f, 0.5f, -5.0f);
+	mannequin_props.position = glm::vec3(.0f, .5f, -5.0f);
 	mannequin_props.type = 0;
 	mannequin_props.bounding_shape = m_skinned_mesh->size() / 2.f * mannequin_props.scale.x;
 	m_mannequin = engine::game_object::create(mannequin_props);
@@ -108,10 +106,10 @@ example_layer::example_layer()
 
 	// creating another pickup object
 	m_pickup_coin.on_initialize();
-	bush.on_initialize("assets/models/FBX/SM_Plant_01.fbx", "assets/textures/grass.png");
-	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png");
-	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png");
-	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png");
+	bush.on_initialize("assets/models/static/SM_Env_Bush_01.fbx", "assets/textures/grass.png", glm::vec3(4.f, .45f, -3.5f));
+	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(4.f, 0, -2.f));
+	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -2.f));
+	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -4.f));
 	//fence.on_initialize("assets/models/FBX/SM_Plant_01.fbx", "assets/textures/grass.png");
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
@@ -136,18 +134,12 @@ example_layer::example_layer()
 	sphere_props.mass = 0.000001f;
 	m_ball = engine::game_object::create(sphere_props);
 
-	std::vector<glm::vec3> tetrahedron_vertices;
-	tetrahedron_vertices.push_back(glm::vec3(0.f, 10.f, 0.f)); //0
-	tetrahedron_vertices.push_back(glm::vec3(0.f, 0.f, 10.f)); //1
-	tetrahedron_vertices.push_back(glm::vec3(-10.f, 0.f, -10.f)); //2
-	tetrahedron_vertices.push_back(glm::vec3(10.f, 0.f, -10.f)); //3
-	engine::ref<engine::tetrahedron> tetrahedron_shape = engine::tetrahedron::create(tetrahedron_vertices);
-
-	engine::game_object_properties tetrahedron_props;
-	tetrahedron_props.position = { 0.f, 0.5f, -20.f };
-	tetrahedron_props.meshes = { tetrahedron_shape->mesh() };
-	tetrahedron_props.textures = tetrahedron_textures;
-	m_tetrahedron = engine::game_object::create(tetrahedron_props);
+	//std::vector<glm::vec3> tetrahedron_vertices;
+	//tetrahedron_vertices.push_back(glm::vec3(0.f, 10.f, 0.f)); //0
+	//tetrahedron_vertices.push_back(glm::vec3(0.f, 0.f, 10.f)); //1
+	//tetrahedron_vertices.push_back(glm::vec3(-10.f, 0.f, -10.f)); //2
+	//tetrahedron_vertices.push_back(glm::vec3(10.f, 0.f, -10.f)); //3
+	//engine::ref<engine::tetrahedron> tetrahedron_shape = engine::tetrahedron::create(tetrahedron_vertices);
 
 	m_game_objects.push_back(m_terrain);
 	m_game_objects.push_back(m_ball);
@@ -165,7 +157,7 @@ example_layer::~example_layer() {}
 
 void example_layer::on_update(const engine::timestep& time_step)
 {
-	//m_3d_camera.on_update(time_step);
+	m_3d_camera.on_update(time_step);
 
 	m_pickup->update(m_3d_camera.position(), time_step);
 	m_pickup_coin.on_update(m_3d_camera.position(), time_step);
@@ -174,7 +166,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
 	m_player.on_update(time_step);
-	m_player.update_camera(m_3d_camera, time_step);
+	//m_player.update_camera(m_3d_camera, time_step);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
 
@@ -219,15 +211,20 @@ void example_layer::on_render()
 	// pickup_coin rendering
 	m_pickup_coin.on_render();
 	bush.on_render(mesh_shader);
+	// rotated bush
+	bush.on_render(mesh_shader, glm::vec3(4.f, .45f, -6.25f), engine::PI / 2, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .01f, .013f));
 	tree_01.on_render(mesh_shader);
 	tree_02.on_render(mesh_shader);
 	tree_03.on_render(mesh_shader);
+	tree_03.on_render(mesh_shader);
+	tree_03.on_render(mesh_shader, glm::vec3(-4.f, 0, -7.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .018f, .013f));
+	tree_03.on_render(mesh_shader, glm::vec3(-4.3f, 0, -10.3f), engine::PI, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f));
 
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
 
-	m_tetrahedron_material->submit(mesh_shader);
-	engine::renderer::submit(mesh_shader, m_tetrahedron);
+	//m_tetrahedron_material->submit(mesh_shader);
+	//engine::renderer::submit(mesh_shader, m_tetrahedron);
 
 	//coin_transform = glm::rotate(coin_transform, engine::PI * 22.5f / 180, glm::vec3(0.f, 0.f, -1.f));
 
