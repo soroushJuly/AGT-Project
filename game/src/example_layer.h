@@ -2,28 +2,34 @@
 #include <engine.h>
 #include <player.h>
 #include "pickup_coin.h"
+#include <static_object.h>
 
 class pickup;
 class pickup_coin;
+class static_object;
 
 class example_layer : public engine::layer
 {
 public:
-    example_layer();
+	example_layer();
 	~example_layer();
 
-    void on_update(const engine::timestep& time_step) override;
-    void on_render() override; 
-    void on_event(engine::event& event) override;
+	void on_update(const engine::timestep& time_step) override;
+	void on_render() override;
+	void on_event(engine::event& event) override;
 
 private:
 	void check_bounce();
 	player m_player{};
 	pickup_coin m_pickup_coin{};
+	static_object bush{};
+	static_object tree_01{};
+	static_object tree_02{};
+	static_object tree_03{};
+	static_object fence{};
 
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};
-	engine::ref<engine::game_object>	m_cow{};
 	engine::ref<engine::game_object>	m_jeep{};
 	engine::ref<engine::game_object>	m_tree{};
 	engine::ref<engine::game_object>	m_ball{};
@@ -44,8 +50,8 @@ private:
 	float								m_prev_sphere_y_vel = 0.f;
 	engine::ref<engine::text_manager>	m_text_manager{};
 
-    engine::orthographic_camera       m_2d_camera; 
-    engine::perspective_camera        m_3d_camera;
+	engine::orthographic_camera       m_2d_camera;
+	engine::perspective_camera        m_3d_camera;
 
 	engine::ref<pickup> m_pickup{};
 	//engine::ref<pickup> m_pickup_2{};
