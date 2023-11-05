@@ -74,14 +74,6 @@ example_layer::example_layer()
 	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxTop.bmp", true),
 	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxBottom.bmp", true)
 	//	});
-	//m_skybox = engine::skybox::create(50.f,
-	//	{ engine::texture_2d::create("assets/textures/skybox/skybox_front.png", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/skybox_right.png", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/skybox_back.png", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/skybox_left.png", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/skybox_top.png", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/skybox_bottom.png", true)
-	//	});
 	m_skybox = engine::skybox::create(50.f,
 		{ engine::texture_2d::create("assets/textures/skybox/skybox_front_1.png", true),
 		  engine::texture_2d::create("assets/textures/skybox/skybox_right_1.png", true),
@@ -120,6 +112,7 @@ example_layer::example_layer()
 
 	// creating another pickup object
 	m_pickup_coin.on_initialize();
+	bush.on_initialize("assets/models/FBX/SM_Plant_01.fbx", "assets/textures/grass.png");
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
 	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/mud.png", false) };
@@ -252,7 +245,7 @@ void example_layer::on_render()
 		glm::mat4 tree_transform(1.0f);
 		tree_transform = glm::translate(tree_transform, glm::vec3(i * 4.f, 0.5, -5.0f));
 		tree_transform = glm::rotate(tree_transform, m_tree->rotation_amount(), m_tree->rotation_axis());
-		tree_transform = glm::scale(tree_transform, glm::vec3(1.f));
+		tree_transform = glm::scale(tree_transform, glm::vec3(.01f));
 		engine::renderer::submit(mesh_shader, tree_transform, m_tree);
 	}
 
@@ -289,6 +282,7 @@ void example_layer::on_render()
 
 	// pickup_coin rendering
 	m_pickup_coin.on_render();
+	bush.on_render(mesh_shader);
 
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
