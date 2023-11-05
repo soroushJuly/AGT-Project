@@ -129,15 +129,6 @@ example_layer::example_layer()
 	m_terrain = engine::game_object::create(terrain_props);
 
 
-	// Load the jeep model
-	engine::ref < engine::model> jeep_model = engine::model::create("assets/models/static/jeep1.obj");
-	engine::game_object_properties jeep_props;
-	jeep_props.meshes = jeep_model->meshes();
-	jeep_props.textures = jeep_model->textures();
-	jeep_props.position = { -5.f,0.5f, 0.f };
-	jeep_props.scale = glm::vec3(1.f);
-	m_jeep = engine::game_object::create(jeep_props);
-
 	// Load the tree model. Create a tree object. Set its properties
 	engine::ref <engine::model> tree_model = engine::model::create("assets/models/static/elm.3ds");
 	engine::game_object_properties tree_props;
@@ -251,13 +242,6 @@ void example_layer::on_render()
 		engine::renderer::submit(mesh_shader, tree_transform, m_tree);
 	}
 
-	// Jeep car
-	glm::mat4 jeep_transform_1(1.0f);
-	jeep_transform_1 = glm::translate(jeep_transform_1, m_jeep->position());
-	//jeep_transform_1 = glm::rotate(jeep_transform_1, -glm::pi<float>()/2, glm::vec3(1.f, 0.f, 0.f));
-	jeep_transform_1 = glm::rotate(jeep_transform_1, m_jeep->rotation_amount(), m_jeep->rotation_axis());
-	jeep_transform_1 = glm::scale(jeep_transform_1, m_jeep->scale());
-	engine::renderer::submit(mesh_shader, jeep_transform_1, m_jeep);
 
 	// location of the cow
 	glm::vec3 p = glm::vec3(0.f, 2.f, 5.f);
