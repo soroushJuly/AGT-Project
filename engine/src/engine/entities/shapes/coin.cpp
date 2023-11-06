@@ -6,15 +6,35 @@
 engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 {
 	std::vector<engine::mesh::vertex> coin_vertices;
+	std::vector<glm::vec2> texts_coordinates;
+	const float repeat = 0.5;
+	const float repeat_sides = 0.2;
+
+	texts_coordinates =
+	{
+		glm::vec2(repeat * 1.0,repeat * 0.7),
+		glm::vec2(repeat * 0.7, repeat * 1.0),
+		glm::vec2(repeat * 0.3, repeat * 1.0),
+		glm::vec2(repeat * 0.1,repeat * 0.7),
+		glm::vec2(repeat * 0.1,repeat * 0.3),
+		glm::vec2(repeat * 0.3,repeat * 0.1),
+		glm::vec2(repeat * 0.7, repeat * 0.1),
+		glm::vec2(repeat * 1.0,repeat * 0.3),
+	};
 	//	// position			normal			text coordinates
 	// Front Octagon
 	for (int i = 0; i < 8; i++)
 	{
-		float theta = i * (360 / 8) * (engine::PI / 180) + (engine::PI / 8);
+		float theta = i * (360 / 8) * (engine::PI / 180);
+		LOG_CORE_INFO("vertex: ['{}']", i);
+		LOG_CORE_INFO("texture x: ['{}']", cos(theta) / 2.f + 0.5f);
+		LOG_CORE_INFO("texture y: ['{}']", sin(theta) / 2.f + 0.5f);
+		theta += (engine::PI / 8);
+		glm::vec2 text = glm::vec2(2 * (cos(theta) / 2.f + 0.5f), 2 * (sin(theta / 2.f) + 0.5f));
 		engine::mesh::vertex vertex(
 			glm::vec3(m_radius * cos(theta), m_radius * sin(theta), m_size),
 			glm::vec3(0.f, 0.f, -1.f),
-			glm::vec2(cos(theta) / 2.f + 0.25f, sin(theta / 2.f) + 0.25f)
+			texts_coordinates[i]
 		);
 
 		coin_vertices.push_back(vertex);
@@ -26,13 +46,14 @@ engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 		engine::mesh::vertex vertex(
 			glm::vec3(m_radius * cos(theta), m_radius * sin(theta), -1 * m_size),
 			glm::vec3(0.f, 0.f, 1.f),
-			glm::vec2(cos(theta) / 2.f + 0.5f, sin(theta / 2.f) + 0.5f)
+			texts_coordinates[i]
 		);
 
 		coin_vertices.push_back(vertex);
 	}
-	std::vector<glm::vec3> normals;
 
+
+	std::vector<glm::vec3> normals;
 	// We need 8 surfaces
 	normals.push_back(glm::cross(coin_vertices[0].position - coin_vertices[8].position, coin_vertices[9].position - coin_vertices[8].position));
 	normals.push_back(glm::cross(coin_vertices[1].position - coin_vertices[9].position, coin_vertices[10].position - coin_vertices[9].position));
@@ -44,89 +65,86 @@ engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 	normals.push_back(glm::cross(coin_vertices[7].position - coin_vertices[15].position, coin_vertices[8].position - coin_vertices[15].position));
 
 
-
-
-
 	std::vector<mesh::vertex> side_vertices
 	{
 		// defining the vertices in every surface
 		// postitions		normal		tex coord
 		{coin_vertices[0].position,	normals[0], { 0.f, 0.f }},
-		{coin_vertices[8].position,	normals[0], { 1.f, 0.f }},
-		{coin_vertices[9].position,	normals[0], { 0.5f, 1.f }},
+		{coin_vertices[8].position,	normals[0], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[9].position,	normals[0], { repeat_sides * 0.5f,repeat_sides * 1.f }},
 
-		{coin_vertices[0].position,	normals[0], { 0.f, 0.f }},
-		{coin_vertices[9].position,	normals[0], { 1.f, 0.f }},
-		{coin_vertices[1].position,	normals[0], { 0.5f, 1.f }},
-
-		{coin_vertices[1].position,	normals[1], { 0.f, 0.f }},
-		{coin_vertices[9].position,	normals[1], { 1.f, 0.f }},
-		{coin_vertices[10].position,normals[1], { 0.5f, 1.f }},
+		{coin_vertices[0].position,	normals[0], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+		{coin_vertices[9].position,	normals[0], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[1].position,	normals[0], { 0.f, 0.f }},
 
 		{coin_vertices[1].position,	normals[1], { 0.f, 0.f }},
-		{coin_vertices[10].position,normals[1], { 1.f, 0.f }},
-		{coin_vertices[2].position,	normals[1], { 0.5f, 1.f }},
+		{coin_vertices[9].position,	normals[1], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[10].position,normals[1], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+
+		{coin_vertices[1].position,	normals[1], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+		{coin_vertices[10].position,normals[1], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[2].position,	normals[1], { 0.f, 0.f }},
 
 		{coin_vertices[2].position,	normals[2], { 0.f, 0.f }},
-		{coin_vertices[10].position,normals[2], { 1.f, 0.f }},
-		{coin_vertices[11].position,normals[2], { 0.5f, 1.f }},
+		{coin_vertices[10].position,normals[2], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[11].position,normals[2], { repeat_sides * 0.5f, repeat_sides * 1.f }},
 
-		{coin_vertices[2].position,	normals[2], { 0.f, 0.f }},
-		{coin_vertices[11].position,normals[2], { 1.f, 0.f }},
-		{coin_vertices[3].position,	normals[2], { 0.5f, 1.f }},
+		{coin_vertices[2].position,	normals[2], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+		{coin_vertices[11].position,normals[2], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[3].position,	normals[2], { 0.f, 0.f }},
 
 
 		{coin_vertices[3].position,	normals[3], { 0.f, 0.f }},
-		{coin_vertices[11].position,normals[3], { 1.f, 0.f }},
-		{coin_vertices[12].position,normals[3], { 0.5f, 1.f }},
+		{coin_vertices[11].position,normals[3], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[12].position,normals[3], { repeat_sides * 0.5f, repeat_sides * 1.f }},
 
-		{coin_vertices[3].position,	normals[3], { 0.f, 0.f }},
-		{coin_vertices[12].position,normals[3], { 1.f, 0.f }},
-		{coin_vertices[4].position,	normals[3], { 0.5f, 1.f }},
-
-		{coin_vertices[4].position,	normals[4], { 0.f, 0.f }},
-		{coin_vertices[12].position,normals[4], { 1.f, 0.f }},
-		{coin_vertices[13].position,normals[4], { 0.5f, 1.f }},
+		{coin_vertices[3].position,	normals[3], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+		{coin_vertices[12].position,normals[3], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[4].position,	normals[3], { 0.f, 0.f }},
 
 		{coin_vertices[4].position,	normals[4], { 0.f, 0.f }},
-		{coin_vertices[13].position,normals[4], { 1.f, 0.f }},
-		{coin_vertices[5].position,	normals[4], { 0.5f, 1.f }},
+		{coin_vertices[12].position,normals[4], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[13].position,normals[4], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+
+		{coin_vertices[4].position,	normals[4], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+		{coin_vertices[13].position,normals[4], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[5].position,	normals[4], { 0.f, 0.f }},
 
 		{coin_vertices[5].position,	normals[5], { 0.f, 0.f }},
-		{coin_vertices[13].position,normals[5], { 1.f, 0.f }},
-		{coin_vertices[14].position,normals[5], { 0.5f, 1.f }},
+		{coin_vertices[13].position,normals[5], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[14].position,normals[5], { repeat_sides * 0.5f, repeat_sides * 1.f }},
 
-		{coin_vertices[5].position,	normals[5], { 0.f, 0.f }},
-		{coin_vertices[14].position,normals[5], { 1.f, 0.f }},
-		{coin_vertices[6].position,	normals[5], { 0.5f, 1.f }},
-
-		{coin_vertices[6].position,	normals[6], { 0.f, 0.f }},
-		{coin_vertices[14].position,normals[6], { 1.f, 0.f }},
-		{coin_vertices[15].position,normals[6], { 0.5f, 1.f }},
+		{coin_vertices[5].position,	normals[5], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+		{coin_vertices[14].position,normals[5], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[6].position,	normals[5], { 0.f, 0.f }},
 
 		{coin_vertices[6].position,	normals[6], { 0.f, 0.f }},
-		{coin_vertices[15].position,normals[6], { 1.f, 0.f }},
-		{coin_vertices[7].position,	normals[6], { 0.5f, 1.f }},
+		{coin_vertices[14].position,normals[6], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[15].position,normals[6], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+
+		{coin_vertices[6].position,	normals[6], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+		{coin_vertices[15].position,normals[6], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[7].position,	normals[6], { 0.f, 0.f }},
 
 		{coin_vertices[7].position,	normals[7], { 0.f, 0.f }},
-		{coin_vertices[15].position,normals[7], { 1.f, 0.f }},
-		{coin_vertices[8].position,	normals[7], { 0.5f, 1.f }},
+		{coin_vertices[15].position,normals[7], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[8].position,	normals[7], { repeat_sides * 0.5f, repeat_sides * 1.f }},
 
-		{coin_vertices[7].position,	normals[7], { 0.f, 0.f }},
-		{coin_vertices[8].position,	normals[7], { 1.f, 0.f }},
-		{coin_vertices[0].position,	normals[7], { 0.5f, 1.f }},
+		{coin_vertices[7].position,	normals[7], { repeat_sides * 0.5f, repeat_sides * 1.f }},
+		{coin_vertices[8].position,	normals[7], { repeat_sides * 1.f, 0.f }},
+		{coin_vertices[0].position,	normals[7], { 0.f, 0.f }},
 	};
 
 	coin_vertices.insert(coin_vertices.end(), side_vertices.begin(), side_vertices.end());
 
 	std::vector<uint32_t> coin_indices =
 	{
-		0,1,2,
-		0,2,3,
-		0,3,4,
-		0,4,5,
-		0,5,6,
-		0,6,7,
+		2,0,1,
+		2,3,4,
+		4,5,6,
+		6,7,0,
+		0,2,4,
+		0,4,6,
 		10,9,8,
 		11,10,8,
 		12,11,8,
