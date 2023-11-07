@@ -51,9 +51,6 @@ example_layer::example_layer()
 	m_material = engine::material::create(1.0f, glm::vec3(1.0f, 0.1f, 0.07f),
 		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
 
-	m_tetrahedron_material = engine::material::create(32.0f, glm::vec3(1.0f, 0.1f, 0.07f),
-		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 0.5f);
-
 	m_mannequin_material = engine::material::create(1.0f, glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
 
@@ -90,11 +87,11 @@ example_layer::example_layer()
 
 	// creating another pickup object
 	m_pickup_coin.on_initialize();
-	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 2.f, -1.f));
-	m_pickup_coin_03.on_initialize(glm::vec3(0.f, 2.5f, -2.f));
-	m_pickup_coin_04.on_initialize(glm::vec3(0.f, 3.f, -3.f));
-	m_pickup_coin_05.on_initialize(glm::vec3(0.f, 2.5f, -4.f));
-	m_pickup_coin_06.on_initialize(glm::vec3(0.f, 2.f, -5.f));
+	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 1.2f, -1.f));
+	m_pickup_coin_03.on_initialize(glm::vec3(0.f, 1.4f, -2.f));
+	m_pickup_coin_04.on_initialize(glm::vec3(0.f, 1.6f, -3.f));
+	m_pickup_coin_05.on_initialize(glm::vec3(0.f, 1.4f, -4.f));
+	m_pickup_coin_06.on_initialize(glm::vec3(0.f, 1.2f, -5.f));
 	m_pickup_coin_07.on_initialize(glm::vec3(0.f, 1.f, -6.f));
 	bush.on_initialize("assets/models/static/SM_Env_Bush_01.fbx", "assets/textures/grass.png", glm::vec3(4.f, .45f, -3.5f));
 	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(4.f, 0, -2.f));
@@ -126,13 +123,6 @@ example_layer::example_layer()
 	sphere_props.mass = 0.000001f;
 	m_ball = engine::game_object::create(sphere_props);
 
-	//std::vector<glm::vec3> tetrahedron_vertices;
-	//tetrahedron_vertices.push_back(glm::vec3(0.f, 10.f, 0.f)); //0
-	//tetrahedron_vertices.push_back(glm::vec3(0.f, 0.f, 10.f)); //1
-	//tetrahedron_vertices.push_back(glm::vec3(-10.f, 0.f, -10.f)); //2
-	//tetrahedron_vertices.push_back(glm::vec3(10.f, 0.f, -10.f)); //3
-	//engine::ref<engine::tetrahedron> tetrahedron_shape = engine::tetrahedron::create(tetrahedron_vertices);
-
 	m_game_objects.push_back(m_terrain);
 	m_game_objects.push_back(m_ball);
 	//m_game_objects.push_back(m_cow);
@@ -152,13 +142,13 @@ void example_layer::on_update(const engine::timestep& time_step)
 	}
 	//m_3d_camera.on_update(time_step);
 
-	m_pickup_coin.on_update(m_3d_camera.position(), time_step);
-	m_pickup_coin_02.on_update(m_3d_camera.position(), time_step);
-	m_pickup_coin_03.on_update(m_3d_camera.position(), time_step);
-	m_pickup_coin_04.on_update(m_3d_camera.position(), time_step);
-	m_pickup_coin_05.on_update(m_3d_camera.position(), time_step);
-	m_pickup_coin_06.on_update(m_3d_camera.position(), time_step);
-	m_pickup_coin_07.on_update(m_3d_camera.position(), time_step);
+	m_pickup_coin.on_update(m_player.position(), time_step);
+	m_pickup_coin_02.on_update(m_player.position(), time_step);
+	m_pickup_coin_03.on_update(m_player.position(), time_step);
+	m_pickup_coin_04.on_update(m_player.position(), time_step);
+	m_pickup_coin_05.on_update(m_player.position(), time_step);
+	m_pickup_coin_06.on_update(m_player.position(), time_step);
+	m_pickup_coin_07.on_update(m_player.position(), time_step);
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 

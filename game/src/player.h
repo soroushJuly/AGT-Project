@@ -17,6 +17,8 @@ public:
 	void jump();
 	void walk(const engine::timestep& time_step);
 	void run(const engine::timestep& time_step);
+
+	glm::vec3 position() { return m_object->position(); };
 private:
 	float m_speed;
 	float m_timer;
