@@ -12,23 +12,20 @@ engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 
 	texts_coordinates =
 	{
-		glm::vec2(repeat * 1.0,repeat * 0.7),
+		glm::vec2(repeat * 1.0, repeat * 0.7),
 		glm::vec2(repeat * 0.7, repeat * 1.0),
 		glm::vec2(repeat * 0.3, repeat * 1.0),
-		glm::vec2(repeat * 0.1,repeat * 0.7),
-		glm::vec2(repeat * 0.1,repeat * 0.3),
-		glm::vec2(repeat * 0.3,repeat * 0.1),
+		glm::vec2(repeat * 0.1, repeat * 0.7),
+		glm::vec2(repeat * 0.1, repeat * 0.3),
+		glm::vec2(repeat * 0.3, repeat * 0.1),
 		glm::vec2(repeat * 0.7, repeat * 0.1),
-		glm::vec2(repeat * 1.0,repeat * 0.3),
+		glm::vec2(repeat * 1.0, repeat * 0.3),
 	};
 	//	// position			normal			text coordinates
 	// Front Octagon
 	for (int i = 0; i < 8; i++)
 	{
 		float theta = i * (360 / 8) * (engine::PI / 180);
-		LOG_CORE_INFO("vertex: ['{}']", i);
-		LOG_CORE_INFO("texture x: ['{}']", cos(theta) / 2.f + 0.5f);
-		LOG_CORE_INFO("texture y: ['{}']", sin(theta) / 2.f + 0.5f);
 		theta += (engine::PI / 8);
 		glm::vec2 text = glm::vec2(2 * (cos(theta) / 2.f + 0.5f), 2 * (sin(theta / 2.f) + 0.5f));
 		engine::mesh::vertex vertex(
