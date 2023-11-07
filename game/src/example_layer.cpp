@@ -20,7 +20,6 @@ example_layer::example_layer()
 	// Initialise audio and play background music
 	m_audio_manager = engine::audio_manager::instance();
 	m_audio_manager->init();
-	m_audio_manager->load_sound("assets/audio/bounce.wav", engine::sound_type::spatialised, "bounce"); // Royalty free sound from freesound.org
 	m_audio_manager->load_sound("assets/audio/DST-impuretechnology.mp3", engine::sound_type::track, "music");  // Royalty free music from http://www.nosoapradio.us/
 	m_audio_manager->play("music");
 	m_audio_manager->pause("music");
@@ -48,18 +47,12 @@ example_layer::example_layer()
 	std::dynamic_pointer_cast<engine::gl_shader>(text_shader)->set_uniform("projection",
 		glm::ortho(0.f, (float)engine::application::window().width(), 0.f,
 			(float)engine::application::window().height()));
-	m_material = engine::material::create(1.0f, glm::vec3(1.0f, 0.1f, 0.07f),
-		glm::vec3(1.0f, 0.1f, 0.07f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
 
 	m_mannequin_material = engine::material::create(1.0f, glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
 
 
-	// Skybox texture from http://www.vwall.it/wp-content/plugins/canvasio3dpro/inc/resource/cubeMaps/
-	//m_skybox = engine::skybox::create(50.f,
-	//	{ engine::texture_2d::create("assets/textures/skybox/SkyboxFront.bmp", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxBottom.bmp", true)
-	//	});
+	// Free Skybox texture from https://sketchfab.com/3d-models/free-skybox-anime-village-a25aa36a28a14c2e83285ad917947278
 	m_skybox = engine::skybox::create(50.f,
 		{ engine::texture_2d::create("assets/textures/skybox/skybox_front_1.png", true),
 		  engine::texture_2d::create("assets/textures/skybox/skybox_right_1.png", true),
@@ -85,7 +78,7 @@ example_layer::example_layer()
 	m_mannequin = engine::game_object::create(mannequin_props);
 	m_player.initialise(m_mannequin);
 
-	// creating another pickup object
+	// Initialize objects
 	m_pickup_coin_01.on_initialize();
 	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 1.2f, -1.f));
 	m_pickup_coin_03.on_initialize(glm::vec3(0.f, 1.4f, -2.f));
@@ -93,15 +86,16 @@ example_layer::example_layer()
 	m_pickup_coin_05.on_initialize(glm::vec3(0.f, 1.4f, -4.f));
 	m_pickup_coin_06.on_initialize(glm::vec3(0.f, 1.2f, -5.f));
 	m_pickup_coin_07.on_initialize(glm::vec3(0.f, 1.f, -6.f));
+	// Textures below from POLYGON Pack https://syntystore.com/products/polygon-adventure-pack?_pos=1&_psq=adve&_ss=e&_v=1.0
 	bush.on_initialize("assets/models/static/SM_Env_Bush_01.fbx", "assets/textures/grass.png", glm::vec3(4.f, .45f, -3.5f));
 	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(4.f, 0, -2.f));
 	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -2.f));
 	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -4.f));
-	//fence.on_initialize("assets/models/FBX/SM_Plant_01.fbx", "assets/textures/grass.png");
 
 	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
+	// Texture from POLYGON Pack https://syntystore.com/products/polygon-adventure-pack?_pos=1&_psq=adve&_ss=e&_v=1.0
 	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/mud.png", false) };
 	engine::ref<engine::terrain> terrain_shape = engine::terrain::create(100.f, 0.5f, 100.f, 70);
 	engine::game_object_properties terrain_props;
@@ -113,18 +107,8 @@ example_layer::example_layer()
 	terrain_props.restitution = 0.92f;
 	m_terrain = engine::game_object::create(terrain_props);
 
-	engine::ref<engine::sphere> sphere_shape = engine::sphere::create(10, 20, 0.5f);
-	engine::game_object_properties sphere_props;
-	sphere_props.position = { 0.f, 5.f, -5.f };
-	sphere_props.meshes = { sphere_shape->mesh() };
-	sphere_props.type = 1;
-	sphere_props.bounding_shape = glm::vec3(0.5f);
-	sphere_props.restitution = 0.92f;
-	sphere_props.mass = 0.000001f;
-	m_ball = engine::game_object::create(sphere_props);
 
 	m_game_objects.push_back(m_terrain);
-	m_game_objects.push_back(m_ball);
 	//m_game_objects.push_back(m_cow);
 	//m_game_objects.push_back(m_pickup);
 	m_physics_manager = engine::bullet_manager::create(m_game_objects);
@@ -156,8 +140,6 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_player.update_camera(m_3d_camera, time_step);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
-
-	check_bounce();
 }
 
 void example_layer::on_render()
@@ -166,7 +148,6 @@ void example_layer::on_render()
 	engine::render_command::clear();
 	// Set up text shader
 	const auto text_shader = engine::renderer::shaders_library()->get("text_2D");
-
 	// Set up  shader. (renders textures and materials)
 	const auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 
@@ -191,7 +172,7 @@ void example_layer::on_render()
 
 	engine::renderer::submit(mesh_shader, m_terrain);
 
-	// pickup_coin rendering
+	// Render Objects in the scene
 	m_pickup_coin_01.on_render();
 	m_pickup_coin_02.on_render();
 	m_pickup_coin_03.on_render();
@@ -200,7 +181,6 @@ void example_layer::on_render()
 	m_pickup_coin_06.on_render();
 	m_pickup_coin_07.on_render();
 	bush.on_render(mesh_shader);
-	// rotated bush
 	bush.on_render(mesh_shader, glm::vec3(4.f, .45f, -6.25f), engine::PI / 2, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .01f, .013f));
 	tree_01.on_render(mesh_shader);
 	tree_02.on_render(mesh_shader);
@@ -208,9 +188,6 @@ void example_layer::on_render()
 	tree_03.on_render(mesh_shader);
 	tree_03.on_render(mesh_shader, glm::vec3(-4.f, 0, -7.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .018f, .013f));
 	tree_03.on_render(mesh_shader, glm::vec3(-4.3f, 0, -10.3f), engine::PI, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f));
-
-	m_material->submit(mesh_shader);
-	engine::renderer::submit(mesh_shader, m_ball);
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_player.object());
@@ -239,12 +216,4 @@ void example_layer::on_event(engine::event& event)
 			engine::render_command::toggle_wireframe();
 		}
 	}
-}
-
-void example_layer::check_bounce()
-{
-	if (m_prev_sphere_y_vel < 0.1f && m_ball->velocity().y > 0.1f)
-		//m_audio_manager->play("bounce");
-		m_audio_manager->play_spatialised_sound("bounce", m_3d_camera.position(), glm::vec3(m_ball->position().x, 0.f, m_ball->position().z));
-	m_prev_sphere_y_vel = m_game_objects.at(1)->velocity().y;
 }

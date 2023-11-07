@@ -20,7 +20,6 @@ public:
 	void on_event(engine::event& event) override;
 
 private:
-	void check_bounce();
 	player m_player{};
 	pickup_coin m_pickup_coin_01{};
 	pickup_coin m_pickup_coin_02{};
@@ -39,12 +38,8 @@ private:
 
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};
-	engine::ref<engine::game_object>	m_ball{};
 	engine::ref<engine::game_object>	m_mannequin{};
-	engine::ref<engine::game_object>	m_tetrahedron{};
 
-	engine::ref<engine::material>		m_material{};
-	engine::ref<engine::material>		m_tetrahedron_material{};
 	engine::ref<engine::material>		m_mannequin_material{};
 
 	engine::DirectionalLight            m_directionalLight;
@@ -53,7 +48,6 @@ private:
 
 	engine::ref<engine::bullet_manager> m_physics_manager{};
 	engine::ref<engine::audio_manager>  m_audio_manager{};
-	float								m_prev_sphere_y_vel = 0.f;
 	engine::ref<engine::text_manager>	m_text_manager{};
 
 	engine::orthographic_camera       m_2d_camera;
