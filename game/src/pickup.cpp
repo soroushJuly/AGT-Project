@@ -12,15 +12,17 @@ void pickup::deactive()
 {
 	m_is_active = false;
 }
-void pickup::update(glm::vec3 c, float dt)
+bool pickup::update(glm::vec3 c, float dt)
 {
 	set_rotation_amount(rotation_amount() + dt);
 
 	float distance = glm::length(c - position());
-	if (distance < 1.f)
+	if (m_is_active && distance < 1.f)
 	{
 		deactive();
+		return true;
 	}
+	return false;
 }
 engine::ref<pickup> pickup::create(const engine::game_object_properties& props)
 {

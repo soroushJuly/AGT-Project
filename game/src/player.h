@@ -19,7 +19,9 @@ public:
 	void run(const engine::timestep& time_step);
 
 	glm::vec3 position() { return m_object->position(); };
+	int& coins() { return m_coins; }
 private:
+	int m_coins;
 	float m_speed;
 	float m_timer;
 	float m_mouse_y;

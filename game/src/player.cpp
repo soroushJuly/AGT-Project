@@ -5,7 +5,7 @@
 #include "engine/key_codes.h"
 
 
-player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0.f), x_angle_x_mouse(0.f)
+player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0.f), x_angle_x_mouse(0.f), m_coins(0)
 {
 
 }

@@ -8,7 +8,7 @@ public:
 	pickup_coin();
 	~pickup_coin();
 
-	void on_update(glm::vec3 c, float dt);
+	void on_update(glm::vec3 c, int& coins, float dt);
 	void on_render();
 	void on_initialize(glm::vec3 position = glm::vec3(0.f, 1.f, 0.f));
 

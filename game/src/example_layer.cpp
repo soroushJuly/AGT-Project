@@ -86,7 +86,7 @@ example_layer::example_layer()
 	m_player.initialise(m_mannequin);
 
 	// creating another pickup object
-	m_pickup_coin.on_initialize();
+	m_pickup_coin_01.on_initialize();
 	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 1.2f, -1.f));
 	m_pickup_coin_03.on_initialize(glm::vec3(0.f, 1.4f, -2.f));
 	m_pickup_coin_04.on_initialize(glm::vec3(0.f, 1.6f, -3.f));
@@ -142,13 +142,13 @@ void example_layer::on_update(const engine::timestep& time_step)
 	}
 	//m_3d_camera.on_update(time_step);
 
-	m_pickup_coin.on_update(m_player.position(), time_step);
-	m_pickup_coin_02.on_update(m_player.position(), time_step);
-	m_pickup_coin_03.on_update(m_player.position(), time_step);
-	m_pickup_coin_04.on_update(m_player.position(), time_step);
-	m_pickup_coin_05.on_update(m_player.position(), time_step);
-	m_pickup_coin_06.on_update(m_player.position(), time_step);
-	m_pickup_coin_07.on_update(m_player.position(), time_step);
+	m_pickup_coin_01.on_update(m_player.position(), m_player.coins(), time_step);
+	m_pickup_coin_02.on_update(m_player.position(), m_player.coins(), time_step);
+	m_pickup_coin_03.on_update(m_player.position(), m_player.coins(), time_step);
+	m_pickup_coin_04.on_update(m_player.position(), m_player.coins(), time_step);
+	m_pickup_coin_05.on_update(m_player.position(), m_player.coins(), time_step);
+	m_pickup_coin_06.on_update(m_player.position(), m_player.coins(), time_step);
+	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step);
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
@@ -192,7 +192,7 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, m_terrain);
 
 	// pickup_coin rendering
-	m_pickup_coin.on_render();
+	m_pickup_coin_01.on_render();
 	m_pickup_coin_02.on_render();
 	m_pickup_coin_03.on_render();
 	m_pickup_coin_04.on_render();
@@ -218,8 +218,9 @@ void example_layer::on_render()
 	engine::renderer::end_scene();
 
 	// Render text
-	//m_text_manager->render_text(text_shader, "Press Enter to Play", (float)engine::application::window().width() / 2 - 200.f, (float)engine::application::window().height() / 2 , 1.f, glm::vec4(1.f, 1.0f, 1.f, 1.f));
-	m_text_manager->render_text(text_shader, "Orange Text", 10.f, (float)engine::application::window().height() - 25.f, 0.5f, glm::vec4(1.f, 0.5f, 0.f, 1.f));
+	m_text_manager->render_text(text_shader, "Coins: " + std::to_string(m_player.coins()), 10.f, (float)engine::application::window().height() - 25.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
+	m_text_manager->render_text(text_shader, "Health: 100", 10.f, (float)engine::application::window().height() - 50.f, 0.5f, glm::vec4(1.f, 0.1f, 0.1f, 1.f));
+	m_text_manager->render_text(text_shader, "Time: 0s", 10.f, (float)engine::application::window().height() - 75.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
 }
 
 void example_layer::on_event(engine::event& event)

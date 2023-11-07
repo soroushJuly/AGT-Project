@@ -36,8 +36,12 @@ void pickup_coin::on_render()
 	}
 };
 
-void pickup_coin::on_update(glm::vec3 c, float dt)
+void pickup_coin::on_update(glm::vec3 c, int& coins, float dt)
 {
-	m_pickup->update(c, dt);
+	if (m_pickup->update(c, dt))
+	{
+		++coins;
+	}
+	
 };
 

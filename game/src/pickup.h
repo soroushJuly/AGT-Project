@@ -7,7 +7,7 @@ public:
 	~pickup();
 	void init();
 	void deactive();
-	void update(glm::vec3 c, float dt);
+	bool update(glm::vec3 c, float dt);
 	bool active() const { return m_is_active; }
 
 	static engine::ref<pickup> create(const engine::game_object_properties& props);

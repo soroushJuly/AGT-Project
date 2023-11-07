@@ -22,7 +22,7 @@ public:
 private:
 	void check_bounce();
 	player m_player{};
-	pickup_coin m_pickup_coin{};
+	pickup_coin m_pickup_coin_01{};
 	pickup_coin m_pickup_coin_02{};
 	pickup_coin m_pickup_coin_03{};
 	pickup_coin m_pickup_coin_04{};
