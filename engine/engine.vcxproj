@@ -594,6 +594,7 @@ IF EXIST ..\engine\external\FMOD\lib\x64\fmod.dll\ (xcopy /Q /E /Y /I ..\engine\
     <ClInclude Include="src\platform\opengl\gl_vertex_array.h" />
     <ClInclude Include="src\platform\windows\win_input.h" />
     <ClInclude Include="src\platform\windows\win_window.h" />
+    <ClInclude Include="src\quad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\core\application.cpp" />
@@ -642,6 +643,7 @@ IF EXIST ..\engine\external\FMOD\lib\x64\fmod.dll\ (xcopy /Q /E /Y /I ..\engine\
     <ClCompile Include="src\platform\windows\win_core.cpp" />
     <ClCompile Include="src\platform\windows\win_input.cpp" />
     <ClCompile Include="src\platform\windows\win_window.cpp" />
+    <ClCompile Include="src\quad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="external\FMOD\include\fmod.cs" />

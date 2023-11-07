@@ -1,6 +1,7 @@
 #pragma once
 #include <engine.h>
 #include <player.h>
+#include <game_intro.h>
 #include "pickup_coin.h"
 #include <static_object.h>
 
@@ -34,6 +35,8 @@ private:
 	static_object tree_03{};
 	static_object fence{};
 
+	engine::ref<game_intro> m_game_intro;
+
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};
 	engine::ref<engine::game_object>	m_ball{};
@@ -56,6 +59,5 @@ private:
 	engine::orthographic_camera       m_2d_camera;
 	engine::perspective_camera        m_3d_camera;
 
-	engine::ref<pickup> m_pickup{};
-	//engine::ref<pickup> m_pickup_2{};
+	bool is_intro_active;
 };

@@ -10,9 +10,8 @@
 
 example_layer::example_layer()
 	:m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f),
-	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height())
-
-
+	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height()),
+	is_intro_active(true)
 {
 	// Hide the mouse and lock it inside the window
 	//engine::input::anchor_mouse(true);
@@ -62,10 +61,6 @@ example_layer::example_layer()
 	// Skybox texture from http://www.vwall.it/wp-content/plugins/canvasio3dpro/inc/resource/cubeMaps/
 	//m_skybox = engine::skybox::create(50.f,
 	//	{ engine::texture_2d::create("assets/textures/skybox/SkyboxFront.bmp", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxRight.bmp", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxBack.bmp", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxLeft.bmp", true),
-	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxTop.bmp", true),
 	//	  engine::texture_2d::create("assets/textures/skybox/SkyboxBottom.bmp", true)
 	//	});
 	m_skybox = engine::skybox::create(50.f,
@@ -93,17 +88,6 @@ example_layer::example_layer()
 	m_mannequin = engine::game_object::create(mannequin_props);
 	m_player.initialise(m_mannequin);
 
-	// creating the pickup object
-	engine::ref<engine::cuboid> pickup_shape = engine::cuboid::create(glm::vec3(0.5f), false);
-	engine::ref<engine::texture_2d> pickup_texture =
-		engine::texture_2d::create("assets/textures/medkit.jpg", true);
-	engine::game_object_properties pickup_props;
-	pickup_props.position = { 5.f, 1.f, 5.f };
-	pickup_props.meshes = { pickup_shape->mesh() };
-	pickup_props.textures = { pickup_texture };
-	m_pickup = pickup::create(pickup_props);
-	m_pickup->init();
-
 	// creating another pickup object
 	m_pickup_coin.on_initialize();
 	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 2.f, -1.f));
@@ -117,6 +101,8 @@ example_layer::example_layer()
 	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -2.f));
 	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -4.f));
 	//fence.on_initialize("assets/models/FBX/SM_Plant_01.fbx", "assets/textures/grass.png");
+
+	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
 	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/mud.png", false) };
@@ -150,22 +136,22 @@ example_layer::example_layer()
 	m_game_objects.push_back(m_terrain);
 	m_game_objects.push_back(m_ball);
 	//m_game_objects.push_back(m_cow);
-	//m_game_objects.push_back(m_tree);
 	//m_game_objects.push_back(m_pickup);
 	m_physics_manager = engine::bullet_manager::create(m_game_objects);
 
 	m_text_manager = engine::text_manager::create();
-
-	m_skinned_mesh->switch_animation(1);
 }
 
 example_layer::~example_layer() {}
 
 void example_layer::on_update(const engine::timestep& time_step)
 {
-	m_3d_camera.on_update(time_step);
+	if (is_intro_active)
+	{
+		return;
+	}
+	//m_3d_camera.on_update(time_step);
 
-	m_pickup->update(m_3d_camera.position(), time_step);
 	m_pickup_coin.on_update(m_3d_camera.position(), time_step);
 	m_pickup_coin_02.on_update(m_3d_camera.position(), time_step);
 	m_pickup_coin_03.on_update(m_3d_camera.position(), time_step);
@@ -173,12 +159,11 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_pickup_coin_05.on_update(m_3d_camera.position(), time_step);
 	m_pickup_coin_06.on_update(m_3d_camera.position(), time_step);
 	m_pickup_coin_07.on_update(m_3d_camera.position(), time_step);
-	/*m_pickup_2->update(m_3d_camera.position(), time_step);*/
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
 	m_player.on_update(time_step);
-	//m_player.update_camera(m_3d_camera, time_step);
+	m_player.update_camera(m_3d_camera, time_step);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
 
@@ -189,9 +174,17 @@ void example_layer::on_render()
 {
 	engine::render_command::clear_color({ 0.2f, 0.3f, 0.3f, 1.0f });
 	engine::render_command::clear();
+	// Set up text shader
+	const auto text_shader = engine::renderer::shaders_library()->get("text_2D");
 
 	// Set up  shader. (renders textures and materials)
 	const auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
+
+	// render 2D Camera
+	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
+	m_game_intro->on_render(mesh_shader);
+	engine::renderer::end_scene();
+
 	engine::renderer::begin_scene(m_3d_camera, mesh_shader);
 
 	// Set up some of the scene's parameters in the shader
@@ -207,18 +200,6 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, m_skybox, skybox_tranform);
 
 	engine::renderer::submit(mesh_shader, m_terrain);
-
-
-	if (m_pickup->active())
-	{
-		std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", true);
-		m_pickup->textures().at(0)->bind();
-		glm::mat4 pickup_transform(1.0f);
-		pickup_transform = glm::translate(pickup_transform, m_pickup->position());
-		pickup_transform = glm::rotate(pickup_transform, m_pickup->rotation_amount(), m_pickup->rotation_axis());
-		engine::renderer::submit(mesh_shader, m_pickup->meshes().at(0), pickup_transform);
-		std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", false);
-	}
 
 	// pickup_coin rendering
 	m_pickup_coin.on_render();
@@ -241,18 +222,13 @@ void example_layer::on_render()
 	m_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_ball);
 
-	//m_tetrahedron_material->submit(mesh_shader);
-	//engine::renderer::submit(mesh_shader, m_tetrahedron);
-
-	//coin_transform = glm::rotate(coin_transform, engine::PI * 22.5f / 180, glm::vec3(0.f, 0.f, -1.f));
-
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_player.object());
 
 	engine::renderer::end_scene();
 
 	// Render text
-	const auto text_shader = engine::renderer::shaders_library()->get("text_2D");
+	//m_text_manager->render_text(text_shader, "Press Enter to Play", (float)engine::application::window().width() / 2 - 200.f, (float)engine::application::window().height() / 2 , 1.f, glm::vec4(1.f, 1.0f, 1.f, 1.f));
 	m_text_manager->render_text(text_shader, "Orange Text", 10.f, (float)engine::application::window().height() - 25.f, 0.5f, glm::vec4(1.f, 0.5f, 0.f, 1.f));
 }
 
@@ -261,6 +237,12 @@ void example_layer::on_event(engine::event& event)
 	if (event.event_type() == engine::event_type_e::key_pressed)
 	{
 		auto& e = dynamic_cast<engine::key_pressed_event&>(event);
+		if (is_intro_active && e.key_code() == engine::key_codes::KEY_ENTER)
+		{
+			is_intro_active = false;
+			m_game_intro->deactivate();
+		}
+
 		if (e.key_code() == engine::key_codes::KEY_TAB)
 		{
 			engine::render_command::toggle_wireframe();

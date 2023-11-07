@@ -1371,6 +1371,9 @@
     <ClInclude Include="src\engine\entities\shapes\coin.h">
       <Filter>src\engine\entities\shapes</Filter>
     </ClInclude>
+    <ClInclude Include="src\quad.h">
+      <Filter>src\engine\entities\shapes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\core\application.cpp">
@@ -1503,6 +1506,9 @@
       <Filter>src\engine\entities\shapes</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\entities\shapes\coin.cpp">
+      <Filter>src\engine\entities\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\quad.cpp">
       <Filter>src\engine\entities\shapes</Filter>
     </ClCompile>
   </ItemGroup>

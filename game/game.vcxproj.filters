@@ -8,6 +8,8 @@
     <ClCompile Include="src\pickup_coin.cpp">
       <Filter>pickupables</Filter>
     </ClCompile>
+    <ClCompile Include="src\static_object.cpp" />
+    <ClCompile Include="src\game_intro.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -16,10 +18,15 @@
     <ClInclude Include="src\pickup_coin.h">
       <Filter>pickupables</Filter>
     </ClInclude>
+    <ClInclude Include="src\static_object.h" />
+    <ClInclude Include="src\game_intro.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pickupables">
       <UniqueIdentifier>{caa6f12c-75d1-4f63-8b51-51740fdf3906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="decorations">
+      <UniqueIdentifier>{64789028-debe-42d8-9a07-f21faec6a677}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
