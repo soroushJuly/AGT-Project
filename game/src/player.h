@@ -29,6 +29,6 @@ private:
 	double x_angle_x_mouse;
 
 	// probably should use these variables to control the character
-	bool is_walking{ false }, is_running{ false }, is_jumping{ false }, is_standing{ false };
+	//bool is_walking{ false }, is_running{ false }, is_jumping{ false }, is_standing{ false };
 	engine::ref< engine::game_object> m_object;
 };

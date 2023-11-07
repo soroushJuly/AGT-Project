@@ -18,8 +18,8 @@ public:
 private:
 	bool s_active;
 
-	float m_timer;
-	float m_max_time;
+	//float m_timer;
+	//float m_max_time;
 
 	engine::ref<engine::texture_2d> m_texture;
 	float m_transparency;

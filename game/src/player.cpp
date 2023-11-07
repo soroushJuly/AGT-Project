@@ -6,12 +6,9 @@
 
 
 player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0.f), x_angle_x_mouse(0.f), m_coins(0)
-{
-
-}
+{}
 player::~player() {};
-// 4 is running
-// 2 is standing
+
 void player::initialise(engine::ref<engine::game_object> object)
 {
 	m_object = object;
@@ -63,13 +60,15 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 {
 	auto [mouse_delta_x, mouse_delta_y] = engine::input::mouse_position();
 
+	const float SENSITIVITY = 0.04f;
 	const float camera_distance_height = 1.5;
-	const float radius = 3;
+	// Radius around the player for camera to rotate
+	const float RADIUS = 3;
 
 	// Camera's default position
 	float camera_position_y = m_object->position().y + camera_distance_height;
-	float camera_position_x = m_object->position().x + radius * glm::normalize(m_object->forward()).x;
-	float camera_position_z = m_object->position().z + radius * glm::normalize(m_object->forward()).z;
+	float camera_position_x = m_object->position().x + RADIUS * glm::normalize(m_object->forward()).x;
+	float camera_position_z = m_object->position().z + RADIUS * glm::normalize(m_object->forward()).z;
 
 	// the camera viewpoint
 	float camera_look_x = m_object->position().x + glm::normalize(m_object->forward()).x;
@@ -77,16 +76,15 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 	glm::vec3 look_at = glm::vec3(camera_look_x, m_object->animated_mesh()->size().y / 4, camera_look_z);
 
 	// mouse movement in y direction
-	y_angle_y_mouse = y_angle_y_mouse + mouse_delta_y * 0.03f * time_step;
-	m_mouse_y = radius * sin(y_angle_y_mouse);
+	y_angle_y_mouse = y_angle_y_mouse + mouse_delta_y * SENSITIVITY * time_step;
+	m_mouse_y = RADIUS * sin(y_angle_y_mouse);
 	if (m_mouse_y < -m_object->animated_mesh()->size().y / 4 + 0.1f)
 		m_mouse_y = -m_object->animated_mesh()->size().y / 4 + 0.1f;
 	if (m_mouse_y > m_object->animated_mesh()->size().y / 4)
 		m_mouse_y = m_object->animated_mesh()->size().y / 4;
 
 	// mouse movement in x direction
-	x_angle_x_mouse = x_angle_x_mouse + mouse_delta_x * 0.03f * time_step;
-	//LOG_INFO("x_angle_x_mouse: [{}]", x_angle_x_mouse);
+	x_angle_x_mouse = x_angle_x_mouse + mouse_delta_x * SENSITIVITY * time_step;
 	glm::vec2 camera_dis_surface = glm::vec2(m_object->position().x - camera_position_x, m_object->position().z - camera_position_z);
 	glm::vec2 camera_dis_rotated = glm::rotate<float>(camera_dis_surface, x_angle_x_mouse);
 	camera_position_x = m_object->position().x + camera_dis_rotated.x;
@@ -108,7 +106,6 @@ void player::jump()
 
 void player::walk(const engine::timestep& time_step)
 {
-	is_walking = true;
 	m_speed = 1.0f;
 	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
 		(float)time_step);

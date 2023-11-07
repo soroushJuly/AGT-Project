@@ -25,9 +25,7 @@ engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 	// Front Octagon
 	for (int i = 0; i < 8; i++)
 	{
-		float theta = i * (360 / 8) * (engine::PI / 180);
-		theta += (engine::PI / 8);
-		glm::vec2 text = glm::vec2(2 * (cos(theta) / 2.f + 0.5f), 2 * (sin(theta / 2.f) + 0.5f));
+		float theta = i * (360 / 8) * (engine::PI / 180) + (engine::PI / 8);
 		engine::mesh::vertex vertex(
 			glm::vec3(m_radius * cos(theta), m_radius * sin(theta), m_size),
 			glm::vec3(0.f, 0.f, -1.f),
@@ -64,7 +62,7 @@ engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 
 	std::vector<mesh::vertex> side_vertices
 	{
-		// defining the vertices in every surface
+		// defining the vertices in every surface between two octagon
 		// postitions		normal		tex coord
 		{coin_vertices[0].position,	normals[0], { 0.f, 0.f }},
 		{coin_vertices[8].position,	normals[0], { repeat_sides * 1.f, 0.f }},
@@ -132,6 +130,7 @@ engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 		{coin_vertices[0].position,	normals[7], { 0.f, 0.f }},
 	};
 
+	// add surface in between to the octagons
 	coin_vertices.insert(coin_vertices.end(), side_vertices.begin(), side_vertices.end());
 
 	std::vector<uint32_t> coin_indices =
@@ -165,23 +164,6 @@ engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 		55,56,57,
 		58,59,60,
 		61,62,63,
-
-		//0,8,9,
-		//0,9,1,
-		//1,9,10,
-		//1,10,2,
-		//2,10,11,
-		//2,11,3,
-		//3,11,12,
-		//3,12,4,
-		//4,12,13,
-		//4,13,5,
-		//5,13,14,
-		//5,14,6,
-		//6,14,15,
-		//6,15,7,
-		//7,15,8,
-		//7,8,0
 	};
 
 	m_coin_mesh = engine::mesh::create(coin_vertices, coin_indices);
