@@ -62,15 +62,20 @@ example_layer::example_layer()
 		  engine::texture_2d::create("assets/textures/skybox/skybox_bottom_1.png", true)
 		});
 
-	engine::ref<engine::skinned_mesh> m_skinned_mesh = engine::skinned_mesh::create("assets/models/animated/mannequin/free3Dmodel.dae");
-	m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/walking.dae");
-	m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/idle.dae");
-	m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/jump.dae");
-	m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/standard_run.dae");
+	engine::ref<engine::skinned_mesh> m_skinned_mesh = engine::skinned_mesh::create("assets/models/animated/Adventurer.fbx");
+	//engine::ref<engine::skinned_mesh> m_skinned_mesh = engine::skinned_mesh::create("assets/models/animated/mannequin/Characters_Skeleton.fbx");
+	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/walking.dae");
+	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/idle.dae");
+	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/jump.dae");
+	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/standard_run.dae");
+	m_skinned_mesh->set_default_animation(3);
 	m_skinned_mesh->switch_root_movement(false);
 
 	engine::game_object_properties mannequin_props;
 	mannequin_props.animated_mesh = m_skinned_mesh;
+	engine::ref<engine::texture_2d> mannequin_texture =
+		engine::texture_2d::create("assets/textures/PolyAdventureTexture_01.png", true);
+	mannequin_props.textures = { mannequin_texture };
 	mannequin_props.scale = glm::vec3(1.f / glm::max(m_skinned_mesh->size().x, glm::max(m_skinned_mesh->size().y, m_skinned_mesh->size().z)));
 	mannequin_props.position = glm::vec3(.0f, .5f, -5.0f);
 	mannequin_props.type = 0;

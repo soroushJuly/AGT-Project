@@ -14,7 +14,7 @@ void player::initialise(engine::ref<engine::game_object> object)
 	m_object = object;
 	m_object->set_forward(glm::vec3(0.f, 0.f, -1.f));
 	m_object->set_position(glm::vec3(0.f, 0.5, 10.f));
-	m_object->animated_mesh()->set_default_animation(2);
+	m_object->animated_mesh()->set_default_animation(3);
 }
 void player::on_update(const engine::timestep& time_step)
 {
@@ -73,15 +73,15 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 	// the camera viewpoint
 	float camera_look_x = m_object->position().x + glm::normalize(m_object->forward()).x;
 	float camera_look_z = m_object->position().z + glm::normalize(m_object->forward()).z;
-	glm::vec3 look_at = glm::vec3(camera_look_x, m_object->animated_mesh()->size().y / 4, camera_look_z);
+	glm::vec3 look_at = glm::vec3(camera_look_x, m_object->animated_mesh()->size().y / 1, camera_look_z);
 
 	// mouse movement in y direction
 	y_angle_y_mouse = y_angle_y_mouse + mouse_delta_y * SENSITIVITY * time_step;
 	m_mouse_y = RADIUS * sin(y_angle_y_mouse);
-	if (m_mouse_y < -m_object->animated_mesh()->size().y / 4 + 0.1f)
-		m_mouse_y = -m_object->animated_mesh()->size().y / 4 + 0.1f;
-	if (m_mouse_y > m_object->animated_mesh()->size().y / 4)
-		m_mouse_y = m_object->animated_mesh()->size().y / 4;
+	if (m_mouse_y < -m_object->animated_mesh()->size().y / 1 + 0.1f)
+		m_mouse_y = -m_object->animated_mesh()->size().y / 1 + 0.1f;
+	if (m_mouse_y > m_object->animated_mesh()->size().y / 1)
+		m_mouse_y = m_object->animated_mesh()->size().y / 1;
 
 	// mouse movement in x direction
 	x_angle_x_mouse = x_angle_x_mouse + mouse_delta_x * SENSITIVITY * time_step;
@@ -98,14 +98,15 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 void player::jump()
 {
 	m_object->animated_mesh()->switch_root_movement(true);
-	m_object->animated_mesh()->switch_animation(3);
 	m_speed = 0.5f;
-	m_timer = m_object->animated_mesh()->animations().at(3)->mDuration;
+	m_object->animated_mesh()->switch_animation(6);
+	m_timer = m_object->animated_mesh()->animations().at(6)->mDuration;
 
 }
 
 void player::walk(const engine::timestep& time_step)
 {
+	//m_object->animated_mesh()->switch_root_movement(false);
 	m_speed = 1.0f;
 	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
 		(float)time_step);
@@ -113,12 +114,13 @@ void player::walk(const engine::timestep& time_step)
 	{
 		return;
 	}
-	m_object->animated_mesh()->switch_animation(1);
-	m_timer = m_object->animated_mesh()->animations().at(1)->mDuration;
+	m_object->animated_mesh()->switch_animation(22);
+	m_timer = m_object->animated_mesh()->animations().at(22)->mDuration;
 }
 
 void player::run(const engine::timestep& time_step)
 {
+	//m_object->animated_mesh()->switch_root_movement(true);
 	m_speed = 3.0f;
 	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
 		(float)time_step);
@@ -126,6 +128,6 @@ void player::run(const engine::timestep& time_step)
 	{
 		return;
 	}
-	m_object->animated_mesh()->switch_animation(4);
-	m_timer = m_object->animated_mesh()->animations().at(4)->mDuration;
+	m_object->animated_mesh()->switch_animation(16);
+	m_timer = m_object->animated_mesh()->animations().at(16)->mDuration;
 }
