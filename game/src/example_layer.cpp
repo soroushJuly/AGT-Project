@@ -68,7 +68,6 @@ example_layer::example_layer()
 	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/idle.dae");
 	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/jump.dae");
 	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/standard_run.dae");
-	m_skinned_mesh->set_default_animation(3);
 	m_skinned_mesh->switch_root_movement(false);
 
 	engine::game_object_properties mannequin_props;

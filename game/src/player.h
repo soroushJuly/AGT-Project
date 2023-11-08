@@ -14,7 +14,7 @@ public:
 
 	void turn(float angle);
 	void update_camera(engine::perspective_camera& camera, const engine::timestep& timestep);
-	void jump();
+	void stand_jump(const engine::timestep& time_step);
 	void walk(const engine::timestep& time_step);
 	void run(const engine::timestep& time_step);
 
@@ -29,6 +29,6 @@ private:
 	double x_angle_x_mouse;
 
 	// probably should use these variables to control the character
-	//bool is_walking{ false }, is_running{ false }, is_jumping{ false }, is_standing{ false };
+	bool is_walking{ false }, is_running{ false }, is_stand_jumping{ false }, is_standing{ false };
 	engine::ref< engine::game_object> m_object;
 };
