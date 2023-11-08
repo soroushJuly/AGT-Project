@@ -42,7 +42,6 @@ void player::on_update(const engine::timestep& time_step)
 		walk(time_step);
 	}
 
-	//LOG_INFO("timer-1 [{}]", m_timer);
 	if (m_timer > 0.0f)
 	{
 		m_timer -= (float)time_step;
@@ -67,27 +66,27 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 	auto [mouse_delta_x, mouse_delta_y] = engine::input::mouse_position();
 
 	const float SENSITIVITY = 0.04f;
-	const float camera_distance_height = 1.5;
+	const float CAMERA_DISTANCE_HEIGHT = 1.5;
 	// Radius around the player for camera to rotate
 	const float RADIUS = 3;
 
 	// Camera's default position
-	float camera_position_y = m_object->position().y + camera_distance_height;
+	float camera_position_y = m_object->position().y + CAMERA_DISTANCE_HEIGHT;
 	float camera_position_x = m_object->position().x + RADIUS * glm::normalize(m_object->forward()).x;
 	float camera_position_z = m_object->position().z + RADIUS * glm::normalize(m_object->forward()).z;
 
 	// the camera viewpoint
 	float camera_look_x = m_object->position().x + glm::normalize(m_object->forward()).x;
 	float camera_look_z = m_object->position().z + glm::normalize(m_object->forward()).z;
-	glm::vec3 look_at = glm::vec3(camera_look_x, m_object->animated_mesh()->size().y / 1, camera_look_z);
+	glm::vec3 look_at = glm::vec3(camera_look_x, m_object->animated_mesh()->size().y / .5f, camera_look_z);
 
 	// mouse movement in y direction
 	y_angle_y_mouse = y_angle_y_mouse + mouse_delta_y * SENSITIVITY * time_step;
 	m_mouse_y = RADIUS * sin(y_angle_y_mouse);
-	if (m_mouse_y < -m_object->animated_mesh()->size().y / 1 + 0.1f)
-		m_mouse_y = -m_object->animated_mesh()->size().y / 1 + 0.1f;
-	if (m_mouse_y > m_object->animated_mesh()->size().y / 1)
-		m_mouse_y = m_object->animated_mesh()->size().y / 1;
+	if (m_mouse_y < -m_object->animated_mesh()->size().y / .5f + 0.1f)
+		m_mouse_y = -m_object->animated_mesh()->size().y / .5f + 0.1f;
+	if (m_mouse_y > m_object->animated_mesh()->size().y / .5f)
+		m_mouse_y = m_object->animated_mesh()->size().y / .5f;
 
 	// mouse movement in x direction
 	x_angle_x_mouse = x_angle_x_mouse + mouse_delta_x * SENSITIVITY * time_step;
@@ -104,7 +103,6 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 void player::stand_jump(const engine::timestep& time_step)
 {
 	is_stand_jumping = true;
-	//m_object->animated_mesh()->switch_root_movement(true);
 	m_speed = 1.f;
 	float x_position = m_object->position().x;
 	float z_position = m_object->position().z;
