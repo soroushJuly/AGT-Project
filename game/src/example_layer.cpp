@@ -62,12 +62,8 @@ example_layer::example_layer()
 		  engine::texture_2d::create("assets/textures/skybox/skybox_bottom_1.png", true)
 		});
 
+	// Model from here: https://poly.pizza/m/ZwF0K7WBmu
 	engine::ref<engine::skinned_mesh> m_skinned_mesh = engine::skinned_mesh::create("assets/models/animated/Adventurer.fbx");
-	//engine::ref<engine::skinned_mesh> m_skinned_mesh = engine::skinned_mesh::create("assets/models/animated/mannequin/Characters_Skeleton.fbx");
-	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/walking.dae");
-	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/idle.dae");
-	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/jump.dae");
-	//m_skinned_mesh->LoadAnimationFile("assets/models/animated/mannequin/standard_run.dae");
 	m_skinned_mesh->switch_root_movement(false);
 
 	engine::game_object_properties mannequin_props;
@@ -113,7 +109,6 @@ example_layer::example_layer()
 
 
 	m_game_objects.push_back(m_terrain);
-	//m_game_objects.push_back(m_cow);
 	//m_game_objects.push_back(m_pickup);
 	m_physics_manager = engine::bullet_manager::create(m_game_objects);
 

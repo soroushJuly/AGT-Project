@@ -10,10 +10,10 @@ static_object::~static_object() {}
 void static_object::on_initialize(const std::string& model_path, const std::string& texture_path, glm::vec3 position)
 {
 	engine::ref <engine::model> model = engine::model::create(model_path);
-	std::vector<engine::ref<engine::texture_2d>> tree_texture = { engine::texture_2d::create(texture_path, false) };
+	std::vector<engine::ref<engine::texture_2d>> model_texture = { engine::texture_2d::create(texture_path, false) };
 	engine::game_object_properties model_props;
 	model_props.meshes = model->meshes();
-	model_props.textures = tree_texture;
+	model_props.textures = model_texture;
 	model_props.position = position;
 	model_props.scale = glm::vec3(.01f);
 	m_object = engine::game_object::create(model_props);
