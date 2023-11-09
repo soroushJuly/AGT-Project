@@ -10,7 +10,7 @@ void pickup_coin::on_initialize(glm::vec3 position)
 {
 	m_position = position;
 	engine::ref<engine::coin> pickup_shape = engine::coin::create();
-	// Texture from https://opengameart.org/content/gold-brick-1-lapisbrickbasecolorpng-0
+	// Free texture from https://opengameart.org/content/gold-brick-1-lapisbrickbasecolorpng-0
 	engine::ref<engine::texture_2d> pickup_texture =
 		engine::texture_2d::create("assets/textures/texture_gold_3.png", false);
 	engine::game_object_properties pickup_props;

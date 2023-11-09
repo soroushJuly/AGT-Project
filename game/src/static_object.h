@@ -14,7 +14,7 @@ public:
 		float rotation_amount = 0.f,
 		glm::vec3 rotation_axis = glm::vec3(0.f, 1.f, 0.f),
 		glm::vec3 scale = glm::vec3(.01f));
-	// If not translate provided:
+	// If translate not provided:
 	void on_render(engine::ref<engine::shader> mesh_shader,
 		float rotation_amount = 0.f,
 		glm::vec3 rotation_axis = glm::vec3(0.f, 1.f, 0.f),

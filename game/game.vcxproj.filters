@@ -25,8 +25,5 @@
     <Filter Include="pickupables">
       <UniqueIdentifier>{caa6f12c-75d1-4f63-8b51-51740fdf3906}</UniqueIdentifier>
     </Filter>
-    <Filter Include="decorations">
-      <UniqueIdentifier>{64789028-debe-42d8-9a07-f21faec6a677}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

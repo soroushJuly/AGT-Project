@@ -62,7 +62,7 @@ example_layer::example_layer()
 		  engine::texture_2d::create("assets/textures/skybox/skybox_bottom_1.png", true)
 		});
 
-	// Model from here: https://poly.pizza/m/ZwF0K7WBmu
+	// Free model from here: https://poly.pizza/m/ZwF0K7WBmu
 	engine::ref<engine::skinned_mesh> m_skinned_mesh = engine::skinned_mesh::create("assets/models/animated/Adventurer.fbx");
 	m_skinned_mesh->switch_root_movement(false);
 	m_skinned_mesh->switch_animation(4);
