@@ -27,9 +27,9 @@ void player::on_update(const engine::timestep& time_step)
 		stand_jump(time_step);
 	}
 	if (engine::input::key_pressed(engine::key_codes::KEY_A)) // left
-		turn(1.0f * time_step);
+		turn(2.5f * time_step);
 	if (engine::input::key_pressed(engine::key_codes::KEY_D)) // right
-		turn(-1.0f * time_step);
+		turn(-2.5f * time_step);
 	if (engine::input::key_pressed(engine::key_codes::KEY_SPACE))
 		stand_jump(time_step);
 	// forward
@@ -48,6 +48,8 @@ void player::on_update(const engine::timestep& time_step)
 		if (m_timer < 0.0f)
 		{
 			is_stand_jumping = false;
+			is_running = false;
+			is_walking = false;
 			m_object->animated_mesh()->switch_root_movement(false);
 			m_object->animated_mesh()->switch_animation(m_object->animated_mesh()->default_animation());
 			m_timer = 0.0f;
@@ -59,6 +61,64 @@ void player::turn(float angle)
 {
 	m_object->set_forward(glm::rotate(m_object->forward(), angle, glm::vec3(0.f, 1.f,
 		0.f)));
+}
+
+void player::turn_back(const engine::timestep& time_step)
+{
+}
+
+void player::stand_jump(const engine::timestep& time_step)
+{
+	is_stand_jumping = true;
+	m_speed = 1.f;
+	float x_position = m_object->position().x;
+	float z_position = m_object->position().z;
+	float y_position = m_object->position().y;
+	if (m_timer > 1.f)
+	{
+		y_position += 1.f * m_speed * (float)time_step;
+	}
+	else
+	{
+		y_position = y_position - 1.f * m_speed * (float)time_step;
+	}
+	m_object->set_position(glm::vec3(x_position, y_position, z_position));
+	if (m_timer > 0.0f)
+	{
+		return;
+	}
+	m_timer = 2.f;
+
+}
+
+void player::walk(const engine::timestep& time_step)
+{
+	m_speed = 1.0f;
+	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
+		(float)time_step);
+	if (m_timer > 0.0f && is_walking)
+	{
+		return;
+	}
+	is_walking = true;
+	m_object->animated_mesh()->switch_animation(22);
+	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(22)->mDuration, 0.f, 1.65f);
+}
+
+void player::run(const engine::timestep& time_step)
+{
+	m_object->animated_mesh()->switch_root_movement(true);
+	m_speed = 3.0f;
+	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
+		(float)time_step);
+	if (m_timer > 0.0f && is_running)
+	{
+		return;
+	}
+	is_running = true;
+	m_object->animated_mesh()->switch_animation(16);
+	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(16)->mDuration, 0.f, 2.f);
+
 }
 
 void player::update_camera(engine::perspective_camera& camera, const engine::timestep& time_step)
@@ -98,57 +158,4 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 	camera.set_view_matrix(
 		glm::vec3(camera_position_x, camera_position_y + m_mouse_y, camera_position_z),
 		look_at);
-}
-
-void player::stand_jump(const engine::timestep& time_step)
-{
-	is_stand_jumping = true;
-	m_speed = 1.f;
-	float x_position = m_object->position().x;
-	float z_position = m_object->position().z;
-	float y_position = m_object->position().y;
-	if (m_timer > 1.f)
-	{
-		y_position += 1.f * m_speed * (float)time_step;
-	}
-	else
-	{
-		y_position = y_position - 1.f * m_speed * (float)time_step;
-	}
-	m_object->set_position(glm::vec3(x_position, y_position, z_position));
-	if (m_timer > 0.0f)
-	{
-		return;
-	}
-	m_timer = 2.f;
-
-}
-
-void player::walk(const engine::timestep& time_step)
-{
-	//m_object->animated_mesh()->switch_root_movement(false);
-	m_speed = 1.0f;
-	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
-		(float)time_step);
-	if (m_timer > 0.0f)
-	{
-		return;
-	}
-	m_object->animated_mesh()->switch_animation(22);
-	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(22)->mDuration, 0.f, 1.65f);
-}
-
-void player::run(const engine::timestep& time_step)
-{
-	m_object->animated_mesh()->switch_root_movement(true);
-	m_speed = 3.0f;
-	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
-		(float)time_step);
-	if (m_timer > 0.0f)
-	{
-		return;
-	}
-	m_object->animated_mesh()->switch_animation(16);
-	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(16)->mDuration, 0.f, 2.f);
-
 }
