@@ -20,9 +20,10 @@ example_layer::example_layer()
 	// Initialise audio and play background music
 	m_audio_manager = engine::audio_manager::instance();
 	m_audio_manager->init();
-	m_audio_manager->load_sound("assets/audio/DST-impuretechnology.mp3", engine::sound_type::track, "music");  // Royalty free music from http://www.nosoapradio.us/
-	m_audio_manager->play("music");
-	m_audio_manager->pause("music");
+	m_audio_manager->load_sound("assets/audio/coin_pick.mp3", engine::sound_type::event, "coin");
+	//m_audio_manager->load_sound("assets/audio/DST-impuretechnology.mp3", engine::sound_type::track, "music");  // Royalty free music from http://www.nosoapradio.us/
+	//m_audio_manager->play("music");
+	//m_audio_manager->pause("music");
 
 
 	// Initialise the shaders, materials and lights
@@ -73,11 +74,30 @@ example_layer::example_layer()
 		engine::texture_2d::create("assets/textures/PolyAdventureTexture_01.png", true);
 	mannequin_props.textures = { mannequin_texture };
 	mannequin_props.scale = glm::vec3(1.f / glm::max(m_skinned_mesh->size().x, glm::max(m_skinned_mesh->size().y, m_skinned_mesh->size().z)));
-	mannequin_props.position = glm::vec3(.0f, .5f, -5.0f);
 	mannequin_props.type = 0;
 	mannequin_props.bounding_shape = m_skinned_mesh->size() / 2.f * mannequin_props.scale.x;
 	m_mannequin = engine::game_object::create(mannequin_props);
 	m_player.initialise(m_mannequin);
+
+	// Free model from here: https://poly.pizza/m/yq5ATpujSt
+	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Characters_Skeleton.fbx");
+	m_enemy_mesh->switch_root_movement(false);
+	m_enemy_mesh->switch_animation(11);
+
+	engine::game_object_properties skeleton_props;
+	std::vector<engine::ref<engine::texture_2d>> tex_vec;
+	skeleton_props.animated_mesh = m_enemy_mesh;
+	engine::ref<engine::texture_2d> skeleton_texture =
+		engine::texture_2d::create("assets/textures/Characters_Brown.png", true);
+	//engine::ref<engine::texture_2d> skeleton_texture_1 =
+	//	engine::texture_2d::create("assets/textures/view.png", true);
+	//tex_vec.push_back(skeleton_texture);
+	skeleton_props.textures = { skeleton_texture };
+	skeleton_props.type = 0;
+	skeleton_props.bounding_shape = m_enemy_mesh->size() / 2.f * skeleton_props.scale.x;
+	m_skeleton = engine::game_object::create(skeleton_props);
+	m_skeleton->set_position(glm::vec3(2.f, 0.5f, 7.f));
+	//m_skeleton->set_textures(tex_vec);
 
 	// Initialize objects
 	m_pickup_coin_01.on_initialize();
@@ -126,17 +146,18 @@ void example_layer::on_update(const engine::timestep& time_step)
 	}
 	//m_3d_camera.on_update(time_step);
 
-	m_pickup_coin_01.on_update(m_player.position(), m_player.coins(), time_step);
-	m_pickup_coin_02.on_update(m_player.position(), m_player.coins(), time_step);
-	m_pickup_coin_03.on_update(m_player.position(), m_player.coins(), time_step);
-	m_pickup_coin_04.on_update(m_player.position(), m_player.coins(), time_step);
-	m_pickup_coin_05.on_update(m_player.position(), m_player.coins(), time_step);
-	m_pickup_coin_06.on_update(m_player.position(), m_player.coins(), time_step);
-	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step);
+	m_pickup_coin_01.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
+	m_pickup_coin_02.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
+	m_pickup_coin_03.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
+	m_pickup_coin_04.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
+	m_pickup_coin_05.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
+	m_pickup_coin_06.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
+	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
 	m_player.on_update(time_step);
+	m_skeleton->animated_mesh()->on_update(time_step);
 	m_player.update_camera(m_3d_camera, time_step);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
@@ -191,6 +212,11 @@ void example_layer::on_render()
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_player.object());
+
+	glm::mat4 object_transform(1.0f);
+	object_transform = glm::translate(object_transform, m_skeleton->position());
+	object_transform = glm::scale(object_transform, glm::vec3(0.6f));
+	engine::renderer::submit(mesh_shader, object_transform, m_skeleton);
 
 	engine::renderer::end_scene();
 

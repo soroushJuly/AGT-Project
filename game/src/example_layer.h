@@ -39,6 +39,7 @@ private:
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};
 	engine::ref<engine::game_object>	m_mannequin{};
+	engine::ref<engine::game_object>	m_skeleton{};
 
 	engine::ref<engine::material>		m_mannequin_material{};
 
