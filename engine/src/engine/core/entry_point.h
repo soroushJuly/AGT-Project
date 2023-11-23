@@ -19,7 +19,8 @@ int main(int argc, char** argv)
     LOG_INFO("Welcome to the new engine!");
 
     auto app = engine::create_application();
-    app->run();
+    //app->run();
+    app->run_fixed();
     delete app;
 }
 
