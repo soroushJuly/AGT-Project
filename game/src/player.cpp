@@ -26,18 +26,27 @@ void player::on_update(const engine::timestep& time_step)
 	{
 		stand_jump(time_step);
 	}
+	if (is_jumping)
+	{
+		jump(time_step);
+	}
 	if (engine::input::key_pressed(engine::key_codes::KEY_A)) // left
 		turn(2.5f * time_step);
 	if (engine::input::key_pressed(engine::key_codes::KEY_D)) // right
 		turn(-2.5f * time_step);
-	if (engine::input::key_pressed(engine::key_codes::KEY_SPACE))
+	if (engine::input::key_pressed(engine::key_codes::KEY_SPACE) && engine::input::key_pressed(engine::key_codes::KEY_W))
+	{
+		if (is_jumping) return;
+		jump(time_step);
+	}
+	else if (engine::input::key_pressed(engine::key_codes::KEY_SPACE))
 		stand_jump(time_step);
-	// forward
-	if (engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
+
+	if (!is_stand_jumping && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
 	{
 		run(time_step);
 	}
-	else if (engine::input::key_pressed(engine::key_codes::KEY_W))
+	else if (!is_stand_jumping && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W))
 	{
 		walk(time_step);
 	}
@@ -47,9 +56,7 @@ void player::on_update(const engine::timestep& time_step)
 		m_timer -= (float)time_step;
 		if (m_timer < 0.0f)
 		{
-			is_stand_jumping = false;
-			is_running = false;
-			is_walking = false;
+			clear_moves();
 			m_object->animated_mesh()->switch_root_movement(false);
 			m_object->animated_mesh()->switch_animation(m_object->animated_mesh()->default_animation());
 			m_timer = 0.0f;
@@ -88,7 +95,40 @@ void player::stand_jump(const engine::timestep& time_step)
 		return;
 	}
 	m_timer = 2.f;
+}
 
+void player::jump(const engine::timestep& time_step)
+{
+	if (m_timer > 0.0f && !is_jumping)
+	{
+		if(is_running)	m_speed = 1.5f;
+		if(is_walking)	m_speed = 1.f;
+		clear_moves();
+		m_object->animated_mesh()->switch_root_movement(false);
+		is_jumping = true;
+		m_timer = 0.f;
+	}
+	float x_position = m_object->position().x;
+	float z_position = m_object->position().z;
+	float y_position = m_object->position().y;
+
+	x_position += glm::normalize(m_object->forward()).x * 1.5f * m_speed * (float)time_step;
+	z_position += glm::normalize(m_object->forward()).z * 1.5f * m_speed * (float)time_step;
+	if (m_timer > .8f)
+	{
+		y_position += .7f * m_speed * (float)time_step;
+	}
+	else
+	{
+		y_position = y_position - .9f * m_speed * (float)time_step;
+		if (y_position < 0.5f) y_position = 0.5f;
+	}
+	m_object->set_position(glm::vec3(x_position, y_position, z_position));
+	if (m_timer > 0.0f)
+	{
+		return;
+	}
+	m_timer = 1.6f;
 }
 
 void player::walk(const engine::timestep& time_step)
@@ -100,6 +140,7 @@ void player::walk(const engine::timestep& time_step)
 	{
 		return;
 	}
+	clear_moves();
 	is_walking = true;
 	m_object->animated_mesh()->switch_animation(22);
 	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(22)->mDuration, 0.f, 1.65f);
@@ -115,10 +156,19 @@ void player::run(const engine::timestep& time_step)
 	{
 		return;
 	}
+	clear_moves();
 	is_running = true;
 	m_object->animated_mesh()->switch_animation(16);
 	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(16)->mDuration, 0.f, 2.f);
 
+}
+
+void player::clear_moves()
+{
+	is_stand_jumping = false;
+	is_running = false;
+	is_jumping = false;
+	is_walking = false;
 }
 
 void player::update_camera(engine::perspective_camera& camera, const engine::timestep& time_step)

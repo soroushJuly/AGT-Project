@@ -15,9 +15,11 @@ public:
 	void turn(float angle);
 	void update_camera(engine::perspective_camera& camera, const engine::timestep& timestep);
 	void stand_jump(const engine::timestep& time_step);
+	void jump(const engine::timestep& time_step);
 	void walk(const engine::timestep& time_step);
 	void run(const engine::timestep& time_step);
 	void turn_back(const engine::timestep& time_step);
+	void clear_moves();
 
 	glm::vec3 position() { return m_object->position(); };
 	int& coins() { return m_coins; }
@@ -30,7 +32,7 @@ private:
 	double x_angle_x_mouse;
 
 	// probably should use these variables to control the character
-	bool is_turned_back{ false };
+	bool is_turned_back{ false }, is_jumping{ false };
 	bool is_walking{ false }, is_running{ false }, is_stand_jumping{ false }, is_standing{ false };
 	engine::ref< engine::game_object> m_object;
 };
