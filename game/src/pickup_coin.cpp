@@ -37,10 +37,15 @@ void pickup_coin::on_render()
 	}
 };
 
-void pickup_coin::on_update(glm::vec3 c, int& coins, float dt)
+void pickup_coin::on_update(glm::vec3 c, int& coins, float dt, engine::ref<engine::audio_manager> m_audio_manager)
 {
 	if (m_pickup->update(c, dt))
 	{
+		if (m_audio_manager)
+		{
+			m_audio_manager->load_sound("assets/audio/coin_pick.mp3", engine::sound_type::event, "coin");
+			m_audio_manager->play("coin");
+		}
 		++coins;
 	}
 };
