@@ -20,6 +20,8 @@ public:
 		glm::vec3 rotation_axis = glm::vec3(0.f, 1.f, 0.f),
 		glm::vec3 scale = glm::vec3(.01f));
 
+	engine::ref<engine::game_object> object() { return m_object; }
+
 private:
 	engine::ref<engine::game_object>	m_object{};
 

@@ -110,6 +110,8 @@ example_layer::example_layer()
 	m_pickup_coin_06.on_initialize(glm::vec3(0.f, 1.2f, -5.f));
 	m_pickup_coin_07.on_initialize(glm::vec3(0.f, 1.f, -6.f));
 	// Textures below from POLYGON Pack https://syntystore.com/products/polygon-adventure-pack?_pos=1&_psq=adve&_ss=e&_v=1.0
+	// decorations initilize
+	campfire.on_initialize("assets/models/static/SM_Env_CampFire_01.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 10.f));
 	bush.on_initialize("assets/models/static/SM_Env_Bush_01.fbx", "assets/textures/grass.png", glm::vec3(4.f, .45f, -3.5f));
 	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(4.f, 0, -2.f));
 	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -2.f));
@@ -203,6 +205,11 @@ void example_layer::on_render()
 	m_pickup_coin_05.on_render();
 	m_pickup_coin_06.on_render();
 	m_pickup_coin_07.on_render();
+
+	// render all of the static decoration in game
+	//decorations.on_render();
+	// translations and scaling for decoration should only happen in intialize NOT true bc we need to render many times just one model
+	campfire.on_render(mesh_shader, 0.f, campfire.object()->rotation_axis(), glm::vec3(0.006f));
 	bush.on_render(mesh_shader);
 	bush.on_render(mesh_shader, glm::vec3(4.f, .45f, -6.25f), engine::PI / 2, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .01f, .013f));
 	tree_01.on_render(mesh_shader);

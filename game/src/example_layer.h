@@ -29,6 +29,7 @@ private:
 	pickup_coin m_pickup_coin_06{};
 	pickup_coin m_pickup_coin_07{};
 	static_object bush{};
+	static_object campfire{};
 	static_object tree_01{};
 	static_object tree_02{};
 	static_object tree_03{};
