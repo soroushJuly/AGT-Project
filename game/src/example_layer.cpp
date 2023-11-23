@@ -80,9 +80,10 @@ example_layer::example_layer()
 	m_player.initialise(m_mannequin);
 
 	// Free model from here: https://poly.pizza/m/yq5ATpujSt
-	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Characters_Skeleton.fbx");
+	//engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Characters_Skeleton.fbx");
+	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Skeleton.fbx");
 	m_enemy_mesh->switch_root_movement(false);
-	m_enemy_mesh->switch_animation(11);
+	m_enemy_mesh->switch_animation(3);
 
 	engine::game_object_properties skeleton_props;
 	std::vector<engine::ref<engine::texture_2d>> tex_vec;
@@ -94,6 +95,7 @@ example_layer::example_layer()
 	//tex_vec.push_back(skeleton_texture);
 	skeleton_props.textures = { skeleton_texture };
 	skeleton_props.type = 0;
+	skeleton_props.scale = glm::vec3(0.2f);
 	skeleton_props.bounding_shape = m_enemy_mesh->size() / 2.f * skeleton_props.scale.x;
 	m_skeleton = engine::game_object::create(skeleton_props);
 	m_skeleton->set_position(glm::vec3(2.f, 0.5f, 7.f));
@@ -210,12 +212,12 @@ void example_layer::on_render()
 	tree_03.on_render(mesh_shader, glm::vec3(-4.f, 0, -7.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .018f, .013f));
 	tree_03.on_render(mesh_shader, glm::vec3(-4.3f, 0, -10.3f), engine::PI, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f));
 
-	m_mannequin_material->submit(mesh_shader);
+	//m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, m_player.object());
 
 	glm::mat4 object_transform(1.0f);
 	object_transform = glm::translate(object_transform, m_skeleton->position());
-	object_transform = glm::scale(object_transform, glm::vec3(0.6f));
+	object_transform = glm::scale(object_transform, glm::vec3(0.16f));
 	engine::renderer::submit(mesh_shader, object_transform, m_skeleton);
 
 	engine::renderer::end_scene();
