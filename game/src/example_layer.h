@@ -6,6 +6,7 @@
 #include <static_object.h>
 #include "decorations.h"
 #include "engine/entities/bounding_box.h"
+#include "engine/entities/shapes/heightmap.h"
 
 
 class pickup;
@@ -48,6 +49,8 @@ private:
 
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};
+	engine::ref<engine::game_object>	m_terrain_2{};
+	engine::ref<engine::heightmap>		m_heightmap;
 	engine::ref<engine::game_object>	m_mannequin{};
 	engine::ref<engine::game_object>	m_skeleton{};
 
@@ -65,4 +68,5 @@ private:
 	engine::perspective_camera        m_3d_camera;
 
 	bool is_intro_active;
+	float							  m_physical_terrain_height = 0.5f;
 };

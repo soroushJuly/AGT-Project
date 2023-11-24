@@ -127,16 +127,26 @@ example_layer::example_layer()
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
 	// Texture from POLYGON Pack https://syntystore.com/products/polygon-adventure-pack?_pos=1&_psq=adve&_ss=e&_v=1.0
-	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/mud.png", false) };
-	engine::ref<engine::terrain> terrain_shape = engine::terrain::create(100.f, 0.5f, 100.f, 70);
+	m_heightmap = engine::heightmap::create("assets/textures/line.bmp", "assets/textures/grass.png", 50.f, 200.f, glm::vec3(-8.f, 0.5f, 10.f), 10.f);
 	engine::game_object_properties terrain_props;
-	terrain_props.meshes = { terrain_shape->mesh() };
-	terrain_props.textures = terrain_textures;
+	terrain_props.meshes = { m_heightmap->mesh() };
+	terrain_props.textures = { m_heightmap->texture() };
 	terrain_props.is_static = true;
 	terrain_props.type = 0;
-	terrain_props.bounding_shape = glm::vec3(100.f, 0.5f, 100.f);
+	terrain_props.bounding_shape = glm::vec3(m_heightmap->terrain_size().x, m_physical_terrain_height, m_heightmap->terrain_size().y);
 	terrain_props.restitution = 0.92f;
 	m_terrain = engine::game_object::create(terrain_props);
+
+	std::vector<engine::ref<engine::texture_2d>> terrain_textures = { engine::texture_2d::create("assets/textures/mud.png", false) };
+	engine::ref<engine::terrain> terrain_shape_2 = engine::terrain::create(200.f, 0.5f, 200.f, 100);
+	engine::game_object_properties terrain_props_2;
+	terrain_props_2.meshes = { terrain_shape_2->mesh() };
+	terrain_props_2.textures = terrain_textures;
+	terrain_props_2.is_static = true;
+	terrain_props_2.type = 0;
+	terrain_props_2.bounding_shape = glm::vec3(100.f, 0.5f, 100.f);
+	terrain_props_2.restitution = 0.92f;
+	m_terrain_2 = engine::game_object::create(terrain_props_2);
 
 
 	m_game_objects.push_back(m_terrain);
@@ -212,6 +222,7 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, m_skybox, skybox_tranform);
 
 	engine::renderer::submit(mesh_shader, m_terrain);
+	engine::renderer::submit(mesh_shader, m_terrain_2);
 
 	// Render Objects in the scene
 	m_pickup_coin_01.on_render();

@@ -10,6 +10,7 @@
     </ClCompile>
     <ClCompile Include="src\static_object.cpp" />
     <ClCompile Include="src\game_intro.cpp" />
+    <ClCompile Include="src\decorations.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -20,6 +21,7 @@
     </ClInclude>
     <ClInclude Include="src\static_object.h" />
     <ClInclude Include="src\game_intro.h" />
+    <ClInclude Include="src\decorations.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pickupables">
