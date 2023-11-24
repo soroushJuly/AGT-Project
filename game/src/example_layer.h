@@ -5,6 +5,8 @@
 #include "pickup_coin.h"
 #include <static_object.h>
 #include "decorations.h"
+#include "engine/entities/bounding_box.h"
+
 
 class pickup;
 class pickup_coin;
@@ -37,8 +39,12 @@ private:
 	static_object tree_03{};
 	static_object fence{};
 
+	engine::bounding_box m_player_box;
+	engine::bounding_box m_world_box_01;
+	engine::bounding_box m_world_box_02;
+
 	engine::ref<game_intro> m_game_intro;
-	engine::timer play_time;
+	engine::timer m_play_time;
 
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};

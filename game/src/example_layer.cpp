@@ -73,11 +73,21 @@ example_layer::example_layer()
 	engine::ref<engine::texture_2d> mannequin_texture =
 		engine::texture_2d::create("assets/textures/PolyAdventureTexture_01.png", true);
 	mannequin_props.textures = { mannequin_texture };
-	mannequin_props.scale = glm::vec3(1.f / glm::max(m_skinned_mesh->size().x, glm::max(m_skinned_mesh->size().y, m_skinned_mesh->size().z)));
+	//mannequin_props.scale = glm::vec3(1.f / glm::max(m_skinned_mesh->size().x, glm::max(m_skinned_mesh->size().y, m_skinned_mesh->size().z)));
+	mannequin_props.scale = glm::vec3(0.6f);
 	mannequin_props.type = 0;
-	mannequin_props.bounding_shape = m_skinned_mesh->size() / 2.f * mannequin_props.scale.x;
+	mannequin_props.position = glm::vec3(0.f, 0.5, 10.f);
+	mannequin_props.bounding_shape = glm::vec3(m_skinned_mesh->size().x * mannequin_props.scale.x / 2.f,
+		m_skinned_mesh->size().y / mannequin_props.scale.x * 2.4f, m_skinned_mesh->size().x / 2.f);
 	m_mannequin = engine::game_object::create(mannequin_props);
 	m_player.initialise(m_mannequin);
+	m_player_box.set_box(mannequin_props.bounding_shape.x * mannequin_props.scale.x,
+		mannequin_props.bounding_shape.y * mannequin_props.scale.x,
+		mannequin_props.bounding_shape.z * mannequin_props.scale.x,
+		mannequin_props.position);
+	// World Collision boxes
+	m_world_box_01.set_box(16.f, 10.f, 16.f, mannequin_props.position);
+	m_world_box_02.set_box(8.f, 20.f, 40.f, glm::vec3(0.f,-10.5, -18.f));
 
 	// Free model from here: https://poly.pizza/m/yq5ATpujSt
 	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Skeleton.fbx");
@@ -89,9 +99,6 @@ example_layer::example_layer()
 	skeleton_props.animated_mesh = m_enemy_mesh;
 	engine::ref<engine::texture_2d> skeleton_texture =
 		engine::texture_2d::create("assets/textures/Characters_Brown.png", true);
-	//engine::ref<engine::texture_2d> skeleton_texture_1 =
-	//	engine::texture_2d::create("assets/textures/view.png", true);
-	//tex_vec.push_back(skeleton_texture);
 	skeleton_props.textures = { skeleton_texture };
 	skeleton_props.type = 0;
 	skeleton_props.scale = glm::vec3(0.2f);
@@ -159,9 +166,16 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
+	glm::vec3 pos = m_player.object()->position();
 	m_player.on_update(time_step);
-	m_skeleton->animated_mesh()->on_update(time_step);
 	m_player.update_camera(m_3d_camera, time_step);
+	m_player_box.on_update(m_player.object()->position());
+	if (!(m_world_box_01.collision(m_player_box)  || m_world_box_02.collision(m_player_box)))
+	{
+		LOG_INFO("not in the map");
+		m_player.object()->set_position(pos);
+	}
+	m_skeleton->animated_mesh()->on_update(time_step);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
 }
@@ -184,6 +198,9 @@ void example_layer::on_render()
 
 	// Set up some of the scene's parameters in the shader
 	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("gEyeWorldPos", m_3d_camera.position());
+	m_player_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_world_box_02.on_render(2.5f, 1.f, 1.f, mesh_shader);
 
 	// Position the skybox centred on the player and render it
 	glm::mat4 skybox_tranform(1.0f);
@@ -231,7 +248,7 @@ void example_layer::on_render()
 	// Render text
 	m_text_manager->render_text(text_shader, "Coins: " + std::to_string(m_player.coins()), 10.f, (float)engine::application::window().height() - 25.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
 	m_text_manager->render_text(text_shader, "Health: 100", 10.f, (float)engine::application::window().height() - 50.f, 0.5f, glm::vec4(1.f, 0.1f, 0.1f, 1.f));
-	m_text_manager->render_text(text_shader, "Time: " + std::to_string(play_time.total()), 10.f, (float)engine::application::window().height() - 75.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
+	m_text_manager->render_text(text_shader, "Time: " + std::to_string(m_play_time.total()), 10.f, (float)engine::application::window().height() - 75.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
 }
 
 void example_layer::on_event(engine::event& event)
@@ -243,7 +260,7 @@ void example_layer::on_event(engine::event& event)
 		{
 			is_intro_active = false;
 			m_game_intro->deactivate();
-			play_time.start();
+			m_play_time.start();
 		}
 
 		if (e.key_code() == engine::key_codes::KEY_TAB)
