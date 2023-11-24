@@ -43,7 +43,6 @@ void pickup_coin::on_update(glm::vec3 c, int& coins, float dt, engine::ref<engin
 	{
 		if (m_audio_manager)
 		{
-			m_audio_manager->load_sound("assets/audio/coin_pick.mp3", engine::sound_type::event, "coin");
 			m_audio_manager->play("coin");
 		}
 		++coins;
