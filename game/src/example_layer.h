@@ -4,6 +4,7 @@
 #include <game_intro.h>
 #include "pickup_coin.h"
 #include <static_object.h>
+#include "decorations.h"
 
 class pickup;
 class pickup_coin;
@@ -28,6 +29,7 @@ private:
 	pickup_coin m_pickup_coin_05{};
 	pickup_coin m_pickup_coin_06{};
 	pickup_coin m_pickup_coin_07{};
+	decorations m_decorations;
 	static_object bush{};
 	static_object campfire{};
 	static_object tree_01{};
@@ -36,6 +38,7 @@ private:
 	static_object fence{};
 
 	engine::ref<game_intro> m_game_intro;
+	engine::timer play_time;
 
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};

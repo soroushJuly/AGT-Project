@@ -11,7 +11,7 @@
 example_layer::example_layer()
 	:m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f),
 	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height()),
-	is_intro_active(true)
+	is_intro_active(false)
 {
 	// Hide the mouse and lock it inside the window
 	//engine::input::anchor_mouse(true);
@@ -80,7 +80,6 @@ example_layer::example_layer()
 	m_player.initialise(m_mannequin);
 
 	// Free model from here: https://poly.pizza/m/yq5ATpujSt
-	//engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Characters_Skeleton.fbx");
 	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Skeleton.fbx");
 	m_enemy_mesh->switch_root_movement(false);
 	m_enemy_mesh->switch_animation(3);
@@ -177,9 +176,9 @@ void example_layer::on_render()
 	const auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 
 	// render 2D Camera
-	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
-	m_game_intro->on_render(mesh_shader);
-	engine::renderer::end_scene();
+	//engine::renderer::begin_scene(m_2d_camera, mesh_shader);
+	//m_game_intro->on_render(mesh_shader);
+	//engine::renderer::end_scene();
 
 	engine::renderer::begin_scene(m_3d_camera, mesh_shader);
 
@@ -232,7 +231,7 @@ void example_layer::on_render()
 	// Render text
 	m_text_manager->render_text(text_shader, "Coins: " + std::to_string(m_player.coins()), 10.f, (float)engine::application::window().height() - 25.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
 	m_text_manager->render_text(text_shader, "Health: 100", 10.f, (float)engine::application::window().height() - 50.f, 0.5f, glm::vec4(1.f, 0.1f, 0.1f, 1.f));
-	m_text_manager->render_text(text_shader, "Time: 0s", 10.f, (float)engine::application::window().height() - 75.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
+	m_text_manager->render_text(text_shader, "Time: " + std::to_string(play_time.total()), 10.f, (float)engine::application::window().height() - 75.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
 }
 
 void example_layer::on_event(engine::event& event)
@@ -244,6 +243,7 @@ void example_layer::on_event(engine::event& event)
 		{
 			is_intro_active = false;
 			m_game_intro->deactivate();
+			play_time.start();
 		}
 
 		if (e.key_code() == engine::key_codes::KEY_TAB)
