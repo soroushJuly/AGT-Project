@@ -21,8 +21,13 @@ example_layer::example_layer()
 	m_audio_manager = engine::audio_manager::instance();
 	m_audio_manager->init();
 	m_audio_manager->load_sound("assets/audio/coin_pick.mp3", engine::sound_type::event, "coin");
-	//m_audio_manager->load_sound("assets/audio/DST-impuretechnology.mp3", engine::sound_type::track, "music");  // Royalty free music from http://www.nosoapradio.us/
-	//m_audio_manager->play("music");
+	m_audio_manager->load_sound("assets/audio/run_mud.mp3", engine::sound_type::event, "run");
+	m_audio_manager->load_sound("assets/audio/walk_mud.mp3", engine::sound_type::event, "walk");
+	m_audio_manager->load_sound("assets/audio/player_hit.mp3", engine::sound_type::event, "hit");
+	m_audio_manager->load_sound("assets/audio/take_damage.mp3", engine::sound_type::event, "damage");
+	m_audio_manager->load_sound("assets/audio/little_village.wav", engine::sound_type::track, "menu");  // Royalty free music from http://www.nosoapradio.us/
+	m_audio_manager->load_sound("assets/audio/move_forward.mp3", engine::sound_type::track, "main");  // Royalty free music from http://www.nosoapradio.us/
+	m_audio_manager->play("menu");
 	//m_audio_manager->pause("music");
 
 
@@ -271,6 +276,8 @@ void example_layer::on_event(engine::event& event)
 		{
 			is_intro_active = false;
 			m_game_intro->deactivate();
+	/*		m_audio_manager->pause("menu");
+			m_audio_manager->play("music");*/
 			m_play_time.start();
 		}
 
