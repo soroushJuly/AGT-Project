@@ -39,6 +39,7 @@ private:
 	static_object tree_02{};
 	static_object tree_03{};
 	static_object fence{};
+	engine::ref<engine::game_object> arrow;
 
 	engine::bounding_box m_player_box;
 	engine::bounding_box m_world_box_01;

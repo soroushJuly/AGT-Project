@@ -112,6 +112,13 @@ example_layer::example_layer()
 	m_skeleton->set_position(glm::vec3(2.f, 0.5f, 7.f));
 	//m_skeleton->set_textures(tex_vec);
 
+	// initiate arrow
+	engine::game_object_properties arrow_props;
+	engine::ref<engine::arrow> arrow_shape = engine::arrow::create(0.5f);
+	arrow_props.meshes = { arrow_shape->mesh()};
+	arrow_props.position = glm::vec3(0.f,1.f,10.f);
+	arrow = engine::game_object::create(arrow_props);
+
 	// Initialize objects
 	m_pickup_coin_01.on_initialize();
 	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 1.2f, -1.f));
@@ -251,7 +258,8 @@ void example_layer::on_render()
 	tree_03.on_render(mesh_shader, glm::vec3(-4.f, 0, -7.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .018f, .013f));
 	tree_03.on_render(mesh_shader, glm::vec3(-4.3f, 0, -10.3f), engine::PI, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f));
 
-	//m_mannequin_material->submit(mesh_shader);
+	m_mannequin_material->submit(mesh_shader);
+	engine::renderer::submit(mesh_shader, arrow);
 	engine::renderer::submit(mesh_shader, m_player.object());
 
 	glm::mat4 object_transform(1.0f);
