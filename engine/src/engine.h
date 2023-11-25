@@ -36,6 +36,7 @@
 #include "engine/entities/shapes/tetrahedron.h"
 #include "engine/entities/shapes/arrow.h"
 #include "engine/entities/shapes/spike.h"
+#include "engine/entities/shapes/heart.h"
 
 // ---utils---------------------------
 #include "engine/utils/bullet_manager.h"

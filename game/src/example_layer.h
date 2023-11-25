@@ -41,6 +41,7 @@ private:
 	static_object fence{};
 	engine::ref<engine::game_object> arrow;
 	engine::ref<engine::game_object> spike;
+	engine::ref<engine::game_object> heart;
 
 	engine::bounding_box m_player_box;
 	engine::bounding_box m_world_box_01;

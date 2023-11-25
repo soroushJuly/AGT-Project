@@ -126,6 +126,13 @@ example_layer::example_layer()
 	spike_props.position = glm::vec3(0.f,.5f,14.f);
 	spike = engine::game_object::create(spike_props);
 
+	// initiate heart
+	engine::game_object_properties heart_props;
+	engine::ref<engine::heart> heart_shape = engine::heart::create(.25f);
+	heart_props.meshes = { heart_shape->mesh()};
+	heart_props.position = glm::vec3(0.f,.5f,6.f);
+	heart = engine::game_object::create(heart_props);
+
 	// Initialize objects
 	m_pickup_coin_01.on_initialize();
 	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 1.2f, -1.f));
@@ -268,6 +275,7 @@ void example_layer::on_render()
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, arrow);
 	engine::renderer::submit(mesh_shader, spike);
+	engine::renderer::submit(mesh_shader, heart);
 	engine::renderer::submit(mesh_shader, m_player.object());
 
 	glm::mat4 object_transform(1.0f);
