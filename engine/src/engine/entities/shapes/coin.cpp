@@ -133,7 +133,7 @@ engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 	// add surface in between to the octagons
 	coin_vertices.insert(coin_vertices.end(), side_vertices.begin(), side_vertices.end());
 
-	std::vector<uint32_t> coin_indices =
+	const std::vector<uint32_t> coin_indices =
 	{
 		2,0,1,
 		2,3,4,

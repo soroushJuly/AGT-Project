@@ -84,7 +84,7 @@ engine::arrow::arrow(float size) : m_depth(.1f), m_size(size)
 	// add surface in between to the faces of the arrow
 	arrow_vertices.insert(arrow_vertices.end(), between_vertices.begin(), between_vertices.end());
 
-	std::vector<uint32_t> arrow_indices =
+	const std::vector<uint32_t> arrow_indices =
 	{
 		1,0,3,
 		2,1,3,

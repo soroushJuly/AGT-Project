@@ -116,8 +116,15 @@ example_layer::example_layer()
 	engine::game_object_properties arrow_props;
 	engine::ref<engine::arrow> arrow_shape = engine::arrow::create(0.5f);
 	arrow_props.meshes = { arrow_shape->mesh()};
-	arrow_props.position = glm::vec3(0.f,1.f,10.f);
+	arrow_props.position = glm::vec3(0.f,.5f,10.f);
 	arrow = engine::game_object::create(arrow_props);
+
+	// initiate arrow
+	engine::game_object_properties spike_props;
+	engine::ref<engine::spike> spike_shape = engine::spike::create(1.f);
+	spike_props.meshes = { spike_shape->mesh()};
+	spike_props.position = glm::vec3(0.f,.5f,14.f);
+	spike = engine::game_object::create(spike_props);
 
 	// Initialize objects
 	m_pickup_coin_01.on_initialize();
@@ -260,6 +267,7 @@ void example_layer::on_render()
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, arrow);
+	engine::renderer::submit(mesh_shader, spike);
 	engine::renderer::submit(mesh_shader, m_player.object());
 
 	glm::mat4 object_transform(1.0f);

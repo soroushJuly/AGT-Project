@@ -35,6 +35,7 @@
 #include "engine/entities/skybox.h"
 #include "engine/entities/shapes/tetrahedron.h"
 #include "engine/entities/shapes/arrow.h"
+#include "engine/entities/shapes/spike.h"
 
 // ---utils---------------------------
 #include "engine/utils/bullet_manager.h"
