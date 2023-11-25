@@ -11,6 +11,9 @@
     <ClCompile Include="src\static_object.cpp" />
     <ClCompile Include="src\game_intro.cpp" />
     <ClCompile Include="src\decorations.cpp" />
+    <ClCompile Include="src\health_bar.cpp" />
+    <ClCompile Include="src\coin_icon.cpp" />
+    <ClCompile Include="src\time_icon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -22,6 +25,9 @@
     <ClInclude Include="src\static_object.h" />
     <ClInclude Include="src\game_intro.h" />
     <ClInclude Include="src\decorations.h" />
+    <ClInclude Include="src\health_bar.h" />
+    <ClInclude Include="src\coin_icon.h" />
+    <ClInclude Include="src\time_icon.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pickupables">

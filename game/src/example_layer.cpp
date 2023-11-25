@@ -21,10 +21,10 @@ example_layer::example_layer()
 	m_audio_manager = engine::audio_manager::instance();
 	m_audio_manager->init();
 	m_audio_manager->load_sound("assets/audio/coin_pick.mp3", engine::sound_type::event, "coin");
-	m_audio_manager->load_sound("assets/audio/run_mud.mp3", engine::sound_type::event, "run");
-	m_audio_manager->load_sound("assets/audio/walk_mud.mp3", engine::sound_type::event, "walk");
+	m_audio_manager->load_sound("assets/audio/run_mud.wav", engine::sound_type::event, "run");
+	m_audio_manager->load_sound("assets/audio/walk_mud.wav", engine::sound_type::event, "walk");
 	m_audio_manager->load_sound("assets/audio/player_hit.mp3", engine::sound_type::event, "hit");
-	m_audio_manager->load_sound("assets/audio/take_damage.mp3", engine::sound_type::event, "damage");
+	m_audio_manager->load_sound("assets/audio/take_damage.wav", engine::sound_type::event, "damage");
 	m_audio_manager->load_sound("assets/audio/little_village.wav", engine::sound_type::track, "menu");  // Royalty free music from http://www.nosoapradio.us/
 	m_audio_manager->load_sound("assets/audio/move_forward.mp3", engine::sound_type::track, "main");  // Royalty free music from http://www.nosoapradio.us/
 	m_audio_manager->play("menu");
@@ -92,7 +92,7 @@ example_layer::example_layer()
 		mannequin_props.position);
 	// World Collision boxes
 	m_world_box_01.set_box(16.f, 10.f, 16.f, mannequin_props.position);
-	m_world_box_02.set_box(8.f, 20.f, 40.f, glm::vec3(0.f,-10.5, -18.f));
+	m_world_box_02.set_box(8.f, 20.f, 40.f, glm::vec3(0.f, -10.5, -18.f));
 
 	// Free model from here: https://poly.pizza/m/yq5ATpujSt
 	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Skeleton.fbx");
@@ -115,22 +115,22 @@ example_layer::example_layer()
 	// initiate arrow
 	engine::game_object_properties arrow_props;
 	engine::ref<engine::arrow> arrow_shape = engine::arrow::create(0.5f);
-	arrow_props.meshes = { arrow_shape->mesh()};
-	arrow_props.position = glm::vec3(0.f,.5f,10.f);
+	arrow_props.meshes = { arrow_shape->mesh() };
+	arrow_props.position = glm::vec3(0.f, .5f, 10.f);
 	arrow = engine::game_object::create(arrow_props);
 
 	// initiate arrow
 	engine::game_object_properties spike_props;
 	engine::ref<engine::spike> spike_shape = engine::spike::create(1.f);
-	spike_props.meshes = { spike_shape->mesh()};
-	spike_props.position = glm::vec3(0.f,.5f,14.f);
+	spike_props.meshes = { spike_shape->mesh() };
+	spike_props.position = glm::vec3(0.f, .5f, 14.f);
 	spike = engine::game_object::create(spike_props);
 
 	// initiate heart
 	engine::game_object_properties heart_props;
 	engine::ref<engine::heart> heart_shape = engine::heart::create(.25f);
-	heart_props.meshes = { heart_shape->mesh()};
-	heart_props.position = glm::vec3(0.f,.5f,6.f);
+	heart_props.meshes = { heart_shape->mesh() };
+	heart_props.position = glm::vec3(0.f, .5f, 6.f);
 	heart = engine::game_object::create(heart_props);
 
 	// Initialize objects
@@ -150,6 +150,9 @@ example_layer::example_layer()
 	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -4.f));
 
 	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
+	m_health_bar = health_bar::create(0.54f, 0.17f);
+	m_coin_icon = coin_icon::create(0.39f, 0.48f);
+	m_time_icon = time_icon::create(0.32f, 0.32f);
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
 	// Texture from POLYGON Pack https://syntystore.com/products/polygon-adventure-pack?_pos=1&_psq=adve&_ss=e&_v=1.0
@@ -200,13 +203,15 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_pickup_coin_06.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 
+	m_coin_icon->on_update(time_step);
+
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
 	glm::vec3 pos = m_player.object()->position();
 	m_player.on_update(time_step);
 	m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
-	if (!(m_world_box_01.collision(m_player_box)  || m_world_box_02.collision(m_player_box)))
+	if (!(m_world_box_01.collision(m_player_box) || m_world_box_02.collision(m_player_box)))
 	{
 		LOG_INFO("not in the map");
 		m_player.object()->set_position(pos);
@@ -229,6 +234,12 @@ void example_layer::on_render()
 	//engine::renderer::begin_scene(m_2d_camera, mesh_shader);
 	//m_game_intro->on_render(mesh_shader);
 	//engine::renderer::end_scene();
+	
+	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
+	m_health_bar->on_render(mesh_shader);
+	m_coin_icon->on_render(mesh_shader);
+	m_time_icon->on_render(mesh_shader);
+	engine::renderer::end_scene();
 
 	engine::renderer::begin_scene(m_3d_camera, mesh_shader);
 
@@ -286,9 +297,8 @@ void example_layer::on_render()
 	engine::renderer::end_scene();
 
 	// Render text
-	m_text_manager->render_text(text_shader, "Coins: " + std::to_string(m_player.coins()), 10.f, (float)engine::application::window().height() - 25.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
-	m_text_manager->render_text(text_shader, "Health: 100", 10.f, (float)engine::application::window().height() - 50.f, 0.5f, glm::vec4(1.f, 0.1f, 0.1f, 1.f));
-	m_text_manager->render_text(text_shader, "Time: " + std::to_string(m_play_time.total()), 10.f, (float)engine::application::window().height() - 75.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
+	m_text_manager->render_text(text_shader, std::to_string(m_player.coins()), 43.f, (float)engine::application::window().height() - 92.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
+	m_text_manager->render_text(text_shader, std::to_string(m_play_time.total()), 45.f, (float)engine::application::window().height() - 135.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
 }
 
 void example_layer::on_event(engine::event& event)
@@ -300,8 +310,8 @@ void example_layer::on_event(engine::event& event)
 		{
 			is_intro_active = false;
 			m_game_intro->deactivate();
-	/*		m_audio_manager->pause("menu");
-			m_audio_manager->play("music");*/
+			/*		m_audio_manager->pause("menu");
+					m_audio_manager->play("music");*/
 			m_play_time.start();
 		}
 
