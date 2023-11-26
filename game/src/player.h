@@ -19,6 +19,7 @@ public:
 	void stand_jump(const engine::timestep& time_step);
 	void jump(const engine::timestep& time_step);
 	void walk(const engine::timestep& time_step);
+	void punch(const engine::timestep& time_step);
 	void run(const engine::timestep& time_step);
 	void turn_back(const engine::timestep& time_step);
 	void clear_moves();
@@ -29,6 +30,7 @@ public:
 	int& coins() { return m_coins; }
 	int& hearts() { return m_hearts; }
 	float& speed() { return m_speed; }
+	bool is_punching() { return m_is_punching; }
 private:
 	int m_coins;
 	int m_hearts;
@@ -40,7 +42,7 @@ private:
 	double x_angle_x_mouse;
 
 	// probably should use these variables to control the character
-	bool is_turned_back{ false }, is_jumping{ false };
+	bool is_turned_back{ false }, is_jumping{ false }, m_is_punching{ false };
 	bool is_walking{ false }, is_running{ false }, is_stand_jumping{ false }, is_standing{ false };
 	engine::ref< engine::game_object> m_object;
 

@@ -34,6 +34,7 @@ void player::on_update(const engine::timestep& time_step)
 	{
 		jump(time_step);
 	}
+
 	if (engine::input::key_pressed(engine::key_codes::KEY_A)) // left
 		turn(2.5f * time_step);
 	if (engine::input::key_pressed(engine::key_codes::KEY_D)) // right
@@ -46,7 +47,11 @@ void player::on_update(const engine::timestep& time_step)
 	else if (engine::input::key_pressed(engine::key_codes::KEY_SPACE))
 		stand_jump(time_step);
 
-	if (!is_stand_jumping && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
+	if (engine::input::mouse_button_pressed(0))
+	{
+		punch(time_step);
+	}
+	else if (!is_stand_jumping && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
 	{
 		run(time_step);
 	}
@@ -167,8 +172,27 @@ void player::run(const engine::timestep& time_step)
 
 }
 
+void player::punch(const engine::timestep& time_step)
+{
+	m_object->animated_mesh()->switch_root_movement(true);
+	//m_speed = 3.0f;
+	//m_object->set_position(m_object->position() += m_object->forward() * m_speed *
+	//	(float)time_step);
+	if (m_timer > 0.0f && m_is_punching)
+	{
+		
+		return;
+	}
+	clear_moves();
+	m_is_punching = true;
+	m_object->animated_mesh()->switch_animation(14);
+	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(14)->mDuration, 0.f, 1.f);
+
+}
+
 void player::clear_moves()
 {
+	m_is_punching = false;
 	is_stand_jumping = false;
 	is_running = false;
 	is_jumping = false;

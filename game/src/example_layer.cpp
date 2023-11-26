@@ -59,6 +59,7 @@ example_layer::example_layer()
 		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
 
 	m_cross_fade = cross_fade::create("assets/textures/red.bmp", 2.0f, 1.6f, 0.9f);
+	m_billboard = billboard::create("assets/textures/hit.png", 4, 4, 16);
 
 	// Free Skybox texture from https://sketchfab.com/3d-models/free-skybox-anime-village-a25aa36a28a14c2e83285ad917947278
 	m_skybox = engine::skybox::create(50.f,
@@ -209,6 +210,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 
 	m_cross_fade->on_update(time_step);
+	m_billboard->on_update(time_step);
 
 	m_coin_icon->on_update(time_step);
 
@@ -218,6 +220,13 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_player.on_update(time_step);
 	m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
+	if (m_player.is_punching())
+	{
+		float x_position = m_player.position().x + m_player.object()->bounding_shape().x / 2;
+		float y_position = m_player.position().y + m_player.object()->bounding_shape().y / 2;
+		float z_position = m_player.position().z - m_player.object()->bounding_shape().z / 2;
+		m_billboard->activate(glm::vec3(x_position, y_position, z_position), 2.f, 2.f);
+	}
 	if (!(m_world_box_01.collision(m_player_box) || m_world_box_02.collision(m_player_box)))
 	{
 		LOG_INFO("not in the map");
@@ -318,6 +327,9 @@ void example_layer::on_render()
 	m_cross_fade->on_render(mesh_shader);
 	engine::renderer::end_scene();
 
+	engine::renderer::begin_scene(m_3d_camera, mesh_shader);
+	m_billboard->on_render(m_3d_camera, mesh_shader);
+	engine::renderer::end_scene();
 	// Render text
 	m_text_manager->render_text(text_shader, std::to_string(m_player.coins()), 43.f, (float)engine::application::window().height() - 91.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
 	m_text_manager->render_text(text_shader, std::to_string(m_play_time.total()), 45.f, (float)engine::application::window().height() - 135.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));

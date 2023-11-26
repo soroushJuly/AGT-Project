@@ -23,6 +23,9 @@
     <ClCompile Include="src\FX\cross_fade.cpp">
       <Filter>FX</Filter>
     </ClCompile>
+    <ClCompile Include="src\FX\billboard.cpp">
+      <Filter>FX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -44,6 +47,9 @@
       <Filter>pickupables</Filter>
     </ClInclude>
     <ClInclude Include="src\FX\cross_fade.h">
+      <Filter>FX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FX\billboard.h">
       <Filter>FX</Filter>
     </ClInclude>
   </ItemGroup>
