@@ -4,7 +4,7 @@
 #include "GLFW/include/GLFW/glfw3.h"
 
 
-health_bar::health_bar(float width, float height)
+health_bar::health_bar(float width, float height) : m_hearts(0)
 {
 
 	m_texture = engine::texture_2d::create("assets/textures/0.png", false);
@@ -22,8 +22,10 @@ health_bar::health_bar(float width, float height)
 health_bar::~health_bar()
 {}
 
-void health_bar::on_update(const engine::timestep& time_step)
-{}
+void health_bar::on_update(int hearts)
+{
+	m_hearts = hearts;
+}
 
 void health_bar::on_render(engine::ref<engine::shader> shader)
 {
@@ -38,7 +40,7 @@ void health_bar::on_render(engine::ref<engine::shader> shader)
 
 	std::dynamic_pointer_cast<engine::gl_shader>(shader)->set_uniform("transparency", m_transparency);
 	std::dynamic_pointer_cast<engine::gl_shader>(shader)->set_uniform("has_texture", true);
-	m_health_bars.at(3)->bind();
+	m_health_bars.at(m_hearts)->bind();
 	engine::renderer::submit(shader, m_quad->mesh(), transform);
 	std::dynamic_pointer_cast<engine::gl_shader>(shader)->set_uniform("has_texture", false);
 	std::dynamic_pointer_cast<engine::gl_shader>(shader)->set_uniform("transparency", 1.0f);

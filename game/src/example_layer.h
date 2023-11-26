@@ -3,6 +3,7 @@
 #include <player.h>
 #include <game_intro.h>
 #include "pickup_coin.h"
+#include "pickup_heart.h"
 #include <static_object.h>
 #include "decorations.h"
 #include "engine/entities/bounding_box.h"
@@ -28,6 +29,8 @@ public:
 
 private:
 	player m_player{};
+	pickup_heart m_pickup_heart_01{};
+	pickup_heart m_pickup_heart_02{};
 	pickup_coin m_pickup_coin_01{};
 	pickup_coin m_pickup_coin_02{};
 	pickup_coin m_pickup_coin_03{};
@@ -66,6 +69,7 @@ private:
 	engine::ref<engine::material>		m_mannequin_material{};
 
 	engine::DirectionalLight            m_directionalLight;
+	engine::SpotLight m_spot_light;
 
 	std::vector<engine::ref<engine::game_object>>     m_game_objects{};
 
