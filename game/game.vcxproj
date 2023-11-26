@@ -138,6 +138,8 @@
     <ClInclude Include="src\pickup_coin.h" />
     <ClInclude Include="src\example_layer.h" />
     <ClInclude Include="src\pickup.h" />
+    <ClInclude Include="src\pickup_heart.h" />
+    <ClInclude Include="src\pickup_speed.h" />
     <ClInclude Include="src\player.h" />
     <ClInclude Include="src\static_object.h" />
     <ClInclude Include="src\time_icon.h" />
@@ -151,6 +153,8 @@
     <ClCompile Include="src\health_bar.cpp" />
     <ClCompile Include="src\pickup.cpp" />
     <ClCompile Include="src\pickup_coin.cpp" />
+    <ClCompile Include="src\pickup_heart.cpp" />
+    <ClCompile Include="src\pickup_speed.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\static_object.cpp" />
     <ClCompile Include="src\time_icon.cpp" />

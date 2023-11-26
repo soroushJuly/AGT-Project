@@ -4,6 +4,7 @@
 #include <game_intro.h>
 #include "pickup_coin.h"
 #include "pickup_heart.h"
+#include "pickup_speed.h"
 #include <static_object.h>
 #include "decorations.h"
 #include "engine/entities/bounding_box.h"
@@ -29,6 +30,7 @@ public:
 
 private:
 	player m_player{};
+	pickup_speed m_pickup_speed_01{};
 	pickup_heart m_pickup_heart_01{};
 	pickup_heart m_pickup_heart_02{};
 	pickup_coin m_pickup_coin_01{};
@@ -47,7 +49,6 @@ private:
 	static_object fence{};
 	engine::ref<engine::game_object> arrow;
 	engine::ref<engine::game_object> spike;
-	engine::ref<engine::game_object> heart;
 
 	engine::bounding_box m_player_box;
 	engine::bounding_box m_world_box_01;

@@ -14,6 +14,12 @@
     <ClCompile Include="src\health_bar.cpp" />
     <ClCompile Include="src\coin_icon.cpp" />
     <ClCompile Include="src\time_icon.cpp" />
+    <ClCompile Include="src\pickup_heart.cpp">
+      <Filter>pickupables</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pickup_speed.cpp">
+      <Filter>pickupables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -28,6 +34,12 @@
     <ClInclude Include="src\health_bar.h" />
     <ClInclude Include="src\coin_icon.h" />
     <ClInclude Include="src\time_icon.h" />
+    <ClInclude Include="src\pickup_heart.h">
+      <Filter>pickupables</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pickup_speed.h">
+      <Filter>pickupables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pickupables">

@@ -24,6 +24,7 @@ public:
 	glm::vec3 position() { return m_object->position(); };
 	int& coins() { return m_coins; }
 	int& hearts() { return m_hearts; }
+	float& speed() { return m_speed; }
 private:
 	int m_coins;
 	int m_hearts;
