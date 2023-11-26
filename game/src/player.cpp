@@ -5,7 +5,9 @@
 #include "engine/key_codes.h"
 
 
-player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0.f), x_angle_x_mouse(0.f), m_coins(0)
+player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0.f), x_angle_x_mouse(0.f),
+m_coins(0),
+m_hearts(2)
 {}
 player::~player() {};
 
@@ -101,8 +103,8 @@ void player::jump(const engine::timestep& time_step)
 {
 	if (m_timer > 0.0f && !is_jumping)
 	{
-		if(is_running)	m_speed = 1.5f;
-		if(is_walking)	m_speed = 1.f;
+		if (is_running)	m_speed = 1.5f;
+		if (is_walking)	m_speed = 1.f;
 		clear_moves();
 		m_object->animated_mesh()->switch_root_movement(false);
 		is_jumping = true;

@@ -21,6 +21,7 @@ example_layer::example_layer()
 	m_audio_manager = engine::audio_manager::instance();
 	m_audio_manager->init();
 	m_audio_manager->load_sound("assets/audio/coin_pick.mp3", engine::sound_type::event, "coin");
+	m_audio_manager->load_sound("assets/audio/pickup.wav", engine::sound_type::event, "pickup");
 	m_audio_manager->load_sound("assets/audio/run_mud.wav", engine::sound_type::event, "run");
 	m_audio_manager->load_sound("assets/audio/walk_mud.wav", engine::sound_type::event, "walk");
 	m_audio_manager->load_sound("assets/audio/player_hit.mp3", engine::sound_type::event, "hit");
@@ -35,8 +36,8 @@ example_layer::example_layer()
 	auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 	auto text_shader = engine::renderer::shaders_library()->get("text_2D");
 
-	m_directionalLight.Color = glm::vec3(1.0f, 1.0f, 1.0f);
-	m_directionalLight.AmbientIntensity = 0.25f;
+	m_directionalLight.Color = glm::vec3(1.0f, 1.0f, 0.9f);
+	m_directionalLight.AmbientIntensity = 0.38f;
 	m_directionalLight.DiffuseIntensity = 0.6f;
 	m_directionalLight.Direction = glm::normalize(glm::vec3(1.0f, -1.0f, 0.0f));
 
@@ -134,6 +135,8 @@ example_layer::example_layer()
 	heart = engine::game_object::create(heart_props);
 
 	// Initialize objects
+	m_pickup_heart_01.on_initialize(glm::vec3(0.f, 1.2f, 1.f));
+	//m_pickup_heart_02.on_initialize(glm::vec3(0.f, 1.2f, 2.f));
 	m_pickup_coin_01.on_initialize();
 	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 1.2f, -1.f));
 	m_pickup_coin_03.on_initialize(glm::vec3(0.f, 1.4f, -2.f));
@@ -195,6 +198,8 @@ void example_layer::on_update(const engine::timestep& time_step)
 	}
 	//m_3d_camera.on_update(time_step);
 
+	m_pickup_heart_01.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
+	//m_pickup_heart_02.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
 	m_pickup_coin_01.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 	m_pickup_coin_02.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 	m_pickup_coin_03.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
@@ -216,6 +221,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 		LOG_INFO("not in the map");
 		m_player.object()->set_position(pos);
 	}
+	m_health_bar->on_update(m_player.hearts());
 	m_skeleton->animated_mesh()->on_update(time_step);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
@@ -262,6 +268,8 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, m_terrain_2);
 
 	// Render Objects in the scene
+	m_pickup_heart_01.on_render();
+	//m_pickup_heart_02.on_render();
 	m_pickup_coin_01.on_render();
 	m_pickup_coin_02.on_render();
 	m_pickup_coin_03.on_render();
@@ -297,7 +305,7 @@ void example_layer::on_render()
 	engine::renderer::end_scene();
 
 	// Render text
-	m_text_manager->render_text(text_shader, std::to_string(m_player.coins()), 43.f, (float)engine::application::window().height() - 92.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
+	m_text_manager->render_text(text_shader, std::to_string(m_player.coins()), 43.f, (float)engine::application::window().height() - 91.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
 	m_text_manager->render_text(text_shader, std::to_string(m_play_time.total()), 45.f, (float)engine::application::window().height() - 135.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
 }
 
