@@ -63,7 +63,7 @@ engine::cuboid::cuboid(glm::vec3 half_extents, bool inwards, int repeat) : m_hal
 
 engine::cuboid::~cuboid() {}
 
-engine::ref<engine::cuboid> engine::cuboid::create(glm::vec3 half_extents, bool inwards)
+engine::ref<engine::cuboid> engine::cuboid::create(glm::vec3 half_extents, bool inwards, int repeat)
 {
-	return std::make_shared<engine::cuboid>(half_extents, inwards);
+	return std::make_shared<engine::cuboid>(half_extents, inwards, repeat);
 }
