@@ -20,6 +20,9 @@
     <ClCompile Include="src\pickup_speed.cpp">
       <Filter>pickupables</Filter>
     </ClCompile>
+    <ClCompile Include="src\FX\cross_fade.cpp">
+      <Filter>FX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -40,10 +43,16 @@
     <ClInclude Include="src\pickup_speed.h">
       <Filter>pickupables</Filter>
     </ClInclude>
+    <ClInclude Include="src\FX\cross_fade.h">
+      <Filter>FX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pickupables">
       <UniqueIdentifier>{caa6f12c-75d1-4f63-8b51-51740fdf3906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FX">
+      <UniqueIdentifier>{c3734f59-d4e5-47b7-b1af-7be51e35cadf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

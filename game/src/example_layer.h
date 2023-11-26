@@ -12,6 +12,7 @@
 #include "health_bar.h"
 #include "coin_icon.h"
 #include "time_icon.h"
+#include "FX/cross_fade.h"
 
 
 class pickup;
@@ -51,6 +52,7 @@ private:
 	engine::ref<engine::game_object> spike;
 
 	engine::bounding_box m_player_box;
+	engine::bounding_box m_lava_box;
 	engine::bounding_box m_world_box_01;
 	engine::bounding_box m_world_box_02;
 
@@ -66,8 +68,11 @@ private:
 	engine::ref<engine::heightmap>		m_heightmap;
 	engine::ref<engine::game_object>	m_mannequin{};
 	engine::ref<engine::game_object>	m_skeleton{};
+	engine::ref<engine::game_object>	m_lava{};
 
 	engine::ref<engine::material>		m_mannequin_material{};
+
+	engine::ref<cross_fade>							m_cross_fade{};;
 
 	engine::DirectionalLight            m_directionalLight;
 	engine::SpotLight m_spot_light;

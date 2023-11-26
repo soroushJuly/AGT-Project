@@ -3,9 +3,10 @@
 // For getting input key codes:
 #include "engine/core/input.h"
 #include "engine/key_codes.h"
-
+#include "FX/cross_fade.h"
 
 player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0.f), x_angle_x_mouse(0.f),
+m_damage_timer(0.f),
 m_coins(0),
 m_hearts(2)
 {}
@@ -24,6 +25,7 @@ void player::on_update(const engine::timestep& time_step)
 	// x is where he looks at in the beginning and the z is the direction it walks to we want him to
 	// be aligned with the walking direction
 	m_object->set_rotation_amount(atan2(m_object->forward().x, m_object->forward().z));
+	m_damage_timer += time_step;
 	if (is_stand_jumping)
 	{
 		stand_jump(time_step);
@@ -210,4 +212,26 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 	camera.set_view_matrix(
 		glm::vec3(camera_position_x, camera_position_y + m_mouse_y, camera_position_z),
 		look_at);
+}
+
+void player::take_damage(engine::ref<engine::audio_manager> audio_manager, engine::ref<cross_fade> cross_fade, const engine::timestep& time_step)
+{
+	if (m_damage_timer > 1.5f)
+	{
+		m_damage_timer = 0;
+		audio_manager->play("damage");
+		cross_fade->activate();
+		if (m_hearts < 1)
+		{
+			die();
+			return;
+		}
+		m_hearts--;
+	}
+}
+
+void player::die()
+{
+	LOG_INFO("game_over");
+	engine::application::exit();
 }

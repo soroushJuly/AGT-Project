@@ -2,6 +2,8 @@
 #include <engine.h>
 #include "glm/gtx/rotate_vector.hpp"
 
+class cross_fade;
+
 class player
 {
 public:
@@ -20,6 +22,8 @@ public:
 	void run(const engine::timestep& time_step);
 	void turn_back(const engine::timestep& time_step);
 	void clear_moves();
+	void die();
+	void take_damage(engine::ref<engine::audio_manager> audio_manager, engine::ref<cross_fade> cross_fade, const engine::timestep& timestep);
 
 	glm::vec3 position() { return m_object->position(); };
 	int& coins() { return m_coins; }
@@ -28,6 +32,7 @@ public:
 private:
 	int m_coins;
 	int m_hearts;
+	float m_damage_timer;
 	float m_speed;
 	float m_timer;
 	float m_mouse_y;
@@ -38,4 +43,6 @@ private:
 	bool is_turned_back{ false }, is_jumping{ false };
 	bool is_walking{ false }, is_running{ false }, is_stand_jumping{ false }, is_standing{ false };
 	engine::ref< engine::game_object> m_object;
+
+	void start_damage_timer(const engine::timestep& time_step);
 };

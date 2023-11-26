@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="src\coin_icon.h" />
     <ClInclude Include="src\decorations.h" />
+    <ClInclude Include="src\FX\cross_fade.h" />
     <ClInclude Include="src\game_intro.h" />
     <ClInclude Include="src\health_bar.h" />
     <ClInclude Include="src\pickup_coin.h" />
@@ -148,6 +149,7 @@
     <ClCompile Include="src\coin_icon.cpp" />
     <ClCompile Include="src\decorations.cpp" />
     <ClCompile Include="src\example_layer.cpp" />
+    <ClCompile Include="src\FX\cross_fade.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_intro.cpp" />
     <ClCompile Include="src\health_bar.cpp" />

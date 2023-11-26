@@ -24,7 +24,7 @@ example_layer::example_layer()
 	m_audio_manager->load_sound("assets/audio/pickup.wav", engine::sound_type::event, "pickup");
 	m_audio_manager->load_sound("assets/audio/run_mud.wav", engine::sound_type::event, "run");
 	m_audio_manager->load_sound("assets/audio/walk_mud.wav", engine::sound_type::event, "walk");
-	m_audio_manager->load_sound("assets/audio/player_hit.mp3", engine::sound_type::event, "hit");
+	m_audio_manager->load_sound("assets/audio/player_hit.wav", engine::sound_type::event, "hit");
 	m_audio_manager->load_sound("assets/audio/take_damage.wav", engine::sound_type::event, "damage");
 	m_audio_manager->load_sound("assets/audio/little_village.wav", engine::sound_type::track, "menu");  // Royalty free music from http://www.nosoapradio.us/
 	m_audio_manager->load_sound("assets/audio/move_forward.mp3", engine::sound_type::track, "main");  // Royalty free music from http://www.nosoapradio.us/
@@ -58,6 +58,7 @@ example_layer::example_layer()
 	m_mannequin_material = engine::material::create(1.0f, glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
 
+	m_cross_fade = cross_fade::create("assets/textures/red.bmp", 2.0f, 1.6f, 0.9f);
 
 	// Free Skybox texture from https://sketchfab.com/3d-models/free-skybox-anime-village-a25aa36a28a14c2e83285ad917947278
 	m_skybox = engine::skybox::create(50.f,
@@ -168,9 +169,19 @@ example_layer::example_layer()
 	terrain_props_2.restitution = 0.92f;
 	m_terrain_2 = engine::game_object::create(terrain_props_2);
 
+	std::vector<engine::ref<engine::texture_2d>> lava_textures = { engine::texture_2d::create("assets/textures/lava_02.png", false) };
+	engine::game_object_properties lava_props;
+	engine::ref<engine::cuboid> lava_shape = engine::cuboid::create(glm::vec3(4.5f, .01f, 1.5f), false, 3);
+	lava_props.meshes = { lava_shape->mesh() };
+	lava_props.textures = { lava_textures };
+	lava_props.position = glm::vec3(0.f, 0.5f, -13.f);
+	lava_props.is_static = true;
+	//lava_props.bounding_shape = lava_shape glm::vec3(100.f, 0.5f, 100.f);
+	m_lava = engine::game_object::create(lava_props);
+	m_lava_box.set_box(9.f, .02f, 3.f, lava_props.position);
+
 
 	m_game_objects.push_back(m_terrain);
-	//m_game_objects.push_back(m_pickup);
 	m_physics_manager = engine::bullet_manager::create(m_game_objects);
 
 	m_text_manager = engine::text_manager::create();
@@ -197,6 +208,8 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_pickup_coin_06.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 
+	m_cross_fade->on_update(time_step);
+
 	m_coin_icon->on_update(time_step);
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
@@ -209,6 +222,11 @@ void example_layer::on_update(const engine::timestep& time_step)
 	{
 		LOG_INFO("not in the map");
 		m_player.object()->set_position(pos);
+	}
+	if (m_lava_box.collision(m_player_box))
+	{
+		m_player.take_damage(m_audio_manager, m_cross_fade, time_step);
+		//m_cross_fade->activate();
 	}
 	m_health_bar->on_update(m_player.hearts());
 	m_skeleton->animated_mesh()->on_update(time_step);
@@ -229,20 +247,17 @@ void example_layer::on_render()
 	//engine::renderer::begin_scene(m_2d_camera, mesh_shader);
 	//m_game_intro->on_render(mesh_shader);
 	//engine::renderer::end_scene();
-	
-	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
-	m_health_bar->on_render(mesh_shader);
-	m_coin_icon->on_render(mesh_shader);
-	m_time_icon->on_render(mesh_shader);
-	engine::renderer::end_scene();
 
 	engine::renderer::begin_scene(m_3d_camera, mesh_shader);
 
 	// Set up some of the scene's parameters in the shader
 	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("gEyeWorldPos", m_3d_camera.position());
 	m_player_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_lava_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_02.on_render(2.5f, 1.f, 1.f, mesh_shader);
+
+
 
 	// Position the skybox centred on the player and render it
 	glm::mat4 skybox_tranform(1.0f);
@@ -256,6 +271,7 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, m_terrain);
 	engine::renderer::submit(mesh_shader, m_terrain_2);
 
+	engine::renderer::submit(mesh_shader, m_lava);
 	// Render Objects in the scene
 	m_pickup_speed_01.on_render();
 	m_pickup_heart_01.on_render();
@@ -290,6 +306,16 @@ void example_layer::on_render()
 	object_transform = glm::scale(object_transform, glm::vec3(0.16f));
 	engine::renderer::submit(mesh_shader, object_transform, m_skeleton);
 
+	engine::renderer::end_scene();
+
+	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
+	m_health_bar->on_render(mesh_shader);
+	m_coin_icon->on_render(mesh_shader);
+	m_time_icon->on_render(mesh_shader);
+	engine::renderer::end_scene();
+
+	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
+	m_cross_fade->on_render(mesh_shader);
 	engine::renderer::end_scene();
 
 	// Render text
