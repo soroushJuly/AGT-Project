@@ -152,9 +152,7 @@ example_layer::example_layer()
 	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -4.f));
 
 	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
-	m_health_bar = health_bar::create(0.54f, 0.17f);
-	m_coin_icon = coin_icon::create(0.39f, 0.48f);
-	m_time_icon = time_icon::create(0.32f, 0.32f);
+	hud.on_initialize();
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
 	// Texture from POLYGON Pack https://syntystore.com/products/polygon-adventure-pack?_pos=1&_psq=adve&_ss=e&_v=1.0
@@ -223,9 +221,6 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	m_ring.on_update(time_step, m_player.position());
 
-
-	m_coin_icon->on_update(time_step);
-
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
 	glm::vec3 pos = m_player.object()->position();
@@ -251,7 +246,8 @@ void example_layer::on_update(const engine::timestep& time_step)
 		m_player.take_damage(m_audio_manager, m_cross_fade, time_step);
 		//m_cross_fade->activate();
 	}
-	m_health_bar->on_update(m_player.hearts());
+
+	hud.on_update(time_step, m_player.hearts());
 	m_skeleton->animated_mesh()->on_update(time_step);
 
 	m_audio_manager->update_with_camera(m_3d_camera);
@@ -335,9 +331,7 @@ void example_layer::on_render()
 	engine::renderer::end_scene();
 
 	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
-	m_health_bar->on_render(mesh_shader);
-	m_coin_icon->on_render(mesh_shader);
-	m_time_icon->on_render(mesh_shader);
+	hud.on_render(mesh_shader);
 	engine::renderer::end_scene();
 
 	engine::renderer::begin_scene(m_2d_camera, mesh_shader);

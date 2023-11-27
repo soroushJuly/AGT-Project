@@ -131,13 +131,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\coin_icon.h" />
     <ClInclude Include="src\decorations.h" />
     <ClInclude Include="src\FX\billboard.h" />
     <ClInclude Include="src\FX\cross_fade.h" />
     <ClInclude Include="src\FX\ring.h" />
     <ClInclude Include="src\game_intro.h" />
-    <ClInclude Include="src\health_bar.h" />
+    <ClInclude Include="src\hud.h" />
+    <ClInclude Include="src\HUD\coin_icon.h" />
+    <ClInclude Include="src\HUD\health_bar.h" />
+    <ClInclude Include="src\HUD\time_icon.h" />
     <ClInclude Include="src\pickup_coin.h" />
     <ClInclude Include="src\example_layer.h" />
     <ClInclude Include="src\pickup.h" />
@@ -145,10 +147,8 @@
     <ClInclude Include="src\pickup_speed.h" />
     <ClInclude Include="src\player.h" />
     <ClInclude Include="src\static_object.h" />
-    <ClInclude Include="src\time_icon.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\coin_icon.cpp" />
     <ClCompile Include="src\decorations.cpp" />
     <ClCompile Include="src\example_layer.cpp" />
     <ClCompile Include="src\FX\billboard.cpp" />
@@ -156,14 +156,16 @@
     <ClCompile Include="src\FX\ring.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_intro.cpp" />
-    <ClCompile Include="src\health_bar.cpp" />
+    <ClCompile Include="src\hud.cpp" />
+    <ClCompile Include="src\HUD\coin_icon.cpp" />
+    <ClCompile Include="src\HUD\health_bar.cpp" />
+    <ClCompile Include="src\HUD\time_icon.cpp" />
     <ClCompile Include="src\pickup.cpp" />
     <ClCompile Include="src\pickup_coin.cpp" />
     <ClCompile Include="src\pickup_heart.cpp" />
     <ClCompile Include="src\pickup_speed.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\static_object.cpp" />
-    <ClCompile Include="src\time_icon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\engine\engine.vcxproj">

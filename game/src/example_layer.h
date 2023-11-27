@@ -9,12 +9,10 @@
 #include "decorations.h"
 #include "engine/entities/bounding_box.h"
 #include "engine/entities/shapes/heightmap.h"
-#include "health_bar.h"
-#include "coin_icon.h"
-#include "time_icon.h"
 #include "FX/cross_fade.h"
 #include "FX/billboard.h"
 #include "FX/ring.h"
+#include "hud.h"
 
 
 class pickup;
@@ -60,9 +58,7 @@ private:
 	engine::bounding_box m_world_box_02;
 
 	engine::ref<game_intro> m_game_intro;
-	engine::ref<health_bar> m_health_bar;
-	engine::ref<coin_icon> m_coin_icon;
-	engine::ref<time_icon> m_time_icon;
+	hud hud;
 	engine::timer m_play_time;
 
 	engine::ref<engine::skybox>			m_skybox{};
