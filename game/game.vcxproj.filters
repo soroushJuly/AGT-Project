@@ -36,6 +36,7 @@
       <Filter>HUD</Filter>
     </ClCompile>
     <ClCompile Include="src\hud.cpp" />
+    <ClCompile Include="src\enemy_skeleton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -72,6 +73,7 @@
       <Filter>HUD</Filter>
     </ClInclude>
     <ClInclude Include="src\hud.h" />
+    <ClInclude Include="src\enemy_skeleton.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pickupables">
