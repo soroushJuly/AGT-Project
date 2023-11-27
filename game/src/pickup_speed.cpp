@@ -37,10 +37,9 @@ void pickup_speed::on_initialize(glm::vec3 position)
 
 void pickup_speed::on_render()
 {
+	auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 	if (m_pickup->active())
 	{
-		auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
-		// point light moves around the object
 		std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->
 			set_uniform("gNumSpotLights", (int)num_spot_lights);
 		m_spot_light.submit(mesh_shader, 0);
@@ -55,7 +54,7 @@ void pickup_speed::on_render()
 		glm::mat4 emitter_transform(1.0f);
 		emitter_transform = glm::translate(emitter_transform, m_spot_light.Position);
 		emitter_transform = glm::rotate(emitter_transform, engine::PI / 2, glm::vec3(1.f, 0.f, 0.f));
-		emitter_transform = glm::scale(emitter_transform, 6.f *  m_pickup->scale());
+		emitter_transform = glm::scale(emitter_transform, 6.f * m_pickup->scale());
 		engine::renderer::submit(mesh_shader, m_light_emitter->meshes().at(0), emitter_transform);
 		std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->
 			set_uniform("lighting_on", true);
@@ -72,6 +71,11 @@ void pickup_speed::on_render()
 		pickup_transform = glm::scale(pickup_transform, m_pickup->scale());
 		engine::renderer::submit(mesh_shader, m_pickup->meshes().at(0), pickup_transform);
 		std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", false);
+	}
+	else
+	{
+		m_spot_light.Color = glm::vec3(0.f, 0.f, 0.f);
+		m_spot_light.submit(mesh_shader, 0);
 	}
 };
 

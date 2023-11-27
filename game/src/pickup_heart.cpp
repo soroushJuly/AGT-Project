@@ -37,9 +37,9 @@ void pickup_heart::on_initialize(glm::vec3 position)
 
 void pickup_heart::on_render()
 {
+	auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 	if (m_pickup->active())
 	{
-		auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 		// point light moves around the object
 		std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->
 			set_uniform("gNumPointLights", (int)num_point_lights);
@@ -69,6 +69,11 @@ void pickup_heart::on_render()
 		pickup_transform = glm::scale(pickup_transform, m_pickup->scale());
 		engine::renderer::submit(mesh_shader, m_pickup->meshes().at(0), pickup_transform);
 		//std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", false);
+	}
+	else
+	{
+		m_pointLight.Color = glm::vec3(0.f, 0.f, 0.f);
+		m_pointLight.submit(mesh_shader, 0);
 	}
 };
 
