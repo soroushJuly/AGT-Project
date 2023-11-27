@@ -92,6 +92,7 @@ example_layer::example_layer()
 		m_skinned_mesh->size().y / mannequin_props.scale.x * 2.4f, m_skinned_mesh->size().x / 2.f);
 	m_mannequin = engine::game_object::create(mannequin_props);
 	m_player.initialise(m_mannequin);
+
 	m_player_box.set_box(mannequin_props.bounding_shape.x * mannequin_props.scale.x,
 		mannequin_props.bounding_shape.y * mannequin_props.scale.x,
 		mannequin_props.bounding_shape.z * mannequin_props.scale.x,
@@ -112,17 +113,22 @@ example_layer::example_layer()
 		engine::texture_2d::create("assets/textures/Characters_Brown.png", true);
 	skeleton_props.textures = { skeleton_texture };
 	skeleton_props.type = 0;
-	skeleton_props.mass = 11.2f;
+	skeleton_props.mass = 30.2f;
+	skeleton_props.velocity = glm::vec3(0.f);
+	//skeleton_props.velocity = glm::vec3(10.f);
 	skeleton_props.scale = glm::vec3(0.2f);
 	skeleton_props.bounding_shape = glm::vec3(m_enemy_mesh->size().x * mannequin_props.scale.x / 2.f,
 		m_enemy_mesh->size().y / mannequin_props.scale.x * 2.f, m_enemy_mesh->size().x / 2.f);
 	m_skeleton = engine::game_object::create(skeleton_props);
+
 	m_skeleton->set_position(glm::vec3(2.f, 0.5f, 7.f));
 	m_skeleton_box.set_box(skeleton_props.bounding_shape.x * skeleton_props.scale.x,
 		skeleton_props.bounding_shape.y * skeleton_props.scale.x,
 		skeleton_props.bounding_shape.z * skeleton_props.scale.x,
 		skeleton_props.position);
 	//m_skeleton->set_textures(tex_vec);
+
+	m_enemy_skeleton.initialise(m_skeleton);
 
 
 	// initiate spike
@@ -184,7 +190,6 @@ example_layer::example_layer()
 	lava_props.textures = { lava_textures };
 	lava_props.position = glm::vec3(0.f, 0.5f, -13.f);
 	lava_props.is_static = true;
-	//lava_props.bounding_shape = lava_shape glm::vec3(100.f, 0.5f, 100.f);
 	m_lava = engine::game_object::create(lava_props);
 	m_lava_box.set_box(9.f, .02f, 3.f, lava_props.position);
 
@@ -227,6 +232,8 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_player.on_update(time_step);
 	m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
+
+	m_enemy_skeleton.on_update(time_step);
 	m_skeleton_box.on_update(m_skeleton->position());
 
 	if (m_player.is_punching())
@@ -324,7 +331,9 @@ void example_layer::on_render()
 	glm::mat4 object_transform(1.0f);
 	object_transform = glm::translate(object_transform, m_skeleton->position());
 	object_transform = glm::scale(object_transform, glm::vec3(0.16f));
-	engine::renderer::submit(mesh_shader, object_transform, m_skeleton);
+	//engine::renderer::submit(mesh_shader, object_transform, m_skeleton);
+
+	engine::renderer::submit(mesh_shader, object_transform, m_enemy_skeleton.object());
 
 	m_ring.on_render(mesh_shader);
 
@@ -367,6 +376,10 @@ void example_layer::on_event(engine::event& event)
 		if (e.key_code() == engine::key_codes::KEY_1)
 		{
 			m_ring.activate(.3f, m_player.position());
+		}
+		if (e.key_code() == engine::key_codes::KEY_2)
+		{
+			m_enemy_skeleton.take_damage();
 		}
 	}
 }
