@@ -99,7 +99,7 @@ example_layer::example_layer()
 		mannequin_props.position);
 	// World Collision boxes
 	m_world_box_01.set_box(16.f, 10.f, 16.f, mannequin_props.position);
-	m_world_box_02.set_box(8.f, 20.f, 40.f, glm::vec3(0.f, -10.5, -18.f));
+	m_world_box_02.set_box(8.f, 20.f, 70.f, glm::vec3(0.f, -10.5, 50.f));
 
 	// Free model from here: https://poly.pizza/m/yq5ATpujSt
 	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Skeleton.fbx");
@@ -113,7 +113,7 @@ example_layer::example_layer()
 		engine::texture_2d::create("assets/textures/Characters_Brown.png", true);
 	skeleton_props.textures = { skeleton_texture };
 	skeleton_props.type = 0;
-	skeleton_props.mass = 30.2f;
+	skeleton_props.mass = 27.2f;
 	skeleton_props.velocity = glm::vec3(0.f);
 	//skeleton_props.velocity = glm::vec3(10.f);
 	skeleton_props.scale = glm::vec3(0.2f);
@@ -139,30 +139,30 @@ example_layer::example_layer()
 	spike = engine::game_object::create(spike_props);
 
 	// Initialize objects
-	m_pickup_heart_01.on_initialize(glm::vec3(0.f, 1.2f, 1.f));
-	m_pickup_speed_01.on_initialize(glm::vec3(3.f, 1.2f, -2.f));
+	m_pickup_heart_01.on_initialize(glm::vec3(0.f, 1.2f, 21.f));
+	m_pickup_speed_01.on_initialize(glm::vec3(3.f, 1.2f, 22.f));
 	//m_pickup_heart_02.on_initialize(glm::vec3(0.f, 1.2f, 2.f));
-	m_pickup_coin_01.on_initialize();
-	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 1.2f, -1.f));
-	m_pickup_coin_03.on_initialize(glm::vec3(0.f, 1.4f, -2.f));
-	m_pickup_coin_04.on_initialize(glm::vec3(0.f, 1.6f, -3.f));
-	m_pickup_coin_05.on_initialize(glm::vec3(0.f, 1.4f, -4.f));
-	m_pickup_coin_06.on_initialize(glm::vec3(0.f, 1.2f, -5.f));
-	m_pickup_coin_07.on_initialize(glm::vec3(0.f, 1.f, -6.f));
+	m_pickup_coin_01.on_initialize(glm::vec3(0.f, 1.2f, 20.f));
+	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 1.2f, 21.f));
+	m_pickup_coin_03.on_initialize(glm::vec3(0.f, 1.4f, 22.f));
+	m_pickup_coin_04.on_initialize(glm::vec3(0.f, 1.6f, 23.f));
+	m_pickup_coin_05.on_initialize(glm::vec3(0.f, 1.4f, 24.f));
+	m_pickup_coin_06.on_initialize(glm::vec3(0.f, 1.2f, 25.f));
+	m_pickup_coin_07.on_initialize(glm::vec3(0.f, 1.f, 26.f));
 	// Textures below from POLYGON Pack https://syntystore.com/products/polygon-adventure-pack?_pos=1&_psq=adve&_ss=e&_v=1.0
 	// decorations initilize
 	campfire.on_initialize("assets/models/static/SM_Env_CampFire_01.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 10.f));
-	bush.on_initialize("assets/models/static/SM_Env_Bush_01.fbx", "assets/textures/grass.png", glm::vec3(4.f, .45f, -3.5f));
-	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(4.f, 0, -2.f));
-	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -2.f));
-	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, -4.f));
+	bush.on_initialize("assets/models/static/SM_Env_Bush_01.fbx", "assets/textures/grass.png", glm::vec3(4.f, .45f, 23.5f));
+	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(4.f, 0, 22.f));
+	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, 22.f));
+	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, 24.f));
 
 	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
 	hud.on_initialize();
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
 	// Texture from POLYGON Pack https://syntystore.com/products/polygon-adventure-pack?_pos=1&_psq=adve&_ss=e&_v=1.0
-	m_heightmap = engine::heightmap::create("assets/textures/line.bmp", "assets/textures/grass.png", 50.f, 200.f, glm::vec3(-8.f, 0.5f, 10.f), 10.f);
+	m_heightmap = engine::heightmap::create("assets/textures/ht_01.jpg", "assets/textures/grass.png", 180.f, 180.f, glm::vec3(48.f, 0.5f, 40.f), 2.f);
 	engine::game_object_properties terrain_props;
 	terrain_props.meshes = { m_heightmap->mesh() };
 	terrain_props.textures = { m_heightmap->texture() };
@@ -185,7 +185,7 @@ example_layer::example_layer()
 
 	std::vector<engine::ref<engine::texture_2d>> lava_textures = { engine::texture_2d::create("assets/textures/lava_02.png", false) };
 	engine::game_object_properties lava_props;
-	engine::ref<engine::cuboid> lava_shape = engine::cuboid::create(glm::vec3(4.5f, .01f, 1.5f), false, 3);
+	engine::ref<engine::cuboid> lava_shape = engine::cuboid::create(glm::vec3(4.5f, .01f, 1.5f), false, 4);
 	lava_props.meshes = { lava_shape->mesh() };
 	lava_props.textures = { lava_textures };
 	lava_props.position = glm::vec3(0.f, 0.5f, -13.f);
@@ -316,13 +316,13 @@ void example_layer::on_render()
 	// translations and scaling for decoration should only happen in intialize NOT true bc we need to render many times just one model
 	campfire.on_render(mesh_shader, 0.f, campfire.object()->rotation_axis(), glm::vec3(0.006f));
 	bush.on_render(mesh_shader);
-	bush.on_render(mesh_shader, glm::vec3(4.f, .45f, -6.25f), engine::PI / 2, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .01f, .013f));
+	bush.on_render(mesh_shader, glm::vec3(4.f, .45f, 16.25f), engine::PI / 2, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .01f, .013f));
 	tree_01.on_render(mesh_shader);
 	tree_02.on_render(mesh_shader);
 	tree_03.on_render(mesh_shader);
 	tree_03.on_render(mesh_shader);
-	tree_03.on_render(mesh_shader, glm::vec3(-4.f, 0, -7.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .018f, .013f));
-	tree_03.on_render(mesh_shader, glm::vec3(-4.3f, 0, -10.3f), engine::PI, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f));
+	tree_03.on_render(mesh_shader, glm::vec3(-4.f, 0, 17.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .018f, .013f));
+	tree_03.on_render(mesh_shader, glm::vec3(-4.3f, 0, 20.3f), engine::PI, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f));
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, spike);
