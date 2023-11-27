@@ -135,6 +135,7 @@
     <ClInclude Include="src\decorations.h" />
     <ClInclude Include="src\FX\billboard.h" />
     <ClInclude Include="src\FX\cross_fade.h" />
+    <ClInclude Include="src\FX\ring.h" />
     <ClInclude Include="src\game_intro.h" />
     <ClInclude Include="src\health_bar.h" />
     <ClInclude Include="src\pickup_coin.h" />
@@ -152,6 +153,7 @@
     <ClCompile Include="src\example_layer.cpp" />
     <ClCompile Include="src\FX\billboard.cpp" />
     <ClCompile Include="src\FX\cross_fade.cpp" />
+    <ClCompile Include="src\FX\ring.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_intro.cpp" />
     <ClCompile Include="src\health_bar.cpp" />

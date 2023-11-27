@@ -26,6 +26,9 @@
     <ClCompile Include="src\FX\billboard.cpp">
       <Filter>FX</Filter>
     </ClCompile>
+    <ClCompile Include="src\FX\ring.cpp">
+      <Filter>FX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -50,6 +53,9 @@
       <Filter>FX</Filter>
     </ClInclude>
     <ClInclude Include="src\FX\billboard.h">
+      <Filter>FX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FX\ring.h">
       <Filter>FX</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,6 +14,7 @@
 #include "time_icon.h"
 #include "FX/cross_fade.h"
 #include "FX/billboard.h"
+#include "FX/ring.h"
 
 
 class pickup;
@@ -87,6 +88,8 @@ private:
 
 	engine::orthographic_camera       m_2d_camera;
 	engine::perspective_camera        m_3d_camera;
+
+	ring m_ring;
 
 	bool is_intro_active;
 	float							  m_physical_terrain_height = 0.5f;

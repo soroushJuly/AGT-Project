@@ -60,6 +60,7 @@ example_layer::example_layer()
 
 	m_cross_fade = cross_fade::create("assets/textures/red.bmp", 2.0f, 1.6f, 0.9f);
 	m_billboard = billboard::create("assets/textures/hit.png", 4, 4, 16);
+	m_ring.initialise();
 
 	// Free Skybox texture from https://sketchfab.com/3d-models/free-skybox-anime-village-a25aa36a28a14c2e83285ad917947278
 	m_skybox = engine::skybox::create(50.f,
@@ -212,6 +213,9 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_cross_fade->on_update(time_step);
 	m_billboard->on_update(time_step);
 
+	m_ring.on_update(time_step, m_player.position());
+	
+
 	m_coin_icon->on_update(time_step);
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
@@ -315,6 +319,8 @@ void example_layer::on_render()
 	object_transform = glm::scale(object_transform, glm::vec3(0.16f));
 	engine::renderer::submit(mesh_shader, object_transform, m_skeleton);
 
+	m_ring.on_render(mesh_shader);
+
 	engine::renderer::end_scene();
 
 	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
@@ -352,6 +358,10 @@ void example_layer::on_event(engine::event& event)
 		if (e.key_code() == engine::key_codes::KEY_TAB)
 		{
 			engine::render_command::toggle_wireframe();
+		}
+		if (e.key_code() == engine::key_codes::KEY_1)
+		{
+			m_ring.activate(.3f, m_player.position());
 		}
 	}
 }
