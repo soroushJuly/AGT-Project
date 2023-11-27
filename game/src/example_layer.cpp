@@ -85,6 +85,8 @@ example_layer::example_layer()
 	//mannequin_props.scale = glm::vec3(1.f / glm::max(m_skinned_mesh->size().x, glm::max(m_skinned_mesh->size().y, m_skinned_mesh->size().z)));
 	mannequin_props.scale = glm::vec3(0.6f);
 	mannequin_props.type = 0;
+	mannequin_props.velocity = glm::vec3(0.f);
+	mannequin_props.mass = 65.f;
 	mannequin_props.position = glm::vec3(0.f, 0.5, 10.f);
 	mannequin_props.bounding_shape = glm::vec3(m_skinned_mesh->size().x * mannequin_props.scale.x / 2.f,
 		m_skinned_mesh->size().y / mannequin_props.scale.x * 2.4f, m_skinned_mesh->size().x / 2.f);
@@ -110,10 +112,16 @@ example_layer::example_layer()
 		engine::texture_2d::create("assets/textures/Characters_Brown.png", true);
 	skeleton_props.textures = { skeleton_texture };
 	skeleton_props.type = 0;
+	skeleton_props.mass = 11.2f;
 	skeleton_props.scale = glm::vec3(0.2f);
-	skeleton_props.bounding_shape = m_enemy_mesh->size() / 2.f * skeleton_props.scale.x;
+	skeleton_props.bounding_shape = glm::vec3(m_enemy_mesh->size().x * mannequin_props.scale.x / 2.f,
+		m_enemy_mesh->size().y / mannequin_props.scale.x * 2.f, m_enemy_mesh->size().x / 2.f);
 	m_skeleton = engine::game_object::create(skeleton_props);
 	m_skeleton->set_position(glm::vec3(2.f, 0.5f, 7.f));
+	m_skeleton_box.set_box(skeleton_props.bounding_shape.x * skeleton_props.scale.x,
+		skeleton_props.bounding_shape.y * skeleton_props.scale.x,
+		skeleton_props.bounding_shape.z * skeleton_props.scale.x,
+		skeleton_props.position);
 	//m_skeleton->set_textures(tex_vec);
 
 
@@ -214,7 +222,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_billboard->on_update(time_step);
 
 	m_ring.on_update(time_step, m_player.position());
-	
+
 
 	m_coin_icon->on_update(time_step);
 
@@ -224,6 +232,8 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_player.on_update(time_step);
 	m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
+	m_skeleton_box.on_update(m_skeleton->position());
+
 	if (m_player.is_punching())
 	{
 		float x_position = m_player.position().x + m_player.object()->bounding_shape().x / 2;
@@ -256,7 +266,7 @@ void example_layer::on_render()
 	// Set up  shader. (renders textures and materials)
 	const auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 
-	// render 2D Camera
+	//render 2D Camera
 	//engine::renderer::begin_scene(m_2d_camera, mesh_shader);
 	//m_game_intro->on_render(mesh_shader);
 	//engine::renderer::end_scene();
@@ -266,6 +276,7 @@ void example_layer::on_render()
 	// Set up some of the scene's parameters in the shader
 	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("gEyeWorldPos", m_3d_camera.position());
 	m_player_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_skeleton_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_lava_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_02.on_render(2.5f, 1.f, 1.f, mesh_shader);

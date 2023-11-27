@@ -159,6 +159,7 @@ void player::run(const engine::timestep& time_step)
 {
 	m_object->animated_mesh()->switch_root_movement(true);
 	m_speed = 3.0f;
+	m_object->set_velocity(14.f * glm::normalize(m_object->forward()));
 	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
 		(float)time_step);
 	if (m_timer > 0.0f && is_running)
@@ -180,7 +181,7 @@ void player::punch(const engine::timestep& time_step)
 	//	(float)time_step);
 	if (m_timer > 0.0f && m_is_punching)
 	{
-		
+
 		return;
 	}
 	clear_moves();

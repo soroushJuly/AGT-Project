@@ -54,6 +54,7 @@ private:
 	engine::ref<engine::game_object> spike;
 
 	engine::bounding_box m_player_box;
+	engine::bounding_box m_skeleton_box;
 	engine::bounding_box m_lava_box;
 	engine::bounding_box m_world_box_01;
 	engine::bounding_box m_world_box_02;
