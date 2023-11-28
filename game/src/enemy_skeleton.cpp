@@ -24,7 +24,6 @@ void enemy_skeleton::on_update(const engine::timestep& time_step)
 	m_object->set_position(m_object->position() + m_object->velocity() * (float)time_step);
 	if (glm::length(m_object->velocity()) > max_velocity)
 	{
-		LOG_INFO("{}", m_object->velocity());
 		m_object->set_velocity(max_velocity * glm::normalize(m_object->forward()));
 	}
 
