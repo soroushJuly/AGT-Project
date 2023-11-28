@@ -112,13 +112,8 @@ void enemy_mech::shoot_bomb()
 
 void enemy_mech::update_bomb(const engine::timestep& time_step)
 {
-
 	m_bomb->set_velocity(m_bomb->velocity() + (m_bomb->acceleration() + m_bomb_instantaneous_acceleration) * (float)time_step);
 	m_bomb->set_position(m_bomb->position() + m_bomb->velocity() * (float)time_step);
-	LOG_INFO("bomb {}", m_bomb->position());
-
-
-
 }
 
 void enemy_mech::shoot_rocket()

@@ -17,7 +17,7 @@ void player::initialise(engine::ref<engine::game_object> object)
 {
 	m_object = object;
 	m_object->set_forward(glm::vec3(0.f, 0.f, 1.f));
-	m_object->set_position(glm::vec3(0.f, 0.5, 10.f));
+	m_object->set_position(glm::vec3(0.f, 0.6f, 10.f));
 	m_object->set_acceleration(glm::vec3(0.f, -9.8f, 0.f));
 	m_object->set_velocity(glm::vec3(0.f, 0.f, 0.f));
 	m_object->animated_mesh()->set_default_animation(4);
@@ -29,14 +29,41 @@ void player::on_update(const engine::timestep& time_step)
 	// be aligned with the walking direction
 	m_object->set_rotation_amount(atan2(m_object->forward().x, m_object->forward().z));
 	m_damage_timer += time_step;
-	if (is_stand_jumping)
-	{
-		stand_jump(time_step);
+
+	if (glm::length(m_instantaneous_acceleration) > 0 && m_contact_time > 1.f) {
+		m_instantaneous_acceleration = glm::vec3(0.f);
+		m_contact_time = 0.f;
+		//is_jumping = false;
 	}
+
+	m_object->set_velocity(m_object->velocity() + (m_object->acceleration() + m_instantaneous_acceleration) * (float)time_step);
+	float x_position = m_object->position().x;
+	float y_position = m_object->position().y;
+	float z_position = m_object->position().z;
+	//LOG_INFO("{}", m_object->acceleration() + m_instantaneous_acceleration);
 	if (is_jumping)
 	{
-		jump(time_step);
+		LOG_INFO("jumping");
+		m_object->set_position(glm::vec3(x_position, y_position, z_position) + m_object->velocity() * (float)time_step);
 	}
+	if (y_position < 0.5f && m_object->velocity().y < 0)
+	{
+		LOG_INFO("first");
+		m_object->set_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
+		//m_object->set_acceleration(glm::vec3(0.0f, -9.8f, 0.0f));
+		m_object->set_position(glm::vec3(m_object->position().x, 0.5f, m_object->position().z));
+		clear_moves();
+	}
+
+	if((is_walking || is_running) && !is_jumping)
+	{
+		LOG_INFO("last");
+		m_object->set_velocity(glm::vec3(m_object->velocity().x, 0.f, m_object->velocity().z));
+		m_object->set_position(glm::vec3(x_position, y_position, z_position) + m_object->velocity() * (float)time_step);
+	}
+
+	
+	m_contact_time += time_step;
 
 	if (engine::input::key_pressed(engine::key_codes::KEY_A)) // left
 		turn(2.5f * time_step);
@@ -44,26 +71,19 @@ void player::on_update(const engine::timestep& time_step)
 		turn(-2.5f * time_step);
 	if (engine::input::key_pressed(engine::key_codes::KEY_SPACE) && engine::input::key_pressed(engine::key_codes::KEY_W))
 	{
-		if (is_jumping) return;
 		jump(time_step);
 	}
-	else if (engine::input::key_pressed(engine::key_codes::KEY_SPACE))
-		stand_jump(time_step);
-	if (glm::length(m_instantaneous_acceleration) > 0 && m_contact_time > 1.f) {
-		m_instantaneous_acceleration = glm::vec3(0.f);
-		m_contact_time = 0.f;
-	}
-	m_contact_time += time_step;
+	
 
 	if (engine::input::mouse_button_pressed(0))
 	{
 		punch(time_step);
 	}
-	else if (!is_stand_jumping && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
+	else if (!is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
 	{
 		run(time_step);
 	}
-	else if (!is_stand_jumping && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W))
+	else if (!is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W))
 	{
 		walk(time_step);
 	}
@@ -91,113 +111,35 @@ void player::turn_back(const engine::timestep& time_step)
 {
 }
 
-void player::stand_jump(const engine::timestep& time_step)
-{
-	is_stand_jumping = true;
-	m_speed = 1.f;
-	float x_position = m_object->position().x;
-	float z_position = m_object->position().z;
-	float y_position = m_object->position().y;
-	if (m_timer > 1.f)
-	{
-		y_position += 1.f * m_speed * (float)time_step;
-	}
-	else
-	{
-		y_position = y_position - 1.f * m_speed * (float)time_step;
-	}
-	m_object->set_position(glm::vec3(x_position, y_position, z_position));
-	if (m_timer > 0.0f)
-	{
-		return;
-	}
-	m_timer = 2.f;
-}
-
-//void player::jump(const engine::timestep& time_step)
-//{
-//	if (m_timer > 0.0f && !is_jumping)
-//	{
-//		if (is_running)	m_speed = 1.5f;
-//		if (is_walking)	m_speed = 1.f;
-//		clear_moves();
-//		m_object->animated_mesh()->switch_root_movement(false);
-//		is_jumping = true;
-//		m_timer = 0.f;
-//	}
-//	float x_position = m_object->position().x;
-//	float z_position = m_object->position().z;
-//	float y_position = m_object->position().y;
-//
-//	x_position += glm::normalize(m_object->forward()).x * 1.5f * m_speed * (float)time_step;
-//	z_position += glm::normalize(m_object->forward()).z * 1.5f * m_speed * (float)time_step;
-//	if (m_timer > .8f)
-//	{
-//		y_position += .7f * m_speed * (float)time_step;
-//	}
-//	else
-//	{
-//		y_position = y_position - .9f * m_speed * (float)time_step;
-//		if (y_position < 0.5f) y_position = 0.5f;
-//	}
-//	m_object->set_position(glm::vec3(x_position, y_position, z_position));
-//	if (m_timer > 0.0f)
-//	{
-//		return;
-//	}
-//	m_timer = 1.6f;
-//}
-
 void player::jump(const engine::timestep& time_step)
 {
-	//if (m_timer > 0.0f && !is_jumping)
-	//{
+
 	if (!is_jumping)
 	{
-		const float force_watt = 1411.f;
-		float force = force_watt * 4;
+		clear_moves();
+		LOG_INFO("jump");
+		m_contact_time = 0.f;
+		//const float force_watt = 1411.f;
+		const float force_watt = 1011.f;
+		float force = force_watt;
 		float y_position = force * cos(engine::PI / 4);
-		float x_position = glm::normalize(m_object->forward()).x * force * cos(engine::PI / 4);
-		float z_position = glm::normalize(m_object->forward()).z * force * cos(engine::PI / 4);
+		float x_position = glm::normalize(m_object->forward()).x * (force / 3) * cos(engine::PI / 4);
+		float z_position = glm::normalize(m_object->forward()).z * (force / 3) * cos(engine::PI / 4);
 		glm::vec3 jump_force = glm::vec3(x_position, y_position, z_position);
 		m_instantaneous_acceleration = jump_force / m_object->mass();
-		m_timer = 1.f;
+		is_jumping = true;
+		m_timer = 10.f;
 	}
 
-	/*	if (is_running)	m_speed = 1.5f;
-		if (is_walking)	m_speed = 1.f;*/
-	//clear_moves();
 	m_object->animated_mesh()->switch_root_movement(false);
-	is_jumping = true;
-	//m_timer = 0.f;
-	//}
-
-	m_object->set_velocity(m_object->velocity() + (m_object->acceleration() + m_instantaneous_acceleration) * (float)time_step);
-	m_object->set_position(m_object->position() + m_object->velocity() * (float)time_step);
-
-	const float y_plane = 0.5f;
-	if (m_object->position().y < y_plane && m_object->velocity().y < 0 && m_timer > 0)
-	{
-
-		// Velocity of the ball is below a threshold.  Stop the ball. 
-		m_object->set_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
-		m_object->set_acceleration(glm::vec3(0.0f, 0.0f, 0.0f));
-		m_object->set_position(glm::vec3(m_object->position().x, y_plane, m_object->position().z));
-		//m_object->set_angular_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
-	}
-	m_timer = 3.f;
-	//if (m_timer > 0.0f)
-	//{
-	//	return;
-	//}
-	//m_timer = 1.6f;
 }
 
 void player::walk(const engine::timestep& time_step)
 {
-	m_speed = 1.0f;
-	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
-		(float)time_step);
+	m_speed = 40.3f;
+	m_object->set_velocity(glm::normalize(m_object->forward()) * m_speed * (float)time_step);
+	m_instantaneous_acceleration = glm::vec3(0.f);
+
 	if (m_timer > 0.0f && is_walking)
 	{
 		return;
@@ -210,11 +152,10 @@ void player::walk(const engine::timestep& time_step)
 
 void player::run(const engine::timestep& time_step)
 {
-	m_object->animated_mesh()->switch_root_movement(true);
-	m_speed = 3.0f;
-	m_object->set_velocity(14.f * glm::normalize(m_object->forward()));
-	m_object->set_position(m_object->position() += m_object->forward() * m_speed *
-		(float)time_step);
+	m_speed = 117.f;
+	m_object->set_velocity(glm::normalize(m_object->forward()) * m_speed * (float)time_step);
+	m_instantaneous_acceleration = glm::vec3(0.f);
+
 	if (m_timer > 0.0f && is_running)
 	{
 		return;
@@ -246,8 +187,8 @@ void player::punch(const engine::timestep& time_step)
 
 void player::clear_moves()
 {
+	m_object->set_velocity(glm::vec3(0.f, 0.f, 0.f));
 	m_is_punching = false;
-	is_stand_jumping = false;
 	is_running = false;
 	is_jumping = false;
 	is_walking = false;
