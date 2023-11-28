@@ -7,6 +7,7 @@
 
 player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0.f), x_angle_x_mouse(0.f),
 m_damage_timer(0.f),
+m_contact_time(0.f),
 m_coins(0),
 m_hearts(2)
 {}
@@ -17,6 +18,8 @@ void player::initialise(engine::ref<engine::game_object> object)
 	m_object = object;
 	m_object->set_forward(glm::vec3(0.f, 0.f, 1.f));
 	m_object->set_position(glm::vec3(0.f, 0.5, 10.f));
+	m_object->set_acceleration(glm::vec3(0.f, -9.8f, 0.f));
+	m_object->set_velocity(glm::vec3(0.f, 0.f, 0.f));
 	m_object->animated_mesh()->set_default_animation(4);
 }
 void player::on_update(const engine::timestep& time_step)
@@ -46,6 +49,11 @@ void player::on_update(const engine::timestep& time_step)
 	}
 	else if (engine::input::key_pressed(engine::key_codes::KEY_SPACE))
 		stand_jump(time_step);
+	if (glm::length(m_instantaneous_acceleration) > 0 && m_contact_time > 1.f) {
+		m_instantaneous_acceleration = glm::vec3(0.f);
+		m_contact_time = 0.f;
+	}
+	m_contact_time += time_step;
 
 	if (engine::input::mouse_button_pressed(0))
 	{
@@ -142,27 +150,47 @@ void player::stand_jump(const engine::timestep& time_step)
 
 void player::jump(const engine::timestep& time_step)
 {
-	if (m_timer > 0.0f && !is_jumping)
+	//if (m_timer > 0.0f && !is_jumping)
+	//{
+	if (!is_jumping)
 	{
-		if (is_running)	m_speed = 1.5f;
-		if (is_walking)	m_speed = 1.f;
-		clear_moves();
-		m_object->animated_mesh()->switch_root_movement(false);
-		is_jumping = true;
-		m_timer = 0.f;
+		const float force_watt = 1411.f;
+		float force = force_watt * 4;
+		float y_position = force * cos(engine::PI / 4);
+		float x_position = glm::normalize(m_object->forward()).x * force * cos(engine::PI / 4);
+		float z_position = glm::normalize(m_object->forward()).z * force * cos(engine::PI / 4);
+		glm::vec3 jump_force = glm::vec3(x_position, y_position, z_position);
+		m_instantaneous_acceleration = jump_force / m_object->mass();
+		m_timer = 1.f;
 	}
-	float x_position = m_object->position().x;
-	float z_position = m_object->position().z;
-	float y_position = m_object->position().y;
 
-	x_position += glm::normalize(m_object->forward()).x * 1.5f * m_speed * (float)time_step;
-	z_position += glm::normalize(m_object->forward()).z * 1.5f * m_speed * (float)time_step;
-	m_object->set_position(glm::vec3(x_position, y_position, z_position));
-	if (m_timer > 0.0f)
+	/*	if (is_running)	m_speed = 1.5f;
+		if (is_walking)	m_speed = 1.f;*/
+	//clear_moves();
+	m_object->animated_mesh()->switch_root_movement(false);
+	is_jumping = true;
+	//m_timer = 0.f;
+	//}
+
+	m_object->set_velocity(m_object->velocity() + (m_object->acceleration() + m_instantaneous_acceleration) * (float)time_step);
+	m_object->set_position(m_object->position() + m_object->velocity() * (float)time_step);
+
+	const float y_plane = 0.5f;
+	if (m_object->position().y < y_plane && m_object->velocity().y < 0 && m_timer > 0)
 	{
-		return;
+
+		// Velocity of the ball is below a threshold.  Stop the ball. 
+		m_object->set_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
+		m_object->set_acceleration(glm::vec3(0.0f, 0.0f, 0.0f));
+		m_object->set_position(glm::vec3(m_object->position().x, y_plane, m_object->position().z));
+		//m_object->set_angular_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
 	}
-	m_timer = 1.6f;
+	m_timer = 3.f;
+	//if (m_timer > 0.0f)
+	//{
+	//	return;
+	//}
+	//m_timer = 1.6f;
 }
 
 void player::walk(const engine::timestep& time_step)

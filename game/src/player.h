@@ -41,6 +41,9 @@ private:
 	double y_angle_y_mouse;
 	double x_angle_x_mouse;
 
+	glm::vec3 m_instantaneous_acceleration{ 0.f };
+	float m_contact_time;
+
 	// probably should use these variables to control the character
 	bool is_turned_back{ false }, is_jumping{ false }, m_is_punching{ false };
 	bool is_walking{ false }, is_running{ false }, is_stand_jumping{ false }, is_standing{ false };

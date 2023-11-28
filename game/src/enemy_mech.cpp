@@ -27,8 +27,6 @@ void enemy_mech::initialise(engine::ref<engine::game_object> object)
 	m_bomb = engine::game_object::create(model_props);
 	//m_object->set_acceleration(0.1f * glm::vec3(m_object->forward()));
 	//walk();
-	//run();
-
 
 }
 void enemy_mech::on_update(const engine::timestep& time_step)
