@@ -43,13 +43,11 @@ void player::on_update(const engine::timestep& time_step)
 	//LOG_INFO("{}", m_object->acceleration() + m_instantaneous_acceleration);
 	if (is_jumping)
 	{
-		LOG_INFO("jumping");
+		m_object->set_velocity(m_object->velocity() + glm::normalize(m_object->forward()) * m_speed / 20.f * (float)time_step);
 		m_object->set_position(glm::vec3(x_position, y_position, z_position) + m_object->velocity() * (float)time_step);
 	}
 	if (y_position < 0.5f && m_object->velocity().y < 0)
 	{
-		LOG_INFO("first");
-		m_object->set_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
 		//m_object->set_acceleration(glm::vec3(0.0f, -9.8f, 0.0f));
 		m_object->set_position(glm::vec3(m_object->position().x, 0.5f, m_object->position().z));
 		clear_moves();
