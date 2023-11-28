@@ -2,6 +2,7 @@
 #include <engine.h>
 #include <player.h>
 #include <enemy_skeleton.h>
+#include <enemy_mech.h>
 #include <game_intro.h>
 #include "pickup_coin.h"
 #include "pickup_heart.h"
@@ -33,6 +34,7 @@ public:
 private:
 	player m_player{};
 	enemy_skeleton m_enemy_skeleton{};
+	enemy_mech m_enemy_mech{};
 	pickup_speed m_pickup_speed_01{};
 	pickup_heart m_pickup_heart_01{};
 	pickup_heart m_pickup_heart_02{};
@@ -69,6 +71,7 @@ private:
 	engine::ref<engine::heightmap>		m_heightmap;
 	engine::ref<engine::game_object>	m_mannequin{};
 	engine::ref<engine::game_object>	m_skeleton{};
+	engine::ref<engine::game_object>	m_mech{};
 	engine::ref<engine::game_object>	m_lava{};
 
 	engine::ref<engine::material>		m_mannequin_material{};

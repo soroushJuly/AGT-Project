@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\decorations.h" />
+    <ClInclude Include="src\enemy_mech.h" />
     <ClInclude Include="src\enemy_skeleton.h" />
     <ClInclude Include="src\FX\billboard.h" />
     <ClInclude Include="src\FX\cross_fade.h" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\decorations.cpp" />
+    <ClCompile Include="src\enemy_mech.cpp" />
     <ClCompile Include="src\enemy_skeleton.cpp" />
     <ClCompile Include="src\example_layer.cpp" />
     <ClCompile Include="src\FX\billboard.cpp" />

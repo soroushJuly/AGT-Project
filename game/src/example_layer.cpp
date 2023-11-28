@@ -55,8 +55,8 @@ example_layer::example_layer()
 		glm::ortho(0.f, (float)engine::application::window().width(), 0.f,
 			(float)engine::application::window().height()));
 
-	m_mannequin_material = engine::material::create(1.0f, glm::vec3(0.5f, 0.5f, 0.5f),
-		glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f);
+	m_mannequin_material = engine::material::create(.8f, glm::vec3(0.1f, 0.9f, 0.9f),
+		glm::vec3(0.1f, 0.9f, 0.9f), glm::vec3(0.1f, 0.9f, 0.9f), 1.0f);
 
 	m_cross_fade = cross_fade::create("assets/textures/red.bmp", 2.0f, 1.6f, 0.9f);
 	m_billboard = billboard::create("assets/textures/hit.png", 4, 4, 16);
@@ -126,9 +126,36 @@ example_layer::example_layer()
 		skeleton_props.bounding_shape.y * skeleton_props.scale.x,
 		skeleton_props.bounding_shape.z * skeleton_props.scale.x,
 		skeleton_props.position);
-	//m_skeleton->set_textures(tex_vec);
 
 	m_enemy_skeleton.initialise(m_skeleton);
+
+
+	engine::ref<engine::skinned_mesh> m_enemy_mesh_01 = engine::skinned_mesh::create("assets/models/animated/mech.fbx");
+	m_enemy_mesh_01->switch_root_movement(false);
+	m_enemy_mesh_01->switch_animation(13);
+
+	engine::game_object_properties mech_props;
+	std::vector<engine::ref<engine::texture_2d>> tex_vec_1;
+	mech_props.animated_mesh = m_enemy_mesh_01;
+	engine::ref<engine::texture_2d> mech_texture =
+		engine::texture_2d::create("assets/textures/PolyAdventureTexture_01.png", true);
+	//mech_props.textures = { mech_texture };
+	mech_props.type = 0;
+	mech_props.position = glm::vec3(0.f,0.5f,1.f);
+	mech_props.mass = 27.2f;
+	mech_props.velocity = glm::vec3(0.f);
+	//mech_props.velocity = glm::vec3(10.f);
+	mech_props.scale = glm::vec3(.4f);
+	mech_props.bounding_shape = glm::vec3(m_enemy_mesh->size().x * mannequin_props.scale.x / 2.f,
+		m_enemy_mesh->size().y / mannequin_props.scale.x * 2.f, m_enemy_mesh->size().x / 2.f);
+	m_mech = engine::game_object::create(mech_props);
+
+	/*m_mech_box.set_box(skeleton_props.bounding_shape.x* skeleton_props.scale.x,
+		skeleton_props.bounding_shape.y* skeleton_props.scale.x,
+		skeleton_props.bounding_shape.z* skeleton_props.scale.x,
+		skeleton_props.position);*/
+
+	m_enemy_mech.initialise(m_mech);
 
 
 	// initiate spike
@@ -221,6 +248,8 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_pickup_coin_06.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 
+	m_enemy_mech.on_update(time_step);
+
 	m_cross_fade->on_update(time_step);
 	m_billboard->on_update(time_step);
 
@@ -256,6 +285,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	hud.on_update(time_step, m_player.hearts());
 	m_skeleton->animated_mesh()->on_update(time_step);
+	
 
 	m_audio_manager->update_with_camera(m_3d_camera);
 }
@@ -284,6 +314,8 @@ void example_layer::on_render()
 	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_02.on_render(2.5f, 1.f, 1.f, mesh_shader);
 
+	engine::renderer::submit(mesh_shader, m_mech);
+
 
 
 	// Position the skybox centred on the player and render it
@@ -297,6 +329,7 @@ void example_layer::on_render()
 
 	engine::renderer::submit(mesh_shader, m_terrain);
 	engine::renderer::submit(mesh_shader, m_terrain_2);
+
 
 	engine::renderer::submit(mesh_shader, m_lava);
 	// Render Objects in the scene
@@ -334,6 +367,7 @@ void example_layer::on_render()
 	//engine::renderer::submit(mesh_shader, object_transform, m_skeleton);
 
 	engine::renderer::submit(mesh_shader, object_transform, m_enemy_skeleton.object());
+	m_enemy_mech.on_render(mesh_shader);
 
 	m_ring.on_render(mesh_shader);
 
@@ -380,6 +414,10 @@ void example_layer::on_event(engine::event& event)
 		if (e.key_code() == engine::key_codes::KEY_2)
 		{
 			m_enemy_skeleton.take_damage();
+		}
+		if (e.key_code() == engine::key_codes::KEY_3)
+		{
+			m_enemy_mech.shoot_bomb();
 		}
 	}
 }

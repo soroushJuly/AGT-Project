@@ -37,6 +37,7 @@
     </ClCompile>
     <ClCompile Include="src\hud.cpp" />
     <ClCompile Include="src\enemy_skeleton.cpp" />
+    <ClCompile Include="src\enemy_mech.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -74,6 +75,7 @@
     </ClInclude>
     <ClInclude Include="src\hud.h" />
     <ClInclude Include="src\enemy_skeleton.h" />
+    <ClInclude Include="src\enemy_mech.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pickupables">
