@@ -1,7 +1,7 @@
 #pragma once
 #include "engine.h"
 
-class enemy_skeleton
+class enemy_basic
 {
 
 	enum states
@@ -14,8 +14,8 @@ class enemy_skeleton
 
 	int m_state = WANDER;
 public:
-	enemy_skeleton();
-	~enemy_skeleton();
+	enemy_basic();
+	~enemy_basic();
 
 	void initialise(engine::ref<engine::game_object> object);
 	void on_update(const engine::timestep& time_step, const glm::vec3& target_position);

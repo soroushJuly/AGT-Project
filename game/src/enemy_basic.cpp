@@ -1,14 +1,14 @@
-#include "enemy_skeleton.h"
+#include "enemy_basic.h"
 
-enemy_skeleton::enemy_skeleton() : m_instantaneous_acceleration(0.f), m_contact_time(0.f), m_attack_timer(0.f)
+enemy_basic::enemy_basic() : m_instantaneous_acceleration(0.f), m_contact_time(0.f), m_attack_timer(0.f)
 {
 }
 
-enemy_skeleton::~enemy_skeleton()
+enemy_basic::~enemy_basic()
 {
 }
 
-void enemy_skeleton::initialise(engine::ref<engine::game_object> object)
+void enemy_basic::initialise(engine::ref<engine::game_object> object)
 {
 	m_object = object;
 	//m_object->set_acceleration(0.1f * glm::vec3(m_object->forward()));
@@ -17,7 +17,7 @@ void enemy_skeleton::initialise(engine::ref<engine::game_object> object)
 
 
 }
-void enemy_skeleton::on_update(const engine::timestep& time_step, const glm::vec3& target_position)
+void enemy_basic::on_update(const engine::timestep& time_step, const glm::vec3& target_position)
 {
 	//m_object->set_velocity(m_object->velocity() + (m_object->acceleration()
 	//	+ m_instantaneous_acceleration) * (float)time_step);
@@ -41,42 +41,42 @@ void enemy_skeleton::on_update(const engine::timestep& time_step, const glm::vec
 
 	switch (m_state)
 	{
-	case enemy_skeleton::WANDER:
+	case enemy_basic::WANDER:
 		wander(time_step);
 		if (distance < RUN_BOUND)
-			m_state = enemy_skeleton::CHASE_RUN;
+			m_state = enemy_basic::CHASE_RUN;
 		if (distance < WALK_BOUND)
-			m_state = enemy_skeleton::CHASE_WALK;
+			m_state = enemy_basic::CHASE_WALK;
 		break;
-	case enemy_skeleton::CHASE_RUN:
+	case enemy_basic::CHASE_RUN:
 		chase_enemy_run(time_step, target_position);
 		if (distance < WALK_BOUND)
-			m_state = enemy_skeleton::CHASE_WALK;
+			m_state = enemy_basic::CHASE_WALK;
 		if (distance > RUN_BOUND)
-			m_state = enemy_skeleton::WANDER;
+			m_state = enemy_basic::WANDER;
 		break;
-	case enemy_skeleton::CHASE_WALK:
+	case enemy_basic::CHASE_WALK:
 		chase_enemy_walk(time_step, target_position);
 		if (distance > WALK_BOUND)
-			m_state = enemy_skeleton::CHASE_RUN;
+			m_state = enemy_basic::CHASE_RUN;
 		if (distance < .5f)
-			m_state = enemy_skeleton::ATTACK;
+			m_state = enemy_basic::ATTACK;
 		break;
-	case enemy_skeleton::ATTACK:
+	case enemy_basic::ATTACK:
 		if (m_attack_timer > 1.f)
 		{
 			attack();
 			m_attack_timer = 0.f;
 		}
 		if (distance > 0.5f)
-			m_state = enemy_skeleton::CHASE_WALK;
+			m_state = enemy_basic::CHASE_WALK;
 		break;
 	default:
 		break;
 	}
 }
 
-void enemy_skeleton::take_damage()
+void enemy_basic::take_damage()
 {
 
 	m_instantaneous_acceleration = -(glm::normalize(glm::vec3(m_object->forward())) * 823.f) / m_object->mass();
@@ -84,7 +84,7 @@ void enemy_skeleton::take_damage()
 	--m_health;
 }
 
-void enemy_skeleton::run()
+void enemy_basic::run()
 {
 	m_run_animation = 3;
 	m_object->animated_mesh()->switch_root_movement(true);
@@ -92,14 +92,14 @@ void enemy_skeleton::run()
 	//m_object->set_acceleration(0.5f * glm::vec3(m_object->forward()));
 }
 
-void enemy_skeleton::walk()
+void enemy_basic::walk()
 {
 	m_walk_animation = 3;
 	m_object->animated_mesh()->switch_animation(m_walk_animation);
 	//m_object->set_acceleration(0.1f * glm::normalize(glm::vec3(m_object->forward())));
 }
 
-void enemy_skeleton::wander(const engine::timestep& time_step)
+void enemy_basic::wander(const engine::timestep& time_step)
 {
 	walk();
 	//m_object->set_position(m_object->position() + m_object->forward() * m_object->velocity() *
@@ -107,7 +107,7 @@ void enemy_skeleton::wander(const engine::timestep& time_step)
 	//m_object->set_forward(target_position - m_object->position());
 }
 
-void enemy_skeleton::chase_enemy_run(const engine::timestep& time_step, const glm::vec3& target_position)
+void enemy_basic::chase_enemy_run(const engine::timestep& time_step, const glm::vec3& target_position)
 {
 	//run();
 	//max_velocity = 2.7f;
@@ -116,21 +116,21 @@ void enemy_skeleton::chase_enemy_run(const engine::timestep& time_step, const gl
 	chase_target(time_step, target_position);
 }
 
-void enemy_skeleton::chase_enemy_walk(const engine::timestep& time_step, const glm::vec3& target_position)
+void enemy_basic::chase_enemy_walk(const engine::timestep& time_step, const glm::vec3& target_position)
 {
 	m_speed = 0.5f;
 	chase_target(time_step, target_position);
 	//walk();
 }
 
-void enemy_skeleton::attack()
+void enemy_basic::attack()
 {
 	m_attack_animation = 0;
 	m_object->animated_mesh()->switch_root_movement(true);
 	m_object->animated_mesh()->switch_animation(m_attack_animation);
 }
 
-void enemy_skeleton::chase_target(const engine::timestep& time_step, const glm::vec3& target_position)
+void enemy_basic::chase_target(const engine::timestep& time_step, const glm::vec3& target_position)
 {
 	m_object->set_forward(target_position - m_object->position());
 	m_object->set_velocity(glm::normalize(m_object->forward()) * m_speed + m_instantaneous_acceleration * (float)time_step);

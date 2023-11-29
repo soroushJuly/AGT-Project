@@ -1,7 +1,7 @@
 #pragma once
 #include <engine.h>
 #include <player.h>
-#include <enemy_skeleton.h>
+#include <enemy_basic.h>
 #include <enemy_mech.h>
 #include <game_intro.h>
 #include "pickup_coin.h"
@@ -33,7 +33,7 @@ public:
 
 private:
 	player m_player{};
-	enemy_skeleton m_enemy_skeleton{};
+	enemy_basic m_enemy_skeleton{};
 	enemy_mech m_enemy_mech{};
 	pickup_speed m_pickup_speed_01{};
 	pickup_heart m_pickup_heart_01{};
