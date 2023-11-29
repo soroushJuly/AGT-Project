@@ -7,7 +7,7 @@ public:
 	enemy_mech();
 	~enemy_mech();
 	void initialise(engine::ref<engine::game_object> object);
-	void on_update(const engine::timestep& time_step);
+	void on_update(const engine::timestep& time_step, glm::vec3 target_position);
 	void on_render(engine::ref<engine::shader> mesh_shader);
 	void take_damage();
 
@@ -38,6 +38,12 @@ private:
 	float m_bomb_timer{ 3.f };
 	glm::vec3 m_bomb_instantaneous_acceleration{ 0.f };
 	void update_bomb(const engine::timestep& time_step);
+
+	engine::ref<engine::game_object> m_rocket;
+	bool is_rocket{ false };
+	float m_rocket_max_velocity;
+	float m_rocket_timer{ 3.f };
+	void update_rocket(const engine::timestep& time_step, glm::vec3 target_position);
 
 
 	//void start_damage_timer(const engine::timestep& time_step);

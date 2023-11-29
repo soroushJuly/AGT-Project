@@ -134,17 +134,17 @@ example_layer::example_layer()
 	m_enemy_mesh_01->switch_root_movement(false);
 	m_enemy_mesh_01->switch_animation(13);
 
+	//engine::ref <engine::model> dd_model = engine::model::create("assets/models/animated/mech.fbx");
 	engine::game_object_properties mech_props;
-	std::vector<engine::ref<engine::texture_2d>> tex_vec_1;
 	mech_props.animated_mesh = m_enemy_mesh_01;
 	engine::ref<engine::texture_2d> mech_texture =
 		engine::texture_2d::create("assets/textures/PolyAdventureTexture_01.png", true);
-	//mech_props.textures = { mech_texture };
+	mech_props.textures = { mech_texture };
+	//mech_props.textures = { dd_model->textures() };
 	mech_props.type = 0;
-	mech_props.position = glm::vec3(0.f,0.5f,1.f);
+	mech_props.position = glm::vec3(0.f,0.5f,5.f);
 	mech_props.mass = 27.2f;
 	mech_props.velocity = glm::vec3(0.f);
-	//mech_props.velocity = glm::vec3(10.f);
 	mech_props.scale = glm::vec3(.4f);
 	mech_props.bounding_shape = glm::vec3(m_enemy_mesh->size().x * mannequin_props.scale.x / 2.f,
 		m_enemy_mesh->size().y / mannequin_props.scale.x * 2.f, m_enemy_mesh->size().x / 2.f);
@@ -248,7 +248,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_pickup_coin_06.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 
-	m_enemy_mech.on_update(time_step);
+	m_enemy_mech.on_update(time_step, m_player.position());
 
 	m_cross_fade->on_update(time_step);
 	m_billboard->on_update(time_step);
@@ -418,6 +418,10 @@ void example_layer::on_event(engine::event& event)
 		if (e.key_code() == engine::key_codes::KEY_3)
 		{
 			m_enemy_mech.shoot_bomb();
+		}
+		if (e.key_code() == engine::key_codes::KEY_4)
+		{
+			m_enemy_mech.shoot_rocket();
 		}
 	}
 }
