@@ -3,14 +3,33 @@
 
 class enemy_skeleton
 {
+
+	enum states
+	{
+		WANDER,
+		CHASE_RUN,
+		CHASE_WALK,
+		ATTACK
+	};
+
+	int m_state = WANDER;
 public:
 	enemy_skeleton();
 	~enemy_skeleton();
+
 	void initialise(engine::ref<engine::game_object> object);
-	void on_update(const engine::timestep& time_step);
+	void on_update(const engine::timestep& time_step, const glm::vec3& target_position);
 	void take_damage();
 	void run();
 	void walk();
+
+
+	// states related methods
+	void wander(const engine::timestep& time_step);
+	void chase_enemy_run(const engine::timestep& time_step, const glm::vec3& target_position);
+	void chase_enemy_walk(const engine::timestep& time_step, const glm::vec3& target_position);
+	void attack();
+	void chase_target(const engine::timestep& time_step, const glm::vec3& target_position);
 
 
 	engine::ref<engine::game_object> object() const { return m_object; }
@@ -19,6 +38,12 @@ private:
 	float m_damage_timer;
 	float m_speed;
 	float m_timer;
+
+	float m_attack_timer;
+
+	int m_run_animation;
+	int m_walk_animation;
+	int m_attack_animation;
 
 	float max_velocity;
 

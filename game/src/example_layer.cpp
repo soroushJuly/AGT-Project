@@ -262,7 +262,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
 
-	m_enemy_skeleton.on_update(time_step);
+	m_enemy_skeleton.on_update(time_step, m_player.object()->position());
 	m_skeleton_box.on_update(m_skeleton->position());
 
 	if (m_player.is_punching())
