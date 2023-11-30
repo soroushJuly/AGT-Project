@@ -137,17 +137,17 @@ example_layer::example_layer()
 	//engine::ref <engine::model> dd_model = engine::model::create("assets/models/animated/mech.fbx");
 	engine::game_object_properties mech_props;
 	mech_props.animated_mesh = m_enemy_mesh_01;
-	engine::ref<engine::texture_2d> mech_texture =
-		engine::texture_2d::create("assets/textures/PolyAdventureTexture_01.png", true);
-	mech_props.textures = { mech_texture };
+	//engine::ref<engine::texture_2d> mech_texture =
+	//	engine::texture_2d::create("assets/textures/Atlas.png", false);
+	//mech_props.textures = { mech_texture };
 	//mech_props.textures = { dd_model->textures() };
 	mech_props.type = 0;
-	mech_props.position = glm::vec3(0.f,0.5f,5.f);
+	mech_props.position = glm::vec3(0.f,0.5f,15.f);
 	mech_props.mass = 27.2f;
 	mech_props.velocity = glm::vec3(0.f);
-	mech_props.scale = glm::vec3(.4f);
+	mech_props.scale = glm::vec3(.6f);
 	mech_props.bounding_shape = glm::vec3(m_enemy_mesh->size().x * mannequin_props.scale.x / 2.f,
-		m_enemy_mesh->size().y / mannequin_props.scale.x * 2.f, m_enemy_mesh->size().x / 2.f);
+		m_enemy_mesh->size().y * mannequin_props.scale.x / 1.1f, m_enemy_mesh->size().x / 2.f);
 	m_mech = engine::game_object::create(mech_props);
 
 	/*m_mech_box.set_box(skeleton_props.bounding_shape.x* skeleton_props.scale.x,
@@ -418,7 +418,7 @@ void example_layer::on_event(engine::event& event)
 		}
 		if (e.key_code() == engine::key_codes::KEY_3)
 		{
-			m_enemy_mech.shoot_bomb();
+			m_enemy_mech.shoot_bomb(m_player.position());
 		}
 		if (e.key_code() == engine::key_codes::KEY_4)
 		{

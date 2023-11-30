@@ -13,6 +13,7 @@ void enemy_mech::initialise(engine::ref<engine::game_object> object)
 	m_object = object;
 	m_object->set_forward(glm::vec3(0.f, 0.f, 1.f));
 
+	// Bomb
 	engine::ref <engine::model> model = engine::model::create("assets/models/static/Bomb.obj");
 	std::vector<engine::ref<engine::texture_2d>> model_texture = { engine::texture_2d::create("assets/textures/bomb.png", false) };
 	engine::game_object_properties model_props;
@@ -21,7 +22,7 @@ void enemy_mech::initialise(engine::ref<engine::game_object> object)
 	model_props.restitution = 0.9f;
 	model_props.mass = 10.9f;
 	model_props.textures = model_texture;
-	model_props.bounding_shape = glm::vec3(.2f);
+	model_props.bounding_shape = glm::vec3(.3f);
 	model_props.position = m_object->position() + glm::vec3(0.f, m_object->animated_mesh()->size().y / 2, 0.f);
 	model_props.scale = glm::vec3(.2f);
 	m_bomb = engine::game_object::create(model_props);
@@ -38,24 +39,13 @@ void enemy_mech::initialise(engine::ref<engine::game_object> object)
 	rocket_model_props.scale = glm::vec3(.005f);
 	m_rocket = engine::game_object::create(rocket_model_props);
 	m_rocket->set_forward(m_object->forward());
-	//m_object->set_acceleration(0.1f * glm::vec3(m_object->forward()));
-	//walk();
-
 }
 void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_position)
 {
 	m_object->animated_mesh()->on_update(time_step);
 	update_bomb(time_step);
 	update_rocket(time_step, target_position);
-	float theta = acos(glm::dot(glm::normalize(m_object->forward()), glm::normalize(glm::vec3(target_position - m_object->position()))));
-	if (glm::vec3(target_position - m_object->position()).x < 0)
-	{
-		m_object->set_rotation_amount(-theta);
-	}
-	else
-	{
-		m_object->set_rotation_amount(theta);
-	}
+
 
 	// Turn off instantaneous forces if contact time is surpassed
 	if (glm::length(m_bomb_instantaneous_acceleration) > 0 && m_bomb_contact_time > 0.3f) {
@@ -63,6 +53,20 @@ void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_p
 		m_bomb_contact_time = 0.f;
 	}
 	m_bomb_contact_time += time_step;
+	m_bomb_timer += time_step;
+	m_rocket_timer += time_step;
+	m_timer -= time_step;
+
+	if (m_timer > 0.0f)
+	{
+		m_timer -= (float)time_step;
+		if (m_timer < 0.0f)
+		{
+			m_object->animated_mesh()->switch_root_movement(false);
+			m_object->animated_mesh()->switch_animation(2);
+			m_timer = 0.0f;
+		}
+	}
 
 	const float y_plane = 0.5f;
 	if (m_bomb->position().y - m_bomb->bounding_shape().y < y_plane && m_bomb->velocity().y < 0)
@@ -70,14 +74,14 @@ void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_p
 
 		float convergenceThreshold = 0.5f;
 		if (glm::length(m_bomb->velocity()) > convergenceThreshold) {
-			// The ball has bounced!  Implement a bounce by flipping the y velocity
+			// The bomb has bounced!
 			m_bomb->restitution();
 			m_bomb->set_velocity(m_bomb->restitution() * glm::vec3(m_bomb->velocity()));
 			//m_object->set_angular_velocity(m_object->restitution() * glm::vec3(m_object->angular_velocity()));
 			m_bomb->set_velocity(glm::vec3(m_bomb->velocity().x, -m_bomb->velocity().y, m_bomb->velocity().z));
 		}
 		else {
-			// Velocity of the ball is below a threshold.  Stop the ball. 
+			// Velocity of the bomb is below a threshold. 
 			m_bomb->set_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
 			m_bomb->set_acceleration(glm::vec3(0.0f, 0.0f, 0.0f));
 			m_bomb->set_position(glm::vec3(m_bomb->position().x, m_bomb->bounding_shape().y + y_plane, m_bomb->position().z));
@@ -86,9 +90,9 @@ void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_p
 	}
 
 	const float distance = glm::length(target_position - m_object->position());
-	const float FACE_BOUND = 5.f;
-	const float BOMB_BOUND = 2.f;
-	const float ROCKET_BOUND = .7f;
+	const float FACE_BOUND = 10.f;
+	const float BOMB_BOUND = 6.f;
+	const float ROCKET_BOUND = 3.f;
 
 	// TODO: shockwave attack to send the target(enemy) backwards
 	switch (m_state)
@@ -99,21 +103,31 @@ void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_p
 			m_state = enemy_mech::FACE_TARGET;
 		break;
 	case enemy_mech::FACE_TARGET:
-		//face_target();
+		face_target(target_position);
 		if (distance < BOMB_BOUND)
 			m_state = enemy_mech::ATTACK_BOMB;
 		if (distance > FACE_BOUND)
 			m_state = enemy_mech::IDLE;
 		break;
 	case enemy_mech::ATTACK_BOMB:
-		shoot_bomb();
-		if (distance > ROCKET_BOUND)
+		face_target(target_position);
+		if (m_bomb_timer > 3.f)
+		{
+			shoot_bomb(target_position);
+			m_bomb_timer = 0.f;
+		}
+		if (distance < ROCKET_BOUND)
 			m_state = enemy_mech::ATTACK_ROCKET;
-		if (distance < .5f)
+		if (distance > BOMB_BOUND)
 			m_state = enemy_mech::FACE_TARGET;
 		break;
 	case enemy_mech::ATTACK_ROCKET:
-		shoot_rocket();
+		face_target(target_position);
+		if (m_rocket_timer > 2.f)
+		{
+			shoot_rocket();
+			m_rocket_timer = 0.f;
+		}
 		if (distance > ROCKET_BOUND)
 		{
 			m_state = enemy_mech::ATTACK_BOMB;
@@ -147,8 +161,6 @@ void enemy_mech::on_render(engine::ref<engine::shader> mesh_shader)
 		transform_01 = glm::translate(transform_01, m_rocket->position());
 		transform_01 = glm::scale(transform_01, m_rocket->scale());
 		transform_01 = glm::rotate(transform_01, m_rocket->rotation_amount(), glm::vec3(0.f, 1.f, 0.f));
-		//transform = glm::rotate(transform, m_phi, glm::vec3(0.f, 1.f, 0.f));
-		//transform = glm::rotate(transform, m_bomb->rotation_amount(), m_bomb->rotation_axis());
 		engine::renderer::submit(mesh_shader, transform_01, m_rocket);
 	}
 }
@@ -158,22 +170,18 @@ void enemy_mech::take_damage()
 	--m_health;
 }
 
-void enemy_mech::run()
-{
-	m_object->set_acceleration(0.5f * glm::vec3(m_object->forward()));
-	max_velocity = 2.7;
-}
-
-void enemy_mech::shoot_bomb()
+void enemy_mech::shoot_bomb(glm::vec3 target_position)
 {
 	is_bomb = true;
+	shoot();
 
 	// TODO: add rotational movement to the bomb
 	m_bomb->set_position(m_object->position() + glm::vec3(0.f, m_object->animated_mesh()->size().y / 2, 0.f));
 
 	m_bomb->set_acceleration(glm::vec3(0.f, -9.8f, 0.f));
 	m_bomb_contact_time = 0.f;
-	m_bomb_instantaneous_acceleration = glm::vec3(20.f * m_object->forward());
+
+	m_bomb_instantaneous_acceleration = glm::vec3(20.f * glm::normalize(glm::vec3(target_position - m_object->position())));
 }
 
 void enemy_mech::update_bomb(const engine::timestep& time_step)
@@ -218,7 +226,7 @@ void enemy_mech::update_rocket(const engine::timestep& time_step, glm::vec3 targ
 // move forwards until the timer runs out, then switch direction to move the other way
 void enemy_mech::patrol(const engine::timestep& time_step)
 {
-	LOG_INFO("patrol");
+	walk();
 	m_switch_direction_timer -= (float)time_step;
 	if (m_switch_direction_timer < 0.f)
 	{
@@ -226,6 +234,46 @@ void enemy_mech::patrol(const engine::timestep& time_step)
 		m_switch_direction_timer = m_default_time;
 	}
 
-	m_object->set_position(m_object->position() + m_object->forward() * 1.f * (float)time_step);
-	//m_object->set_rotation_amount(atan2(m_object->forward().x, m_object->forward().z));
+	m_object->set_position(m_object->position() + glm::normalize(m_object->forward()) * 1.f * (float)time_step);
+	m_object->set_rotation_amount(atan2(m_object->forward().x, m_object->forward().z));
+}
+
+void enemy_mech::face_target(glm::vec3 target_position)
+{
+	idle();
+	m_object->set_forward(target_position - m_object->position());
+	m_object->set_rotation_amount(atan2(m_object->forward().x, m_object->forward().z));
+}
+
+void enemy_mech::idle()
+{
+	if (m_timer > 0.f)
+	{
+		return;
+	}
+	m_object->animated_mesh()->switch_root_movement(true);
+	m_object->animated_mesh()->switch_animation(5);
+	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(5)->mDuration, 0.f, 1.65f);
+}
+
+void enemy_mech::walk()
+{
+	if (m_timer > 0.f)
+	{
+		return;
+	}
+	m_object->animated_mesh()->switch_root_movement(true);
+	m_object->animated_mesh()->switch_animation(15);
+	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(15)->mDuration, 0.f, 1.65f);
+}
+
+void enemy_mech::shoot()
+{
+	if (m_timer > 0.f)
+	{
+		return;
+	}
+	m_object->animated_mesh()->switch_root_movement(true);
+	m_object->animated_mesh()->switch_animation(13);
+	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(13)->mDuration, 0.f, 1.f);
 }

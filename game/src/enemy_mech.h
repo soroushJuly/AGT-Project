@@ -21,12 +21,15 @@ public:
 	void on_render(engine::ref<engine::shader> mesh_shader);
 	void take_damage();
 
-	void run();
+	// motions
+	void idle();
 	void walk();
+	void shoot();
 
+	// state specific methods
 	void patrol(const engine::timestep& time_step);
-	void face_target();
-	void shoot_bomb();
+	void face_target(glm::vec3 target_position);
+	void shoot_bomb(glm::vec3 target_position);
 	void shoot_rocket();
 
 
@@ -39,7 +42,7 @@ private:
 	float m_timer;
 
 	// control the patrol
-	float m_default_time{ 4.f };
+	float m_default_time{ 5.f };
 	float m_switch_direction_timer = m_default_time;
 
 	float max_velocity;
