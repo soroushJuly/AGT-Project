@@ -29,6 +29,7 @@ public:
 	glm::vec3 position() { return m_object->position(); };
 	int& coins() { return m_coins; }
 	int& hearts() { return m_hearts; }
+	bool is_dead() { return m_is_dead; }
 	float& speed() { return m_speed; }
 	bool is_punching() { return m_is_punching; }
 private:
@@ -45,6 +46,7 @@ private:
 	float m_contact_time;
 
 	// probably should use these variables to control the character
+	bool m_is_dead{ false };
 	bool is_turned_back{ false }, is_jumping{ false }, m_is_punching{ false };
 	bool is_walking{ false }, is_running{ false }, is_stand_jumping{ false }, is_standing{ false };
 	engine::ref< engine::game_object> m_object;

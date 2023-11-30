@@ -20,11 +20,13 @@ public:
 	void on_update(const engine::timestep& time_step, glm::vec3 target_position);
 	void on_render(engine::ref<engine::shader> mesh_shader);
 	void take_damage();
+	bool is_dead() { return m_is_dead; };
 
 	// motions
 	void idle();
 	void walk();
 	void shoot();
+	void die();
 
 	// state specific methods
 	void patrol(const engine::timestep& time_step);
@@ -36,10 +38,11 @@ public:
 	engine::ref<engine::game_object> object() const { return m_object; }
 private:
 	engine::ref< engine::game_object> m_object;
-	int m_health;
+	int m_health{ 5 };
 	float m_damage_timer;
 	float m_speed;
 	float m_timer;
+	bool m_is_dead{ false };
 
 	// control the patrol
 	float m_default_time{ 5.f };

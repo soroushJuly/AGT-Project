@@ -10,8 +10,7 @@
 
 example_layer::example_layer()
 	:m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f),
-	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height()),
-	is_intro_active(false)
+	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height())
 {
 	// Hide the mouse and lock it inside the window
 	//engine::input::anchor_mouse(true);
@@ -186,6 +185,8 @@ example_layer::example_layer()
 	m_decorations.on_initialise();
 
 	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
+	m_game_won = game_intro::create("assets/textures/game_won.png", 1.6f, 0.9f);
+	m_game_lost = game_intro::create("assets/textures/game_lost.png", 1.6f, 0.9f);
 	hud.on_initialize();
 
 	// Load the terrain texture and create a terrain mesh. Create a terrain object. Set its properties
@@ -230,12 +231,15 @@ example_layer::~example_layer() {}
 
 void example_layer::on_update(const engine::timestep& time_step)
 {
-	if (is_intro_active)
-	{
+	if (m_state == example_layer::MENU)
 		return;
-	}
+	if (m_player.is_dead())
+		m_state = example_layer::GAME_LOST;
+	if (m_enemy_mech.is_dead())
+		m_state = example_layer::GAME_WON;
+
 	// Uncomment to roam around the map
-	m_3d_camera.on_update(time_step);
+	//m_3d_camera.on_update(time_step);
 
 	m_pickup_heart_01.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
 	m_pickup_speed_01.on_update(m_player.position(), m_player.speed(), time_step, m_audio_manager);
@@ -285,7 +289,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	}
 	if (m_lava_01.collision(m_player_box)
 		|| m_lava_02.collision(m_player_box)
-		|| m_lava_03.collision(m_player_box) 
+		|| m_lava_03.collision(m_player_box)
 		|| m_lava_04.collision(m_player_box)
 		|| m_lava_05.collision(m_player_box)
 		|| m_lava_06.collision(m_player_box)
@@ -310,10 +314,15 @@ void example_layer::on_render()
 	// Set up  shader. (renders textures and materials)
 	const auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 
-	//render 2D Camera
-	//engine::renderer::begin_scene(m_2d_camera, mesh_shader);
-	//m_game_intro->on_render(mesh_shader);
-	//engine::renderer::end_scene();
+	// Render 2D Camera
+	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
+	if (m_state == example_layer::MENU)
+		m_game_intro->on_render(mesh_shader);
+	else if (m_state == example_layer::GAME_WON)
+		m_game_won->on_render(mesh_shader);
+	else if (m_state == example_layer::GAME_LOST)
+		m_game_lost->on_render(mesh_shader);
+	engine::renderer::end_scene();
 
 	engine::renderer::begin_scene(m_3d_camera, mesh_shader);
 
@@ -405,13 +414,16 @@ void example_layer::on_event(engine::event& event)
 	if (event.event_type() == engine::event_type_e::key_pressed)
 	{
 		auto& e = dynamic_cast<engine::key_pressed_event&>(event);
-		if (is_intro_active && e.key_code() == engine::key_codes::KEY_ENTER)
+		if (m_state == example_layer::MENU && e.key_code() == engine::key_codes::KEY_ENTER)
 		{
-			is_intro_active = false;
-			m_game_intro->deactivate();
-			/*		m_audio_manager->pause("menu");
-					m_audio_manager->play("music");*/
+			m_state = example_layer::IN_GAME;
+			m_audio_manager->stop("menu");
+			m_audio_manager->play("music");
 			m_play_time.start();
+		}
+		if ((m_state == example_layer::GAME_LOST || m_state == example_layer::GAME_WON) && e.key_code() == engine::key_codes::KEY_ESCAPE)
+		{
+			engine::application::exit();
 		}
 
 		if (e.key_code() == engine::key_codes::KEY_TAB)

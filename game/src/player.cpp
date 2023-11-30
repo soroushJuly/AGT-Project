@@ -91,6 +91,11 @@ void player::on_update(const engine::timestep& time_step)
 		m_timer -= (float)time_step;
 		if (m_timer < 0.0f)
 		{
+			if (m_hearts < 1)
+			{
+				m_is_dead = true;
+				return;
+			}
 			clear_moves();
 			m_object->animated_mesh()->switch_root_movement(false);
 			m_object->animated_mesh()->switch_animation(m_object->animated_mesh()->default_animation());
@@ -115,7 +120,6 @@ void player::jump(const engine::timestep& time_step)
 	if (!is_jumping)
 	{
 		clear_moves();
-		LOG_INFO("jump");
 		m_contact_time = 0.f;
 		//const float force_watt = 1411.f;
 		const float force_watt = 1011.f;
@@ -126,7 +130,7 @@ void player::jump(const engine::timestep& time_step)
 		glm::vec3 jump_force = glm::vec3(x_position, y_position, z_position);
 		m_instantaneous_acceleration = jump_force / m_object->mass();
 		is_jumping = true;
-		m_timer = 10.f;
+		m_timer = 3.f;
 	}
 
 	m_object->animated_mesh()->switch_root_movement(false);
@@ -249,6 +253,13 @@ void player::take_damage(engine::ref<engine::audio_manager> audio_manager, engin
 
 void player::die()
 {
-	LOG_INFO("game_over");
-	engine::application::exit();
+	m_object->animated_mesh()->switch_root_movement(true);
+	if (m_timer > 0.0f)
+	{
+
+		return;
+	}
+	clear_moves();
+	m_object->animated_mesh()->switch_animation(0);
+	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(0)->mDuration, 0.f, 1.f);
 }

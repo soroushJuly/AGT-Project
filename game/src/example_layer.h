@@ -22,6 +22,15 @@ class pickup_coin;
 
 class example_layer : public engine::layer
 {
+	enum game_state
+	{
+		MENU,
+		IN_GAME,
+		GAME_WON,
+		GAME_LOST
+	};
+
+	int m_state = MENU;
 public:
 	example_layer();
 	~example_layer();
@@ -70,6 +79,8 @@ private:
 	engine::bounding_box m_world_box_06;
 
 	engine::ref<game_intro> m_game_intro;
+	engine::ref<game_intro> m_game_won;
+	engine::ref<game_intro> m_game_lost;
 	hud hud;
 	engine::timer m_play_time;
 
@@ -80,11 +91,6 @@ private:
 	engine::ref<engine::game_object>	m_mannequin{};
 	engine::ref<engine::game_object>	m_skeleton{};
 	engine::ref<engine::game_object>	m_mech{};
-	//engine::ref<engine::game_object>	m_lava_01{};
-	//engine::ref<engine::game_object>	m_lava_02{};
-	//engine::ref<engine::game_object>	m_lava_03{};
-	//engine::ref<engine::game_object>	m_lava_04{};
-	//engine::ref<engine::game_object>	m_lava_05{};
 
 	engine::ref<engine::material>		m_mannequin_material{};
 
@@ -105,6 +111,5 @@ private:
 
 	ring m_ring;
 
-	bool is_intro_active;
 	float							  m_physical_terrain_height = 0.5f;
 };

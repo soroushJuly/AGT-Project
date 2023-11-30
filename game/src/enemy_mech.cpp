@@ -62,6 +62,11 @@ void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_p
 		m_timer -= (float)time_step;
 		if (m_timer < 0.0f)
 		{
+			if (m_health < 0)
+			{
+				//m_object->set_scale(glm::vec3(0.0001f));
+				m_is_dead = true;
+			}
 			m_object->animated_mesh()->switch_root_movement(false);
 			m_object->animated_mesh()->switch_animation(2);
 			m_timer = 0.0f;
@@ -168,6 +173,8 @@ void enemy_mech::on_render(engine::ref<engine::shader> mesh_shader)
 void enemy_mech::take_damage()
 {
 	--m_health;
+	if (m_health < 0)
+		die();
 }
 
 void enemy_mech::shoot_bomb(glm::vec3 target_position)
@@ -276,4 +283,15 @@ void enemy_mech::shoot()
 	m_object->animated_mesh()->switch_root_movement(true);
 	m_object->animated_mesh()->switch_animation(13);
 	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(13)->mDuration, 0.f, 1.f);
+}
+
+void enemy_mech::die()
+{
+	if (m_timer > 0.f)
+	{
+		return;
+	}
+	m_object->animated_mesh()->switch_root_movement(true);
+	m_object->animated_mesh()->switch_animation(1);
+	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(1)->mDuration, 0.f, 2.f);
 }
