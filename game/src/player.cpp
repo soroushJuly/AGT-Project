@@ -11,9 +11,9 @@ m_contact_time(0.f),
 m_coins(0),
 m_hearts(2)
 {}
-player::~player() {};
+player::~player() {}
 
-void player::initialise(engine::ref<engine::game_object> object)
+void player::initialise(engine::ref<engine::game_object> object, engine::ref<cross_fade> cross_fade, engine::ref<engine::audio_manager> audio_manager)
 {
 	m_object = object;
 	m_object->set_forward(glm::vec3(0.f, 0.f, 1.f));
@@ -21,6 +21,9 @@ void player::initialise(engine::ref<engine::game_object> object)
 	m_object->set_acceleration(glm::vec3(0.f, -9.8f, 0.f));
 	m_object->set_velocity(glm::vec3(0.f, 0.f, 0.f));
 	m_object->animated_mesh()->set_default_animation(4);
+
+	m_audio_manager = audio_manager;
+	m_cross_fade = cross_fade;
 
 	default_bounding = m_object->bounding_shape();
 }
@@ -55,14 +58,14 @@ void player::on_update(const engine::timestep& time_step)
 		clear_moves();
 	}
 
-	if((is_walking || is_running) && !is_jumping)
+	if ((is_walking || is_running) && !is_jumping)
 	{
 		LOG_INFO("last");
 		m_object->set_velocity(glm::vec3(m_object->velocity().x, 0.f, m_object->velocity().z));
 		m_object->set_position(glm::vec3(x_position, y_position, z_position) + m_object->velocity() * (float)time_step);
 	}
 
-	
+
 	m_contact_time += time_step;
 
 	if (engine::input::key_pressed(engine::key_codes::KEY_A)) // left
@@ -73,7 +76,7 @@ void player::on_update(const engine::timestep& time_step)
 	{
 		jump(time_step);
 	}
-	
+
 
 	if (engine::input::mouse_button_pressed(0))
 	{
@@ -236,13 +239,13 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 		look_at);
 }
 
-void player::take_damage(engine::ref<engine::audio_manager> audio_manager, engine::ref<cross_fade> cross_fade, const engine::timestep& time_step)
+void player::take_damage(const engine::timestep& time_step)
 {
 	if (m_damage_timer > 1.5f)
 	{
 		m_damage_timer = 0;
-		audio_manager->play("damage");
-		cross_fade->activate();
+		m_audio_manager->play("damage");
+		m_cross_fade->activate();
 		if (m_hearts < 1)
 		{
 			die();

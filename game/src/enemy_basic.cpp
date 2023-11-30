@@ -27,10 +27,15 @@ void enemy_basic::initialise(engine::ref<engine::game_object> object)
 
 	std::srand(std::time(nullptr));
 }
-void enemy_basic::on_update(const engine::timestep& time_step, engine::bounding_box m_player_box, const glm::vec3& target_position, bool is_punching)
+void enemy_basic::on_update(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box, const glm::vec3& target_position)
 {
+	if (m_is_dead && m_timer < 0.1f)
+	{
+		return;
+	}
+
 	m_enemy_box.on_update(m_object->position());
-	if (m_enemy_box.collision(m_player_box) && is_punching)
+	if (m_enemy_box.collision(m_player_box) && player.is_punching())
 	{
 		take_damage();
 	}
@@ -89,7 +94,7 @@ void enemy_basic::on_update(const engine::timestep& time_step, engine::bounding_
 	case enemy_basic::ATTACK:
 		if (m_attack_timer > 1.f)
 		{
-			attack(time_step);
+			attack(time_step, player, m_player_box);
 			m_attack_timer = 0.f;
 		}
 		if (distance > 0.5f)
@@ -129,10 +134,10 @@ void enemy_basic::take_damage()
 	m_billboard->activate(glm::vec3(x_position, y_position, z_position), 2.f, 2.f);
 
 	m_damage_timer = 0.f;
-	m_instantaneous_acceleration = -(glm::normalize(glm::vec3(m_object->forward())) * 823.f) / m_object->mass();
+	m_instantaneous_acceleration = -(glm::normalize(glm::vec3(m_object->forward())) * 900.f) / m_object->mass();
 	m_contact_time = 0.f;
 	--m_health;
-	if (m_health < 0)
+	if (m_health < 1)
 	{
 		die();
 		m_is_dead = true;
@@ -230,11 +235,14 @@ void enemy_basic::chase_enemy_walk(const engine::timestep& time_step, const glm:
 	chase_target(time_step, target_position);
 }
 
-void enemy_basic::attack(const engine::timestep& time_step)
+void enemy_basic::attack(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box)
 {
 	m_attack_animation = 0;
 	m_object->animated_mesh()->switch_root_movement(true);
 	m_object->animated_mesh()->switch_animation(m_attack_animation);
+
+	if (m_enemy_box.collision(m_player_box))
+		player.take_damage(time_step);
 
 	m_object->set_velocity(m_object->velocity() + m_instantaneous_acceleration * (float)time_step);
 	m_object->set_position(m_object->position() + m_object->velocity() * (float)time_step);

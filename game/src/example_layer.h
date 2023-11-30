@@ -95,7 +95,6 @@ private:
 	engine::ref<engine::material>		m_mannequin_material{};
 
 	engine::ref<cross_fade>							m_cross_fade{};
-	engine::ref<billboard>							m_billboard{};
 
 	engine::DirectionalLight            m_directionalLight;
 	engine::SpotLight m_spot_light;

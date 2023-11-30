@@ -58,7 +58,6 @@ example_layer::example_layer()
 		glm::vec3(0.1f, 0.9f, 0.9f), glm::vec3(0.1f, 0.9f, 0.9f), 1.0f);
 
 	m_cross_fade = cross_fade::create("assets/textures/red.bmp", 2.0f, 1.6f, 0.9f);
-	m_billboard = billboard::create("assets/textures/hit.png", 4, 4, 16);
 	m_ring.initialise();
 
 	// Free Skybox texture from https://sketchfab.com/3d-models/free-skybox-anime-village-a25aa36a28a14c2e83285ad917947278
@@ -90,7 +89,7 @@ example_layer::example_layer()
 	mannequin_props.bounding_shape = glm::vec3(m_skinned_mesh->size().x * mannequin_props.scale.x / 2.f,
 		m_skinned_mesh->size().y / mannequin_props.scale.x * 2.4f, m_skinned_mesh->size().x / 2.f);
 	m_mannequin = engine::game_object::create(mannequin_props);
-	m_player.initialise(m_mannequin);
+	m_player.initialise(m_mannequin, m_cross_fade, m_audio_manager);
 
 	m_player_box.set_box(mannequin_props.bounding_shape.x * mannequin_props.scale.x,
 		mannequin_props.bounding_shape.y * mannequin_props.scale.x,
@@ -259,7 +258,6 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_enemy_mech.on_update(time_step, m_player.position());
 
 	m_cross_fade->on_update(time_step);
-	m_billboard->on_update(time_step);
 
 	m_ring.on_update(time_step, m_player.position());
 
@@ -270,15 +268,9 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
 
-	m_enemy_skeleton.on_update(time_step, m_player_box, m_player.object()->position(), m_player.is_punching());
+	// TODO: Not passing the player - instead pointer
+	m_enemy_skeleton.on_update(time_step, m_player, m_player_box, m_player.object()->position());
 
-	if (m_player.is_punching())
-	{
-		float x_position = m_player.position().x + m_player.object()->bounding_shape().x / 2;
-		float y_position = m_player.position().y + m_player.object()->bounding_shape().y / 2;
-		float z_position = m_player.position().z - m_player.object()->bounding_shape().z / 2;
-		m_billboard->activate(glm::vec3(x_position, y_position, z_position), 2.f, 2.f);
-	}
 	// Player move restriction in the map
 	if (!(m_world_box_01.collision(m_player_box)
 		|| m_world_box_02.collision(m_player_box)
@@ -298,7 +290,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 		|| m_lava_06.collision(m_player_box)
 		)
 	{
-		m_player.take_damage(m_audio_manager, m_cross_fade, time_step);
+		m_player.take_damage(time_step);
 	}
 
 	hud.on_update(time_step, m_player.hearts());
@@ -332,7 +324,7 @@ void example_layer::on_render()
 	// Set up some of the scene's parameters in the shader
 	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("gEyeWorldPos", m_3d_camera.position());
 	m_player_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	
+
 	//m_lava_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_03.on_render(2.5f, 1.f, 1.f, mesh_shader);
@@ -400,9 +392,6 @@ void example_layer::on_render()
 	m_cross_fade->on_render(mesh_shader);
 	engine::renderer::end_scene();
 
-	engine::renderer::begin_scene(m_3d_camera, mesh_shader);
-	//m_billboard->on_render(m_3d_camera, mesh_shader);
-	engine::renderer::end_scene();
 	// Render text
 	m_text_manager->render_text(text_shader, std::to_string(m_player.coins()), 43.f, (float)engine::application::window().height() - 91.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
 	m_text_manager->render_text(text_shader, std::to_string(m_play_time.total()), 45.f, (float)engine::application::window().height() - 135.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
@@ -417,11 +406,12 @@ void example_layer::on_event(engine::event& event)
 		{
 			m_state = example_layer::IN_GAME;
 			m_audio_manager->stop("menu");
-			m_audio_manager->play("music");
+			m_audio_manager->play("main");
 			m_play_time.start();
 		}
 		if ((m_state == example_layer::GAME_LOST || m_state == example_layer::GAME_WON) && e.key_code() == engine::key_codes::KEY_ESCAPE)
 		{
+			m_audio_manager->stop("main");
 			engine::application::exit();
 		}
 
@@ -432,10 +422,6 @@ void example_layer::on_event(engine::event& event)
 		if (e.key_code() == engine::key_codes::KEY_1)
 		{
 			m_ring.activate(.3f, m_player.position());
-		}
-		if (e.key_code() == engine::key_codes::KEY_2)
-		{
-			m_enemy_skeleton.take_damage();
 		}
 		if (e.key_code() == engine::key_codes::KEY_3)
 		{

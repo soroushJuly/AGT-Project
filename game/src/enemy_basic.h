@@ -2,6 +2,9 @@
 #include "engine.h"
 #include "engine/entities/bounding_box.h"
 #include "FX/billboard.h"
+#include "player.h"
+
+class player;
 
 class enemy_basic
 {
@@ -20,7 +23,7 @@ public:
 	~enemy_basic();
 
 	void initialise(engine::ref<engine::game_object> object);
-	void on_update(const engine::timestep& time_step, engine::bounding_box m_player_box, const glm::vec3& target_position, bool is_punching);
+	void on_update(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box, const glm::vec3& target_position);
 	void on_render(const engine::ref<engine::shader> mesh_shader, const engine::perspective_camera& camera);
 	void take_damage();
 	void run();
@@ -32,7 +35,7 @@ public:
 	void wander(const engine::timestep& time_step);
 	void chase_enemy_run(const engine::timestep& time_step, const glm::vec3& target_position);
 	void chase_enemy_walk(const engine::timestep& time_step, const glm::vec3& target_position);
-	void attack(const engine::timestep& time_step);
+	void attack(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box);
 	void chase_target(const engine::timestep& time_step, const glm::vec3& target_position);
 
 
