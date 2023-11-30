@@ -102,8 +102,8 @@ example_layer::example_layer()
 	m_world_box_02.set_box(8.f, 20.f, 70.f, mannequin_props.position + glm::vec3(0.f, -10.f, 40.f));
 	m_world_box_03.set_box(36.f, 20.f, 36.f, mannequin_props.position + glm::vec3(14.f, -10.f, 80.f));
 	m_world_box_04.set_box(108.f, 20.f, 8.f, mannequin_props.position + glm::vec3(43.f, -10.f, 89.f));
-	m_world_box_05.set_box(12.f, 20.f, 70.f, mannequin_props.position + glm::vec3(94.f, -10.f, 50.f));
-	m_world_box_06.set_box(30.f, 20.f, 30.f, mannequin_props.position + glm::vec3(80.f, -10.f, 12.f));
+	m_world_box_05.set_box(10.f, 20.f, 70.f, mannequin_props.position + glm::vec3(94.f, -10.f, 50.f));
+	m_world_box_06.set_box(28.f, 20.f, 28.f, mannequin_props.position + glm::vec3(84.f, -10.f, 12.f));
 
 	// Free model from here: https://poly.pizza/m/yq5ATpujSt
 	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Skeleton.fbx");
@@ -187,9 +187,12 @@ example_layer::example_layer()
 	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(4.f, 0, 22.f));
 	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, 22.f));
 	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, 24.f));
-	fence_01.on_initialize("assets/models/static/SM_Bld_Fence_01.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 26.f));
-	fence_02.on_initialize("assets/models/static/SM_Bld_Fence_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 28.f));
+	tree_04.on_initialize("assets/models/static/SM_Env_Tree_09.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, 24.f));
+	fence_01.on_initialize("assets/models/static/SM_Bld_Fence_01.fbx", "assets/textures/PolyAdventureTexture_01.png");
 	cart_01.on_initialize("assets/models/static/SM_Prop_Cart_01.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(6.f, .5f, 74.f));
+	hut_01.on_initialize("assets/models/static/SM_Bld_Village_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 26.f));
+	hut_02.on_initialize("assets/models/static/SM_Bld_Village_06.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 26.f));
+	hut_03.on_initialize("assets/models/static/SM_Bld_Village_07.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 26.f));
 
 	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
 	hud.on_initialize();
@@ -243,7 +246,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 		return;
 	}
 	// Uncomment to roam around the map
-	//m_3d_camera.on_update(time_step);
+	m_3d_camera.on_update(time_step);
 
 	m_pickup_heart_01.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
 	m_pickup_speed_01.on_update(m_player.position(), m_player.speed(), time_step, m_audio_manager);
@@ -267,7 +270,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	glm::vec3 pos = m_player.object()->position();
 	m_player.on_update(time_step);
-	m_player.update_camera(m_3d_camera, time_step);
+	//m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
 
 	m_enemy_skeleton.on_update(time_step, m_player.object()->position());
@@ -394,12 +397,28 @@ void example_layer::on_render()
 	// Box 4 decorations
 	for (int i = 0; i < 20; i++)
 	{
-		fence_01.on_render(mesh_shader, glm::vec3(20.2f + (float)i * 3.f, .5f, 102.f));
-		fence_01.on_render(mesh_shader, glm::vec3(20.2f + (float)i * 3.f, .5f, 95.f));
+		fence_01.on_render(mesh_shader, glm::vec3(22.2f + (float)i * 3.f, .5f, 102.f));
+		fence_01.on_render(mesh_shader, glm::vec3(22.2f + (float)i * 3.f, .5f, 95.f));
 	}
 
 	// Box 5 decorations
+	for (int i = 0; i < 18; i++)
+	{
+		fence_01.on_render(mesh_shader, glm::vec3(98.5f, .5f, 36.f + (float)i * 3.f), engine::PI / 2);
+		fence_01.on_render(mesh_shader, glm::vec3(88.5f, .5f, 36.f + (float)i * 3.f), engine::PI / 2);
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		tree_04.on_render(mesh_shader, glm::vec3(99.5f, .5f, 36.f + (float)i * 5.2f));
+		tree_04.on_render(mesh_shader, glm::vec3(87.5f, .5f, 36.f + (float)i * 5.2f));
+	}
 
+	// Box 6 decoration
+	cart_01.on_render(mesh_shader, glm::vec3(69.f, .5f, 20.f));
+	hut_01.on_render(mesh_shader, glm::vec3(67.f, .5f, 28.f));
+	hut_02.on_render(mesh_shader, glm::vec3(62.f, .5f, 21.f));
+	hut_03.on_render(mesh_shader, glm::vec3(66.f, .5f, 9.f));
+	hut_01.on_render(mesh_shader, glm::vec3(66.f, .5f, 14.f));
 
 
 	m_mannequin_material->submit(mesh_shader);

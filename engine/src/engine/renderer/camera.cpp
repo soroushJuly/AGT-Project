@@ -101,7 +101,7 @@ void engine::perspective_camera::on_update(const timestep& timestep)
 
 	//float y_value = m_position.y;
 	if (input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
-		set_movement_speed(8.f);
+		set_movement_speed(12.f);
 	else
 		set_movement_speed(1.f);
 

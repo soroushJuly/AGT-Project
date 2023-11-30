@@ -54,7 +54,10 @@ private:
 	static_object tree_01{};
 	static_object tree_02{};
 	static_object tree_03{};
-	static_object fence{};
+	static_object tree_04{};
+	static_object hut_01{};
+	static_object hut_02{};
+	static_object hut_03{};
 	engine::ref<engine::game_object> arrow;
 	engine::ref<engine::game_object> spike;
 
