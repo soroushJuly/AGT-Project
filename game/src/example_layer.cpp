@@ -97,6 +97,7 @@ example_layer::example_layer()
 		mannequin_props.bounding_shape.y * mannequin_props.scale.x,
 		mannequin_props.bounding_shape.z * mannequin_props.scale.x,
 		mannequin_props.position);
+
 	// World Collision boxes
 	m_world_box_01.set_box(16.f, 10.f, 16.f, mannequin_props.position);
 	m_world_box_02.set_box(8.f, 20.f, 70.f, mannequin_props.position + glm::vec3(0.f, -10.f, 40.f));
@@ -210,15 +211,13 @@ example_layer::example_layer()
 	terrain_props_2.restitution = 0.92f;
 	m_terrain_2 = engine::game_object::create(terrain_props_2);
 
-	std::vector<engine::ref<engine::texture_2d>> lava_textures = { engine::texture_2d::create("assets/textures/lava_02.png", false) };
-	engine::game_object_properties lava_props;
-	engine::ref<engine::cuboid> lava_shape = engine::cuboid::create(glm::vec3(4.5f, .01f, 1.5f), false, 4);
-	lava_props.meshes = { lava_shape->mesh() };
-	lava_props.textures = { lava_textures };
-	lava_props.position = glm::vec3(0.f, 0.5f, -13.f);
-	lava_props.is_static = true;
-	m_lava = engine::game_object::create(lava_props);
-	m_lava_box.set_box(9.f, .02f, 3.f, lava_props.position);
+	// TODO: jumping pads on lava
+	m_lava_01.on_initialise(glm::vec3(0.f, 0.5f, 30.f), glm::vec3(4.5f, .01f, 1.5f));
+	m_lava_02.on_initialise(glm::vec3(0.f, 0.5f, 60.f), glm::vec3(4.5f, .01f, 1.5f));
+	m_lava_03.on_initialise(glm::vec3(35.f, 0.5f, 98.f), glm::vec3(1.5f, .01f, 4.5f));
+	m_lava_04.on_initialise(glm::vec3(55.f, 0.5f, 98.f), glm::vec3(1.5f, .01f, 4.5f));
+	m_lava_05.on_initialise(glm::vec3(93.6f, 0.5f, 55.f), glm::vec3(4.5f, .01f, 1.5f));
+	m_lava_06.on_initialise(glm::vec3(93.6f, 0.5f, 70.f), glm::vec3(4.5f, .01f, 1.5f));
 
 
 	m_game_objects.push_back(m_terrain);
@@ -260,7 +259,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	glm::vec3 pos = m_player.object()->position();
 	m_player.on_update(time_step);
-	//m_player.update_camera(m_3d_camera, time_step);
+	m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
 
 	m_enemy_skeleton.on_update(time_step, m_player.object()->position());
@@ -273,6 +272,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 		float z_position = m_player.position().z - m_player.object()->bounding_shape().z / 2;
 		m_billboard->activate(glm::vec3(x_position, y_position, z_position), 2.f, 2.f);
 	}
+	// Player move restriction in the map
 	if (!(m_world_box_01.collision(m_player_box)
 		|| m_world_box_02.collision(m_player_box)
 		|| m_world_box_03.collision(m_player_box)
@@ -281,13 +281,17 @@ void example_layer::on_update(const engine::timestep& time_step)
 		|| m_world_box_06.collision(m_player_box)
 		))
 	{
-		LOG_INFO("not in the map");
 		m_player.object()->set_position(pos);
 	}
-	if (m_lava_box.collision(m_player_box))
+	if (m_lava_01.collision(m_player_box)
+		|| m_lava_02.collision(m_player_box)
+		|| m_lava_03.collision(m_player_box) 
+		|| m_lava_04.collision(m_player_box)
+		|| m_lava_05.collision(m_player_box)
+		|| m_lava_06.collision(m_player_box)
+		)
 	{
 		m_player.take_damage(m_audio_manager, m_cross_fade, time_step);
-		//m_cross_fade->activate();
 	}
 
 	hud.on_update(time_step, m_player.hearts());
@@ -317,7 +321,7 @@ void example_layer::on_render()
 	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("gEyeWorldPos", m_3d_camera.position());
 	m_player_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_skeleton_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_lava_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	//m_lava_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_03.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_04.on_render(2.5f, 1.f, 1.f, mesh_shader);
@@ -340,8 +344,13 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, m_terrain);
 	engine::renderer::submit(mesh_shader, m_terrain_2);
 
+	m_lava_01.on_render(mesh_shader);
+	m_lava_02.on_render(mesh_shader);
+	m_lava_03.on_render(mesh_shader);
+	m_lava_04.on_render(mesh_shader);
+	m_lava_05.on_render(mesh_shader);
+	m_lava_06.on_render(mesh_shader);
 
-	engine::renderer::submit(mesh_shader, m_lava);
 	// Render Objects in the scene
 	m_pickup_speed_01.on_render();
 	m_pickup_heart_01.on_render();

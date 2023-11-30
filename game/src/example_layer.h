@@ -3,6 +3,7 @@
 #include <player.h>
 #include <enemy_basic.h>
 #include <enemy_mech.h>
+#include "enemy_lava.h"
 #include <game_intro.h>
 #include "pickup_coin.h"
 #include "pickup_heart.h"
@@ -33,6 +34,14 @@ private:
 	player m_player{};
 	enemy_basic m_enemy_skeleton{};
 	enemy_mech m_enemy_mech{};
+
+	enemy_lava m_lava_01;
+	enemy_lava m_lava_02;
+	enemy_lava m_lava_03;
+	enemy_lava m_lava_04;
+	enemy_lava m_lava_05;
+	enemy_lava m_lava_06;
+
 	pickup_speed m_pickup_speed_01{};
 	pickup_heart m_pickup_heart_01{};
 	pickup_heart m_pickup_heart_02{};
@@ -44,13 +53,15 @@ private:
 	pickup_coin m_pickup_coin_06{};
 	pickup_coin m_pickup_coin_07{};
 	decorations m_decorations;
+
+	
 	
 	engine::ref<engine::game_object> arrow;
 	engine::ref<engine::game_object> spike;
 
 	engine::bounding_box m_player_box;
 	engine::bounding_box m_skeleton_box;
-	engine::bounding_box m_lava_box;
+	//engine::bounding_box m_lava_box;
 	engine::bounding_box m_world_box_01;
 	engine::bounding_box m_world_box_02;
 	engine::bounding_box m_world_box_03;
@@ -69,7 +80,11 @@ private:
 	engine::ref<engine::game_object>	m_mannequin{};
 	engine::ref<engine::game_object>	m_skeleton{};
 	engine::ref<engine::game_object>	m_mech{};
-	engine::ref<engine::game_object>	m_lava{};
+	//engine::ref<engine::game_object>	m_lava_01{};
+	//engine::ref<engine::game_object>	m_lava_02{};
+	//engine::ref<engine::game_object>	m_lava_03{};
+	//engine::ref<engine::game_object>	m_lava_04{};
+	//engine::ref<engine::game_object>	m_lava_05{};
 
 	engine::ref<engine::material>		m_mannequin_material{};
 

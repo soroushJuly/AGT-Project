@@ -65,8 +65,8 @@ void decorations::on_render(const engine::ref<engine::shader> mesh_shader)
 	// Box 5 decorations
 	for (int i = 0; i < 18; i++)
 	{
-		fence_01.on_render(mesh_shader, glm::vec3(98.5f, .5f, 36.f + (float)i * 3.f), engine::PI / 2);
-		fence_01.on_render(mesh_shader, glm::vec3(88.5f, .5f, 36.f + (float)i * 3.f), engine::PI / 2);
+		fence_01.on_render(mesh_shader, glm::vec3(97.5f, .5f, 36.f + (float)i * 3.f), engine::PI / 2);
+		fence_01.on_render(mesh_shader, glm::vec3(89.5f, .5f, 36.f + (float)i * 3.f), engine::PI / 2);
 	}
 	for (int i = 0; i < 10; i++)
 	{
