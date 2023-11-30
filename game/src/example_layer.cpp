@@ -314,7 +314,7 @@ void example_layer::on_render()
 	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_02.on_render(2.5f, 1.f, 1.f, mesh_shader);
 
-	engine::renderer::submit(mesh_shader, m_mech);
+	
 
 
 

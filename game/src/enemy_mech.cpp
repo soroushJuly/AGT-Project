@@ -1,6 +1,6 @@
 #include "enemy_mech.h"
 
-enemy_mech::enemy_mech() : m_instantaneous_acceleration(0.f), m_contact_time(0.f), m_rocket_max_velocity(0.f)
+enemy_mech::enemy_mech() : m_instantaneous_acceleration(0.f), m_contact_time(0.f), m_rocket_max_velocity(0.f), m_switch_direction_timer(0.f)
 {
 }
 
@@ -84,10 +84,54 @@ void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_p
 			//m_object->set_angular_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	}
+
+	const float distance = glm::length(target_position - m_object->position());
+	const float FACE_BOUND = 5.f;
+	const float BOMB_BOUND = 2.f;
+	const float ROCKET_BOUND = .7f;
+
+	// TODO: shockwave attack to send the target(enemy) backwards
+	switch (m_state)
+	{
+	case enemy_mech::IDLE:
+		patrol(time_step);
+		if (distance < FACE_BOUND)
+			m_state = enemy_mech::FACE_TARGET;
+		break;
+	case enemy_mech::FACE_TARGET:
+		//face_target();
+		if (distance < BOMB_BOUND)
+			m_state = enemy_mech::ATTACK_BOMB;
+		if (distance > FACE_BOUND)
+			m_state = enemy_mech::IDLE;
+		break;
+	case enemy_mech::ATTACK_BOMB:
+		shoot_bomb();
+		if (distance > ROCKET_BOUND)
+			m_state = enemy_mech::ATTACK_ROCKET;
+		if (distance < .5f)
+			m_state = enemy_mech::FACE_TARGET;
+		break;
+	case enemy_mech::ATTACK_ROCKET:
+		shoot_rocket();
+		if (distance > ROCKET_BOUND)
+		{
+			m_state = enemy_mech::ATTACK_BOMB;
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void enemy_mech::on_render(engine::ref<engine::shader> mesh_shader)
 {
+	glm::mat4 transform_mech(1.0f);
+	transform_mech = glm::translate(transform_mech, m_object->position());
+	transform_mech = glm::scale(transform_mech, m_object->scale());
+	transform_mech = glm::rotate(transform_mech, m_object->rotation_amount(), glm::vec3(0.f, 1.f, 0.f));
+	engine::renderer::submit(mesh_shader, transform_mech, m_object);
+
 	if (is_bomb)
 	{
 		glm::mat4 transform(1.0f);
@@ -105,9 +149,7 @@ void enemy_mech::on_render(engine::ref<engine::shader> mesh_shader)
 		transform_01 = glm::rotate(transform_01, m_rocket->rotation_amount(), glm::vec3(0.f, 1.f, 0.f));
 		//transform = glm::rotate(transform, m_phi, glm::vec3(0.f, 1.f, 0.f));
 		//transform = glm::rotate(transform, m_bomb->rotation_amount(), m_bomb->rotation_axis());
-		LOG_INFO("ff");
 		engine::renderer::submit(mesh_shader, transform_01, m_rocket);
-
 	}
 }
 
@@ -126,6 +168,7 @@ void enemy_mech::shoot_bomb()
 {
 	is_bomb = true;
 
+	// TODO: add rotational movement to the bomb
 	m_bomb->set_position(m_object->position() + glm::vec3(0.f, m_object->animated_mesh()->size().y / 2, 0.f));
 
 	m_bomb->set_acceleration(glm::vec3(0.f, -9.8f, 0.f));
@@ -170,4 +213,19 @@ void enemy_mech::update_rocket(const engine::timestep& time_step, glm::vec3 targ
 		m_rocket->set_rotation_amount(theta);
 	}
 	m_rocket->set_position(m_rocket->position() + m_rocket->velocity() * (float)time_step);
+}
+
+// move forwards until the timer runs out, then switch direction to move the other way
+void enemy_mech::patrol(const engine::timestep& time_step)
+{
+	LOG_INFO("patrol");
+	m_switch_direction_timer -= (float)time_step;
+	if (m_switch_direction_timer < 0.f)
+	{
+		m_object->set_forward(m_object->forward() * -1.f);
+		m_switch_direction_timer = m_default_time;
+	}
+
+	m_object->set_position(m_object->position() + m_object->forward() * 1.f * (float)time_step);
+	//m_object->set_rotation_amount(atan2(m_object->forward().x, m_object->forward().z));
 }

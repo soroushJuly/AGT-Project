@@ -42,7 +42,7 @@ void enemy_basic::on_update(const engine::timestep& time_step, const glm::vec3& 
 		}
 	}
 
-	float distance = glm::length(target_position - m_object->position());
+	const float distance = glm::length(target_position - m_object->position());
 	const float WALK_BOUND = 1.5f;
 	const float RUN_BOUND = 5.f;
 
