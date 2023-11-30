@@ -363,6 +363,7 @@ void example_layer::on_render()
 
 	glm::mat4 object_transform(1.0f);
 	object_transform = glm::translate(object_transform, m_skeleton->position());
+	object_transform = glm::rotate(object_transform, m_skeleton->rotation_amount(), m_skeleton->rotation_axis());
 	object_transform = glm::scale(object_transform, glm::vec3(0.16f));
 	//engine::renderer::submit(mesh_shader, object_transform, m_skeleton);
 

@@ -28,7 +28,7 @@ public:
 	void wander(const engine::timestep& time_step);
 	void chase_enemy_run(const engine::timestep& time_step, const glm::vec3& target_position);
 	void chase_enemy_walk(const engine::timestep& time_step, const glm::vec3& target_position);
-	void attack();
+	void attack(const engine::timestep& time_step);
 	void chase_target(const engine::timestep& time_step, const glm::vec3& target_position);
 
 
@@ -38,6 +38,7 @@ private:
 	float m_damage_timer;
 	float m_speed;
 	float m_timer;
+	float m_angle{ 0.f };
 
 	float m_attack_timer;
 

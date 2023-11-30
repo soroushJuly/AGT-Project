@@ -155,7 +155,7 @@ void enemy_mech::update_rocket(const engine::timestep& time_step, glm::vec3 targ
 {
 	glm::vec3 target_position_2d = glm::vec3(target_position.x, m_rocket->position().y, target_position.z);
 	glm::vec3 desired_path = target_position_2d - m_rocket->position();
-	glm::vec3 desired_velocity = glm::normalize(target_position_2d - m_rocket->position()) * max_velocity;
+	glm::vec3 desired_velocity = glm::normalize(desired_path) * max_velocity;
 	glm::vec3 steering = desired_velocity - m_rocket->velocity();
 
 	m_rocket->set_velocity(m_rocket->velocity() + steering + (m_rocket->acceleration()) * (float)time_step);
