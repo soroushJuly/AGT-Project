@@ -166,7 +166,7 @@ example_layer::example_layer()
 	engine::game_object_properties spike_props;
 	engine::ref<engine::spike> spike_shape = engine::spike::create(1.f);
 	spike_props.meshes = { spike_shape->mesh() };
-	spike_props.position = glm::vec3(0.f, .5f, 14.f);
+	spike_props.position = glm::vec3(0.f, .5f, 4.f);
 	spike = engine::game_object::create(spike_props);
 
 	// Initialize objects
@@ -187,6 +187,8 @@ example_layer::example_layer()
 	tree_01.on_initialize("assets/models/static/SM_Env_Tree_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(4.f, 0, 22.f));
 	tree_02.on_initialize("assets/models/static/SM_Env_Tree_04.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, 22.f));
 	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, 24.f));
+	fence_01.on_initialize("assets/models/static/SM_Bld_Fence_01.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 26.f));
+	fence_02.on_initialize("assets/models/static/SM_Bld_Fence_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 28.f));
 
 	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
 	hud.on_initialize();
@@ -323,7 +325,6 @@ void example_layer::on_render()
 	m_skeleton_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_lava_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_world_box_02.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_03.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_04.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_05.on_render(2.5f, 1.f, 1.f, mesh_shader);
@@ -365,6 +366,12 @@ void example_layer::on_render()
 	campfire.on_render(mesh_shader, 0.f, campfire.object()->rotation_axis(), glm::vec3(0.006f));
 	bush.on_render(mesh_shader);
 	bush.on_render(mesh_shader, glm::vec3(4.f, .45f, 16.25f), engine::PI / 2, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .01f, .013f));
+	for (int i = 0; i < 16; i++)
+	{
+		fence_01.on_render(mesh_shader, glm::vec3(4.2f, .5f, 26.f + (float)i * 3.f), engine::PI / 2);
+		fence_01.on_render(mesh_shader, glm::vec3(-4.2f, .5f, 26.f + (float)i * 3.f), engine::PI / 2);
+	}
+	//fence_02.on_render(mesh_shader, engine::PI / 2);
 	tree_01.on_render(mesh_shader);
 	tree_02.on_render(mesh_shader);
 	tree_03.on_render(mesh_shader);
