@@ -99,7 +99,11 @@ example_layer::example_layer()
 		mannequin_props.position);
 	// World Collision boxes
 	m_world_box_01.set_box(16.f, 10.f, 16.f, mannequin_props.position);
-	m_world_box_02.set_box(8.f, 20.f, 70.f, glm::vec3(0.f, -10.5, 50.f));
+	m_world_box_02.set_box(8.f, 20.f, 70.f, mannequin_props.position + glm::vec3(0.f, -10.f, 40.f));
+	m_world_box_03.set_box(36.f, 20.f, 36.f, mannequin_props.position + glm::vec3(14.f, -10.f, 80.f));
+	m_world_box_04.set_box(108.f, 20.f, 16.f, mannequin_props.position + glm::vec3(43.f, -10.f, 88.f));
+	m_world_box_05.set_box(12.f, 20.f, 70.f, mannequin_props.position + glm::vec3(94.f, -10.f, 50.f));
+	m_world_box_06.set_box(30.f, 20.f, 30.f, mannequin_props.position + glm::vec3(80.f, -10.f, 12.f));
 
 	// Free model from here: https://poly.pizza/m/yq5ATpujSt
 	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Skeleton.fbx");
@@ -142,7 +146,7 @@ example_layer::example_layer()
 	//mech_props.textures = { mech_texture };
 	//mech_props.textures = { dd_model->textures() };
 	mech_props.type = 0;
-	mech_props.position = glm::vec3(0.f,0.5f,15.f);
+	mech_props.position = glm::vec3(0.f, 0.5f, 15.f);
 	mech_props.mass = 27.2f;
 	mech_props.velocity = glm::vec3(0.f);
 	mech_props.scale = glm::vec3(.6f);
@@ -235,6 +239,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	{
 		return;
 	}
+	// Uncomment to roam around the map
 	//m_3d_camera.on_update(time_step);
 
 	m_pickup_heart_01.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
@@ -272,7 +277,13 @@ void example_layer::on_update(const engine::timestep& time_step)
 		float z_position = m_player.position().z - m_player.object()->bounding_shape().z / 2;
 		m_billboard->activate(glm::vec3(x_position, y_position, z_position), 2.f, 2.f);
 	}
-	if (!(m_world_box_01.collision(m_player_box) || m_world_box_02.collision(m_player_box)))
+	if (!(m_world_box_01.collision(m_player_box)
+		|| m_world_box_02.collision(m_player_box)
+		|| m_world_box_03.collision(m_player_box)
+		|| m_world_box_04.collision(m_player_box)
+		|| m_world_box_05.collision(m_player_box)
+		|| m_world_box_06.collision(m_player_box)
+		))
 	{
 		LOG_INFO("not in the map");
 		m_player.object()->set_position(pos);
@@ -285,7 +296,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	hud.on_update(time_step, m_player.hearts());
 	m_skeleton->animated_mesh()->on_update(time_step);
-	
+
 
 	m_audio_manager->update_with_camera(m_3d_camera);
 }
@@ -313,8 +324,12 @@ void example_layer::on_render()
 	m_lava_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_02.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_world_box_03.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_world_box_04.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_world_box_05.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_world_box_06.on_render(2.5f, 1.f, 1.f, mesh_shader);
 
-	
+
 
 
 

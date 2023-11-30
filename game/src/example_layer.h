@@ -60,6 +60,10 @@ private:
 	engine::bounding_box m_lava_box;
 	engine::bounding_box m_world_box_01;
 	engine::bounding_box m_world_box_02;
+	engine::bounding_box m_world_box_03;
+	engine::bounding_box m_world_box_04;
+	engine::bounding_box m_world_box_05;
+	engine::bounding_box m_world_box_06;
 
 	engine::ref<game_intro> m_game_intro;
 	hud hud;
