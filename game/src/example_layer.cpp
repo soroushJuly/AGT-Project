@@ -149,11 +149,6 @@ example_layer::example_layer()
 		m_enemy_mesh->size().y * mannequin_props.scale.x / 1.1f, m_enemy_mesh->size().x / 2.f);
 	m_mech = engine::game_object::create(mech_props);
 
-	/*m_mech_box.set_box(skeleton_props.bounding_shape.x* skeleton_props.scale.x,
-		skeleton_props.bounding_shape.y* skeleton_props.scale.x,
-		skeleton_props.bounding_shape.z* skeleton_props.scale.x,
-		skeleton_props.position);*/
-
 	m_enemy_mech.initialise(m_mech);
 
 
@@ -230,11 +225,15 @@ void example_layer::on_update(const engine::timestep& time_step)
 		return;
 	if (m_player.is_dead())
 	{
+		m_audio_manager->stop("main");
 		m_state = example_layer::GAME_LOST;
 		return;
 	}
 	if (m_enemy_mech.is_dead())
+	{
+		m_audio_manager->stop("main");
 		m_state = example_layer::GAME_WON;
+	}
 
 	// Uncomment to roam around the map
 	//m_3d_camera.on_update(time_step);
@@ -255,11 +254,8 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_pickup_coin_06.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
 
-	m_enemy_mech.on_update(time_step, m_player.position());
 
-	m_cross_fade->on_update(time_step);
 
-	m_ring.on_update(time_step, m_player.position());
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
@@ -268,6 +264,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
 
+	m_enemy_mech.on_update(time_step, m_player, m_player_box, m_player.position());
 	// TODO: Not passing the player - instead pointer
 	m_enemy_skeleton.on_update(time_step, m_player, m_player_box, m_player.object()->position());
 
@@ -294,8 +291,9 @@ void example_layer::on_update(const engine::timestep& time_step)
 	}
 
 	hud.on_update(time_step, m_player.hearts());
-	m_skeleton->animated_mesh()->on_update(time_step);
 
+	m_cross_fade->on_update(time_step);
+	m_ring.on_update(time_step, m_player.position());
 
 	m_audio_manager->update_with_camera(m_3d_camera);
 }
@@ -375,10 +373,8 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, spike);
 	engine::renderer::submit(mesh_shader, m_player.object());
 
-
-
 	m_enemy_skeleton.on_render(mesh_shader, m_3d_camera);
-	m_enemy_mech.on_render(mesh_shader);
+	m_enemy_mech.on_render(mesh_shader, m_3d_camera);
 
 	m_ring.on_render(mesh_shader);
 
@@ -411,7 +407,6 @@ void example_layer::on_event(engine::event& event)
 		}
 		if ((m_state == example_layer::GAME_LOST || m_state == example_layer::GAME_WON) && e.key_code() == engine::key_codes::KEY_ESCAPE)
 		{
-			m_audio_manager->stop("main");
 			engine::application::exit();
 		}
 

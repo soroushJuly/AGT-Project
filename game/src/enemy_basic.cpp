@@ -29,6 +29,7 @@ void enemy_basic::initialise(engine::ref<engine::game_object> object)
 }
 void enemy_basic::on_update(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box, const glm::vec3& target_position)
 {
+	m_object->animated_mesh()->on_update(time_step);
 	if (m_is_dead && m_timer < 0.1f)
 	{
 		return;

@@ -1,5 +1,10 @@
 #pragma once
 #include "engine.h"
+#include "engine/entities/bounding_box.h"
+#include "FX/billboard.h"
+#include "player.h"
+
+class player;
 
 class enemy_mech
 {
@@ -17,8 +22,8 @@ public:
 	enemy_mech();
 	~enemy_mech();
 	void initialise(engine::ref<engine::game_object> object);
-	void on_update(const engine::timestep& time_step, glm::vec3 target_position);
-	void on_render(engine::ref<engine::shader> mesh_shader);
+	void on_update(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box, glm::vec3 target_position);
+	void on_render(engine::ref<engine::shader> mesh_shader, const engine::perspective_camera& camera);
 	void take_damage();
 	bool is_dead() { return m_is_dead; };
 
@@ -43,6 +48,8 @@ private:
 	float m_speed;
 	float m_timer;
 	bool m_is_dead{ false };
+	engine::bounding_box m_enemy_box;
+	engine::ref<billboard>				m_billboard{};
 
 	// control the patrol
 	float m_default_time{ 5.f };

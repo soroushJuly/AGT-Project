@@ -1,6 +1,7 @@
 #include "enemy_mech.h"
 
-enemy_mech::enemy_mech() : m_instantaneous_acceleration(0.f), m_contact_time(0.f), m_rocket_max_velocity(0.f), m_switch_direction_timer(0.f)
+enemy_mech::enemy_mech() : m_instantaneous_acceleration(0.f), m_damage_timer(0.f),
+	m_contact_time(0.f), m_rocket_max_velocity(0.f), m_switch_direction_timer(0.f)
 {
 }
 
@@ -12,6 +13,13 @@ void enemy_mech::initialise(engine::ref<engine::game_object> object)
 {
 	m_object = object;
 	m_object->set_forward(glm::vec3(0.f, 0.f, 1.f));
+
+	m_enemy_box.set_box(m_object->animated_mesh()->size().x * m_object->scale().x,
+		m_object->animated_mesh()->size().y * m_object->scale().y,
+		m_object->animated_mesh()->size().z * m_object->scale().z,
+		m_object->position());
+
+	m_billboard = billboard::create("assets/textures/hit.png", 4, 4, 16);
 
 	// Bomb
 	engine::ref <engine::model> model = engine::model::create("assets/models/static/Bomb.obj");
@@ -40,12 +48,15 @@ void enemy_mech::initialise(engine::ref<engine::game_object> object)
 	m_rocket = engine::game_object::create(rocket_model_props);
 	m_rocket->set_forward(m_object->forward());
 }
-void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_position)
+void enemy_mech::on_update(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box, glm::vec3 target_position)
 {
 	m_object->animated_mesh()->on_update(time_step);
 	update_bomb(time_step);
-	update_rocket(time_step, target_position);
+	update_rocket(time_step, player.object()->position());
+	m_billboard->on_update(time_step);
 
+	if (m_enemy_box.collision(m_player_box) && player.is_punching())
+		take_damage();
 
 	// Turn off instantaneous forces if contact time is surpassed
 	if (glm::length(m_bomb_instantaneous_acceleration) > 0 && m_bomb_contact_time > 0.3f) {
@@ -55,6 +66,7 @@ void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_p
 	m_bomb_contact_time += time_step;
 	m_bomb_timer += time_step;
 	m_rocket_timer += time_step;
+	m_damage_timer += time_step;
 	m_timer -= time_step;
 
 	if (m_timer > 0.0f)
@@ -143,13 +155,17 @@ void enemy_mech::on_update(const engine::timestep& time_step, glm::vec3 target_p
 	}
 }
 
-void enemy_mech::on_render(engine::ref<engine::shader> mesh_shader)
+void enemy_mech::on_render(engine::ref<engine::shader> mesh_shader, const engine::perspective_camera& camera)
 {
 	glm::mat4 transform_mech(1.0f);
 	transform_mech = glm::translate(transform_mech, m_object->position());
 	transform_mech = glm::scale(transform_mech, m_object->scale());
 	transform_mech = glm::rotate(transform_mech, m_object->rotation_amount(), glm::vec3(0.f, 1.f, 0.f));
 	engine::renderer::submit(mesh_shader, transform_mech, m_object);
+
+	m_enemy_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
+
+	m_billboard->on_render(camera, mesh_shader);
 
 	if (is_bomb)
 	{
@@ -172,8 +188,19 @@ void enemy_mech::on_render(engine::ref<engine::shader> mesh_shader)
 
 void enemy_mech::take_damage()
 {
+	if (m_damage_timer < 1.f)
+	{
+		return;
+	}
+
+	float x_position = m_object->position().x;
+	float y_position = m_object->position().y + m_object->animated_mesh()->size().y * m_object->scale().y;
+	float z_position = m_object->position().z;
+	m_billboard->activate(glm::vec3(x_position, y_position, z_position), 2.f, 2.f);
+	m_damage_timer = 0.f;
+
 	--m_health;
-	if (m_health < 0)
+	if (m_health < 1)
 		die();
 }
 
