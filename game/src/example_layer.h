@@ -7,7 +7,6 @@
 #include "pickup_coin.h"
 #include "pickup_heart.h"
 #include "pickup_speed.h"
-#include <static_object.h>
 #include "decorations.h"
 #include "engine/entities/bounding_box.h"
 #include "engine/entities/shapes/heightmap.h"
@@ -19,7 +18,6 @@
 
 class pickup;
 class pickup_coin;
-class static_object;
 
 class example_layer : public engine::layer
 {
@@ -46,18 +44,7 @@ private:
 	pickup_coin m_pickup_coin_06{};
 	pickup_coin m_pickup_coin_07{};
 	decorations m_decorations;
-	static_object cart_01{};
-	static_object fence_01{};
-	static_object fence_02{};
-	static_object bush{};
-	static_object campfire{};
-	static_object tree_01{};
-	static_object tree_02{};
-	static_object tree_03{};
-	static_object tree_04{};
-	static_object hut_01{};
-	static_object hut_02{};
-	static_object hut_03{};
+	
 	engine::ref<engine::game_object> arrow;
 	engine::ref<engine::game_object> spike;
 
