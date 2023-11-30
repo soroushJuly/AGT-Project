@@ -101,7 +101,7 @@ example_layer::example_layer()
 	m_world_box_01.set_box(16.f, 10.f, 16.f, mannequin_props.position);
 	m_world_box_02.set_box(8.f, 20.f, 70.f, mannequin_props.position + glm::vec3(0.f, -10.f, 40.f));
 	m_world_box_03.set_box(36.f, 20.f, 36.f, mannequin_props.position + glm::vec3(14.f, -10.f, 80.f));
-	m_world_box_04.set_box(108.f, 20.f, 16.f, mannequin_props.position + glm::vec3(43.f, -10.f, 88.f));
+	m_world_box_04.set_box(108.f, 20.f, 8.f, mannequin_props.position + glm::vec3(43.f, -10.f, 89.f));
 	m_world_box_05.set_box(12.f, 20.f, 70.f, mannequin_props.position + glm::vec3(94.f, -10.f, 50.f));
 	m_world_box_06.set_box(30.f, 20.f, 30.f, mannequin_props.position + glm::vec3(80.f, -10.f, 12.f));
 
@@ -189,6 +189,7 @@ example_layer::example_layer()
 	tree_03.on_initialize("assets/models/static/SM_Env_Tree_08.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(-4.f, 0, 24.f));
 	fence_01.on_initialize("assets/models/static/SM_Bld_Fence_01.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 26.f));
 	fence_02.on_initialize("assets/models/static/SM_Bld_Fence_02.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(1.f, .5f, 28.f));
+	cart_01.on_initialize("assets/models/static/SM_Prop_Cart_01.fbx", "assets/textures/PolyAdventureTexture_01.png", glm::vec3(6.f, .5f, 74.f));
 
 	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
 	hud.on_initialize();
@@ -363,21 +364,43 @@ void example_layer::on_render()
 	// render all of the static decoration in game
 	//decorations.on_render();
 	// translations and scaling for decoration should only happen in intialize NOT true bc we need to render many times just one model
+	// Box 1 decorations
 	campfire.on_render(mesh_shader, 0.f, campfire.object()->rotation_axis(), glm::vec3(0.006f));
 	bush.on_render(mesh_shader);
 	bush.on_render(mesh_shader, glm::vec3(4.f, .45f, 16.25f), engine::PI / 2, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .01f, .013f));
+	tree_01.on_render(mesh_shader);
+	tree_02.on_render(mesh_shader);
+	tree_03.on_render(mesh_shader);
+	tree_03.on_render(mesh_shader, glm::vec3(-4.f, 0, 17.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .018f, .013f));
+	tree_03.on_render(mesh_shader, glm::vec3(-4.3f, 0, 20.3f), engine::PI, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f));
+
+	// Box 2 decoratinos
 	for (int i = 0; i < 16; i++)
 	{
 		fence_01.on_render(mesh_shader, glm::vec3(4.2f, .5f, 26.f + (float)i * 3.f), engine::PI / 2);
 		fence_01.on_render(mesh_shader, glm::vec3(-4.2f, .5f, 26.f + (float)i * 3.f), engine::PI / 2);
 	}
 	//fence_02.on_render(mesh_shader, engine::PI / 2);
-	tree_01.on_render(mesh_shader);
-	tree_02.on_render(mesh_shader);
-	tree_03.on_render(mesh_shader);
-	tree_03.on_render(mesh_shader);
-	tree_03.on_render(mesh_shader, glm::vec3(-4.f, 0, 17.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f, .018f, .013f));
-	tree_03.on_render(mesh_shader, glm::vec3(-4.3f, 0, 20.3f), engine::PI, glm::vec3(0.f, 1.f, 0.f), glm::vec3(.013f));
+
+	// Box 3 decorations
+	for (int i = 0; i < 13; i++)
+	{
+		tree_03.on_render(mesh_shader, glm::vec3(-4.2f, .5f, 75.f + (float)i * 2.7f), 0.f, glm::vec3(0.f, 1.f, 0.f),
+			tree_03.object()->scale() + (float)(i % 3) / 150.f);
+		//fence_01.on_render(mesh_shader, glm::vec3(-4.2f, .5f, 26.f + (float)i * 3.f), engine::PI / 2);
+	}
+	cart_01.on_render(mesh_shader, engine::PI / 4);
+
+	// Box 4 decorations
+	for (int i = 0; i < 20; i++)
+	{
+		fence_01.on_render(mesh_shader, glm::vec3(20.2f + (float)i * 3.f, .5f, 102.f));
+		fence_01.on_render(mesh_shader, glm::vec3(20.2f + (float)i * 3.f, .5f, 95.f));
+	}
+
+	// Box 5 decorations
+
+
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, spike);

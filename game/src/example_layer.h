@@ -46,6 +46,7 @@ private:
 	pickup_coin m_pickup_coin_06{};
 	pickup_coin m_pickup_coin_07{};
 	decorations m_decorations;
+	static_object cart_01{};
 	static_object fence_01{};
 	static_object fence_02{};
 	static_object bush{};
