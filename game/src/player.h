@@ -42,6 +42,7 @@ private:
 	double y_angle_y_mouse;
 	double x_angle_x_mouse;
 
+	glm::vec3 default_bounding{ 0.f };
 	glm::vec3 m_instantaneous_acceleration{ 0.f };
 	float m_contact_time;
 

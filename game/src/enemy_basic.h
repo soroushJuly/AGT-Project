@@ -1,5 +1,7 @@
 #pragma once
 #include "engine.h"
+#include "engine/entities/bounding_box.h"
+#include "FX/billboard.h"
 
 class enemy_basic
 {
@@ -18,10 +20,12 @@ public:
 	~enemy_basic();
 
 	void initialise(engine::ref<engine::game_object> object);
-	void on_update(const engine::timestep& time_step, const glm::vec3& target_position);
+	void on_update(const engine::timestep& time_step, engine::bounding_box m_player_box, const glm::vec3& target_position, bool is_punching);
+	void on_render(const engine::ref<engine::shader> mesh_shader, const engine::perspective_camera& camera);
 	void take_damage();
 	void run();
 	void walk();
+	void die();
 
 
 	// states related methods
@@ -34,15 +38,17 @@ public:
 
 	engine::ref<engine::game_object> object() const { return m_object; }
 private:
-	int m_health;
+	int m_health{ 2 };
 	float m_damage_timer;
 	float m_speed;
+	bool m_is_dead{ false };
 	float m_timer;
 	float m_angle{ 0.f };
 
 	float m_attack_timer;
 
 	int m_run_animation;
+	int m_die_animation;
 	int m_walk_animation;
 	int m_attack_animation;
 
@@ -56,5 +62,8 @@ private:
 	glm::vec3 m_instantaneous_acceleration{ 0.f };
 
 	//void start_damage_timer(const engine::timestep& time_step);
+	engine::bounding_box m_enemy_box;
+
+	engine::ref<billboard>				m_billboard{};
 };
 

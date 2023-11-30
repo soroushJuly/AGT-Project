@@ -126,10 +126,6 @@ example_layer::example_layer()
 	m_skeleton = engine::game_object::create(skeleton_props);
 
 	m_skeleton->set_position(glm::vec3(2.f, 0.5f, 7.f));
-	m_skeleton_box.set_box(skeleton_props.bounding_shape.x * skeleton_props.scale.x,
-		skeleton_props.bounding_shape.y * skeleton_props.scale.x,
-		skeleton_props.bounding_shape.z * skeleton_props.scale.x,
-		skeleton_props.position);
 
 	m_enemy_skeleton.initialise(m_skeleton);
 
@@ -234,12 +230,20 @@ void example_layer::on_update(const engine::timestep& time_step)
 	if (m_state == example_layer::MENU)
 		return;
 	if (m_player.is_dead())
+	{
 		m_state = example_layer::GAME_LOST;
+		return;
+	}
 	if (m_enemy_mech.is_dead())
 		m_state = example_layer::GAME_WON;
 
 	// Uncomment to roam around the map
 	//m_3d_camera.on_update(time_step);
+
+	m_player_box.set_box(m_player.object()->bounding_shape().x * m_player.object()->scale().x,
+		m_player.object()->bounding_shape().y * m_player.object()->scale().x,
+		m_player.object()->bounding_shape().z * m_player.object()->scale().x,
+		m_player.position());
 
 	m_pickup_heart_01.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
 	m_pickup_speed_01.on_update(m_player.position(), m_player.speed(), time_step, m_audio_manager);
@@ -266,8 +270,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_player.update_camera(m_3d_camera, time_step);
 	m_player_box.on_update(m_player.object()->position());
 
-	m_enemy_skeleton.on_update(time_step, m_player.object()->position());
-	m_skeleton_box.on_update(m_skeleton->position());
+	m_enemy_skeleton.on_update(time_step, m_player_box, m_player.object()->position(), m_player.is_punching());
 
 	if (m_player.is_punching())
 	{
@@ -329,7 +332,7 @@ void example_layer::on_render()
 	// Set up some of the scene's parameters in the shader
 	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("gEyeWorldPos", m_3d_camera.position());
 	m_player_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_skeleton_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	
 	//m_lava_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
 	m_world_box_03.on_render(2.5f, 1.f, 1.f, mesh_shader);
@@ -380,13 +383,9 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, spike);
 	engine::renderer::submit(mesh_shader, m_player.object());
 
-	glm::mat4 object_transform(1.0f);
-	object_transform = glm::translate(object_transform, m_skeleton->position());
-	object_transform = glm::rotate(object_transform, m_skeleton->rotation_amount(), m_skeleton->rotation_axis());
-	object_transform = glm::scale(object_transform, glm::vec3(0.16f));
-	//engine::renderer::submit(mesh_shader, object_transform, m_skeleton);
 
-	engine::renderer::submit(mesh_shader, object_transform, m_enemy_skeleton.object());
+
+	m_enemy_skeleton.on_render(mesh_shader, m_3d_camera);
 	m_enemy_mech.on_render(mesh_shader);
 
 	m_ring.on_render(mesh_shader);
@@ -402,7 +401,7 @@ void example_layer::on_render()
 	engine::renderer::end_scene();
 
 	engine::renderer::begin_scene(m_3d_camera, mesh_shader);
-	m_billboard->on_render(m_3d_camera, mesh_shader);
+	//m_billboard->on_render(m_3d_camera, mesh_shader);
 	engine::renderer::end_scene();
 	// Render text
 	m_text_manager->render_text(text_shader, std::to_string(m_player.coins()), 43.f, (float)engine::application::window().height() - 91.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));

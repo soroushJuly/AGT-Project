@@ -21,6 +21,8 @@ void player::initialise(engine::ref<engine::game_object> object)
 	m_object->set_acceleration(glm::vec3(0.f, -9.8f, 0.f));
 	m_object->set_velocity(glm::vec3(0.f, 0.f, 0.f));
 	m_object->animated_mesh()->set_default_animation(4);
+
+	default_bounding = m_object->bounding_shape();
 }
 void player::on_update(const engine::timestep& time_step)
 {
@@ -77,11 +79,11 @@ void player::on_update(const engine::timestep& time_step)
 	{
 		punch(time_step);
 	}
-	else if (!is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
+	else if (!m_is_punching && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
 	{
 		run(time_step);
 	}
-	else if (!is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W))
+	else if (!m_is_punching && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W))
 	{
 		walk(time_step);
 	}
@@ -172,15 +174,13 @@ void player::run(const engine::timestep& time_step)
 void player::punch(const engine::timestep& time_step)
 {
 	m_object->animated_mesh()->switch_root_movement(true);
-	//m_speed = 3.0f;
-	//m_object->set_position(m_object->position() += m_object->forward() * m_speed *
-	//	(float)time_step);
 	if (m_timer > 0.0f && m_is_punching)
 	{
 
 		return;
 	}
 	clear_moves();
+	m_object->set_bounding_shape(m_object->bounding_shape() * 2.f);
 	m_is_punching = true;
 	m_object->animated_mesh()->switch_animation(14);
 	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(14)->mDuration, 0.f, 1.f);
@@ -190,6 +190,7 @@ void player::punch(const engine::timestep& time_step)
 void player::clear_moves()
 {
 	m_object->set_velocity(glm::vec3(0.f, 0.f, 0.f));
+	m_object->set_bounding_shape(default_bounding);
 	m_is_punching = false;
 	is_running = false;
 	is_jumping = false;

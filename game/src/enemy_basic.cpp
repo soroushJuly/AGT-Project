@@ -1,6 +1,7 @@
 #include "enemy_basic.h"
 
-enemy_basic::enemy_basic() : m_instantaneous_acceleration(0.f), m_contact_time(0.f), m_attack_timer(0.f)
+enemy_basic::enemy_basic() : m_instantaneous_acceleration(0.f),
+m_contact_time(0.f), m_attack_timer(0.f), m_damage_timer(0.f)
 {
 }
 
@@ -14,13 +15,28 @@ void enemy_basic::initialise(engine::ref<engine::game_object> object)
 	m_object->set_forward(glm::vec3(0.f, 0.f, 1.f));
 	m_object->set_velocity(glm::vec3(0.f, 0.f, 1.f));
 	//m_object->set_acceleration(0.1f * glm::vec3(m_object->forward()));
+
+
+	m_enemy_box.set_box(m_object->bounding_shape().x * m_object->scale().x,
+		m_object->bounding_shape().y * m_object->scale().x,
+		m_object->bounding_shape().z * m_object->scale().x,
+		m_object->position());
 	walk();
+
+	m_billboard = billboard::create("assets/textures/hit.png", 4, 4, 16);
+
 	std::srand(std::time(nullptr));
 }
-void enemy_basic::on_update(const engine::timestep& time_step, const glm::vec3& target_position)
+void enemy_basic::on_update(const engine::timestep& time_step, engine::bounding_box m_player_box, const glm::vec3& target_position, bool is_punching)
 {
-	//m_object->set_velocity(m_object->velocity() + (m_object->acceleration()
-	//	+ m_instantaneous_acceleration) * (float)time_step);
+	m_enemy_box.on_update(m_object->position());
+	if (m_enemy_box.collision(m_player_box) && is_punching)
+	{
+		take_damage();
+	}
+
+	m_billboard->on_update(time_step);
+
 
 	// Turn off instantaneous forces if contact time is surpassed
 	if (glm::length(m_instantaneous_acceleration) > 0 && m_contact_time > 0.3f) {
@@ -29,6 +45,7 @@ void enemy_basic::on_update(const engine::timestep& time_step, const glm::vec3& 
 	}
 	m_contact_time += time_step;
 	m_attack_timer += time_step;
+	m_damage_timer += time_step;
 	m_timer -= time_step;
 
 	if (m_timer > 0.0f)
@@ -83,12 +100,43 @@ void enemy_basic::on_update(const engine::timestep& time_step, const glm::vec3& 
 	}
 }
 
+void enemy_basic::on_render(const engine::ref<engine::shader> mesh_shader, const engine::perspective_camera& camera)
+{
+	if (m_is_dead && m_timer < 0.1f)
+	{
+		return;
+	}
+	glm::mat4 object_transform(1.0f);
+	object_transform = glm::translate(object_transform, m_object->position());
+	object_transform = glm::rotate(object_transform, m_object->rotation_amount(), m_object->rotation_axis());
+	object_transform = glm::scale(object_transform, glm::vec3(0.16f));
+	engine::renderer::submit(mesh_shader, object_transform, m_object);
+
+	m_enemy_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
+
+	m_billboard->on_render(camera, mesh_shader);
+}
+
 void enemy_basic::take_damage()
 {
+	if (m_damage_timer < 1.f)
+	{
+		return;
+	}
+	float x_position = m_object->position().x;
+	float y_position = m_object->position().y + m_object->animated_mesh()->size().y * m_object->scale().y;
+	float z_position = m_object->position().z;
+	m_billboard->activate(glm::vec3(x_position, y_position, z_position), 2.f, 2.f);
 
+	m_damage_timer = 0.f;
 	m_instantaneous_acceleration = -(glm::normalize(glm::vec3(m_object->forward())) * 823.f) / m_object->mass();
 	m_contact_time = 0.f;
 	--m_health;
+	if (m_health < 0)
+	{
+		die();
+		m_is_dead = true;
+	}
 }
 
 void enemy_basic::run()
@@ -116,6 +164,19 @@ void enemy_basic::walk()
 	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(m_walk_animation)->mDuration, 0.f, 1.65f);
 }
 
+void enemy_basic::die()
+{
+	if (m_timer > 0.f)
+	{
+		return;
+	}
+	m_die_animation = 1;
+	m_object->animated_mesh()->switch_root_movement(true);
+	m_object->animated_mesh()->switch_animation(m_die_animation);
+	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(m_die_animation)->mDuration, 0.f, .8f);
+}
+
+// TODO: take this functionality in a class
 void enemy_basic::wander(const engine::timestep& time_step)
 {
 	walk();
