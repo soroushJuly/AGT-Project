@@ -12,7 +12,7 @@ public:
 	~hud();
 
 	void on_initialize();
-	void on_update(const engine::timestep& time_step, int& hearts);
+	void on_update(const engine::timestep& time_step, int hearts);
 	void on_render(engine::ref<engine::shader> shader);
 
 private:

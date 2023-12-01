@@ -17,7 +17,6 @@ public:
 
 	void turn(float angle);
 	void update_camera(engine::perspective_camera& camera, const engine::timestep& timestep);
-	void stand_jump(const engine::timestep& time_step);
 	void jump(const engine::timestep& time_step);
 	void walk(const engine::timestep& time_step);
 	void punch(const engine::timestep& time_step);
@@ -26,10 +25,11 @@ public:
 	void clear_moves();
 	void die();
 	void take_damage(const engine::timestep& timestep);
+	void add_heart() { ++m_hearts; };
 
 	glm::vec3 position() { return m_object->position(); };
 	int& coins() { return m_coins; }
-	int& hearts() { return m_hearts; }
+	int hearts() { return m_hearts; }
 	bool is_dead() { return m_is_dead; }
 	float& speed() { return m_speed; }
 	bool is_punching() { return m_is_punching; }

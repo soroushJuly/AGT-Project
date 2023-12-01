@@ -77,7 +77,7 @@ void pickup_heart::on_render()
 	}
 };
 
-void pickup_heart::on_update(glm::vec3 c, int& hearts, float dt, engine::ref<engine::audio_manager> m_audio_manager)
+void pickup_heart::on_update(glm::vec3 c, player& player, float dt, engine::ref<engine::audio_manager> m_audio_manager)
 {
 
 	theta += 2.5 * dt;
@@ -93,9 +93,9 @@ void pickup_heart::on_update(glm::vec3 c, int& hearts, float dt, engine::ref<eng
 		{
 			m_audio_manager->play("pickup");
 		}
-		if (hearts <= 3)
+		if (player.hearts() <= 3)
 		{
-			++hearts;
+			player.add_heart();
 		}
 		//auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 		//std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->

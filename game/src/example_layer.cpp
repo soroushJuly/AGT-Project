@@ -115,7 +115,6 @@ example_layer::example_layer()
 	engine::ref<engine::texture_2d> skeleton_texture =
 		engine::texture_2d::create("assets/textures/Characters_Brown.png", true);
 	skeleton_props.textures = { skeleton_texture };
-	skeleton_props.type = 0;
 	skeleton_props.mass = 27.2f;
 	skeleton_props.velocity = glm::vec3(0.f);
 	//skeleton_props.velocity = glm::vec3(10.f);
@@ -136,13 +135,8 @@ example_layer::example_layer()
 	//engine::ref <engine::model> dd_model = engine::model::create("assets/models/animated/mech.fbx");
 	engine::game_object_properties mech_props;
 	mech_props.animated_mesh = m_enemy_mesh_01;
-	//engine::ref<engine::texture_2d> mech_texture =
-	//	engine::texture_2d::create("assets/textures/Atlas.png", false);
-	//mech_props.textures = { mech_texture };
 	//mech_props.textures = { dd_model->textures() };
-	mech_props.type = 0;
-	mech_props.position = glm::vec3(0.f, 0.5f, 15.f);
-	mech_props.mass = 27.2f;
+	mech_props.position = glm::vec3(84.f, 0.5f, 16.f);
 	mech_props.velocity = glm::vec3(0.f);
 	mech_props.scale = glm::vec3(.6f);
 	mech_props.bounding_shape = glm::vec3(m_enemy_mesh->size().x * mannequin_props.scale.x / 2.f,
@@ -243,7 +237,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 		m_player.object()->bounding_shape().z * m_player.object()->scale().x,
 		m_player.position());
 
-	m_pickup_heart_01.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
+	m_pickup_heart_01.on_update(m_player.position(), m_player, time_step, m_audio_manager);
 	m_pickup_speed_01.on_update(m_player.position(), m_player.speed(), time_step, m_audio_manager);
 	//m_pickup_heart_02.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
 	m_pickup_coin_01.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
@@ -417,10 +411,6 @@ void example_layer::on_event(engine::event& event)
 		if (e.key_code() == engine::key_codes::KEY_1)
 		{
 			m_ring.activate(.3f, m_player.position());
-		}
-		if (e.key_code() == engine::key_codes::KEY_3)
-		{
-			m_enemy_mech.shoot_bomb(m_player.position());
 		}
 		if (e.key_code() == engine::key_codes::KEY_4)
 		{

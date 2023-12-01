@@ -15,7 +15,7 @@ void hud::on_initialize()
 	m_time_icon = time_icon::create(0.32f, 0.32f);
 }
 
-void hud::on_update(const engine::timestep& time_step, int& hearts)
+void hud::on_update(const engine::timestep& time_step, int hearts)
 {
 	m_health_bar->on_update(hearts);
 	m_coin_icon->on_update(time_step);

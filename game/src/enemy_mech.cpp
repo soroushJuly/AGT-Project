@@ -77,6 +77,8 @@ void enemy_mech::on_update(const engine::timestep& time_step, player& player, en
 		player.take_damage(time_step);
 		m_rocket->set_position(m_object->position());
 	}
+	if (m_rocket->position().y < 0.5)
+		is_rocket = false;
 
 
 	// Turn off instantaneous forces if contact time is surpassed
