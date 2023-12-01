@@ -15,6 +15,7 @@
 #include "FX/billboard.h"
 #include "FX/ring.h"
 #include "hud.h"
+#include "enemy_basic_skeleton.h"
 
 
 class pickup;
@@ -41,7 +42,8 @@ public:
 
 private:
 	player m_player{};
-	enemy_basic m_enemy_skeleton{};
+	std::vector<engine::ref<enemy_basic_skeleton>> m_skeleton_list;
+	//enemy_basic_skeleton m_pp{ glm::vec3(2.f, 0.5f, 7.f) };
 	enemy_mech m_enemy_mech{};
 
 	enemy_lava m_lava_01;
@@ -58,8 +60,8 @@ private:
 
 	decorations m_decorations;
 
-	
-	
+
+
 	engine::ref<engine::game_object> arrow;
 	engine::ref<engine::game_object> spike;
 
@@ -86,7 +88,6 @@ private:
 	engine::ref<engine::game_object>	m_terrain_2{};
 	engine::ref<engine::heightmap>		m_heightmap;
 	engine::ref<engine::game_object>	m_mannequin{};
-	engine::ref<engine::game_object>	m_skeleton{};
 	engine::ref<engine::game_object>	m_mech{};
 
 	engine::ref<engine::material>		m_mannequin_material{};

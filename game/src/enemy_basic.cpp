@@ -17,9 +17,9 @@ void enemy_basic::initialise(engine::ref<engine::game_object> object)
 	//m_object->set_acceleration(0.1f * glm::vec3(m_object->forward()));
 
 
-	m_enemy_box.set_box(m_object->bounding_shape().x * m_object->scale().x,
-		m_object->bounding_shape().y * m_object->scale().x,
-		m_object->bounding_shape().z * m_object->scale().x,
+	m_enemy_box.set_box(m_object->bounding_shape().x,
+		m_object->bounding_shape().y,
+		m_object->bounding_shape().z,
 		m_object->position());
 	walk();
 
@@ -115,7 +115,7 @@ void enemy_basic::on_render(const engine::ref<engine::shader> mesh_shader, const
 	glm::mat4 object_transform(1.0f);
 	object_transform = glm::translate(object_transform, m_object->position());
 	object_transform = glm::rotate(object_transform, m_object->rotation_amount(), m_object->rotation_axis());
-	object_transform = glm::scale(object_transform, glm::vec3(0.16f));
+	object_transform = glm::scale(object_transform, m_object->scale());
 	engine::renderer::submit(mesh_shader, object_transform, m_object);
 
 	m_enemy_box.on_render(2.5f, 1.f, 1.f, mesh_shader);

@@ -39,6 +39,7 @@
     <ClCompile Include="src\enemy_basic.cpp" />
     <ClCompile Include="src\enemy_mech.cpp" />
     <ClCompile Include="src\enemy_lava.cpp" />
+    <ClCompile Include="src\enemy_basic_skeleton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -78,6 +79,7 @@
     <ClInclude Include="src\enemy_basic.h" />
     <ClInclude Include="src\enemy_mech.h" />
     <ClInclude Include="src\enemy_lava.h" />
+    <ClInclude Include="src\enemy_basic_skeleton.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pickupables">

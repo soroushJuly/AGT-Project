@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\decorations.h" />
+    <ClInclude Include="src\enemy_basic_skeleton.h" />
     <ClInclude Include="src\enemy_lava.h" />
     <ClInclude Include="src\enemy_mech.h" />
     <ClInclude Include="src\enemy_basic.h" />
@@ -153,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\decorations.cpp" />
+    <ClCompile Include="src\enemy_basic_skeleton.cpp" />
     <ClCompile Include="src\enemy_lava.cpp" />
     <ClCompile Include="src\enemy_mech.cpp" />
     <ClCompile Include="src\enemy_basic.cpp" />

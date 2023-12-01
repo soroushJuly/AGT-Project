@@ -105,30 +105,8 @@ example_layer::example_layer()
 	m_world_box_05.set_box(10.f, 20.f, 70.f, mannequin_props.position + glm::vec3(94.f, -10.f, 50.f));
 	m_world_box_06.set_box(28.f, 20.f, 28.f, mannequin_props.position + glm::vec3(84.f, -10.f, 12.f));
 
-	// Free model from here: https://poly.pizza/m/yq5ATpujSt
-	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Skeleton.fbx");
-	m_enemy_mesh->switch_root_movement(false);
-	m_enemy_mesh->switch_animation(3);
 
-	engine::game_object_properties skeleton_props;
-	std::vector<engine::ref<engine::texture_2d>> tex_vec;
-	skeleton_props.animated_mesh = m_enemy_mesh;
-	engine::ref<engine::texture_2d> skeleton_texture =
-		engine::texture_2d::create("assets/textures/Characters_Brown.png", true);
-	skeleton_props.textures = { skeleton_texture };
-	skeleton_props.mass = 27.2f;
-	skeleton_props.velocity = glm::vec3(0.f);
-	//skeleton_props.velocity = glm::vec3(10.f);
-	skeleton_props.scale = glm::vec3(0.2f);
-	skeleton_props.bounding_shape = glm::vec3(m_enemy_mesh->size().x * mannequin_props.scale.x / 2.f,
-		m_enemy_mesh->size().y / mannequin_props.scale.x * 2.f, m_enemy_mesh->size().x / 2.f);
-	m_skeleton = engine::game_object::create(skeleton_props);
-
-	m_skeleton->set_position(glm::vec3(2.f, 0.5f, 7.f));
-
-	m_enemy_skeleton.initialise(m_skeleton);
-
-
+	// TODO: add texture for the mech 
 	engine::ref<engine::skinned_mesh> m_enemy_mesh_01 = engine::skinned_mesh::create("assets/models/animated/mech.fbx");
 	m_enemy_mesh_01->switch_root_movement(false);
 	m_enemy_mesh_01->switch_animation(13);
@@ -140,8 +118,8 @@ example_layer::example_layer()
 	mech_props.position = glm::vec3(84.f, 0.5f, 16.f);
 	mech_props.velocity = glm::vec3(0.f);
 	mech_props.scale = glm::vec3(.6f);
-	mech_props.bounding_shape = glm::vec3(m_enemy_mesh->size().x * mannequin_props.scale.x / 2.f,
-		m_enemy_mesh->size().y * mannequin_props.scale.x / 1.1f, m_enemy_mesh->size().x / 2.f);
+	mech_props.bounding_shape = glm::vec3(m_enemy_mesh_01->size().x * mannequin_props.scale.x / 2.f,
+		m_enemy_mesh_01->size().y * mannequin_props.scale.x / 1.1f, m_enemy_mesh_01->size().x / 2.f);
 	m_mech = engine::game_object::create(mech_props);
 
 	m_enemy_mech.initialise(m_mech);
@@ -154,6 +132,16 @@ example_layer::example_layer()
 	spike_props.position = glm::vec3(0.f, .5f, 4.f);
 	spike = engine::game_object::create(spike_props);
 
+	// Add skeletons to the map
+	for (size_t i = 0; i < 4; i++)
+	{
+		for (size_t j = 0; j < 4; j++)
+		{
+			m_skeleton_list.push_back(enemy_basic_skeleton::create(glm::vec3(10.f + (float)i, .5f, 80.f + (float)j)));
+		}
+	}
+
+	// Add coins in the map
 	for (size_t i = 0; i < 10; i++)
 	{
 		m_coin_list.push_back(pickup_coin::create(glm::vec3(0.f, 1.f, 20.f + (float)i / 2.f)));
@@ -169,14 +157,16 @@ example_layer::example_layer()
 		m_coin_list.push_back(pickup_coin::create(glm::vec3(90.f + (float)i / 2.f, 1.f, 80.f - (float)i / 2.f)));
 		m_coin_list.push_back(pickup_coin::create(glm::vec3(90.f + (float)i / 2.f, 1.f, 68.f - (float)i / 2.f)));
 	}
+
 	// Initialize objects
 	m_pickup_heart_01.on_initialize(glm::vec3(2.f, 1.2f, 21.f));
 	m_pickup_speed_01.on_initialize(glm::vec3(3.f, 1.2f, 22.f));
 	//m_pickup_heart_02.on_initialize(glm::vec3(0.f, 1.2f, 2.f));
 
-	// Initilaise the decorations in the map.
+	// Initialise the decorations in the map.
 	m_decorations.on_initialise();
 
+	// Initialise 2D features
 	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
 	m_game_won = game_intro::create("assets/textures/game_won.png", 1.6f, 0.9f);
 	m_game_lost = game_intro::create("assets/textures/game_lost.png", 1.6f, 0.9f);
@@ -268,7 +258,10 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	m_enemy_mech.on_update(time_step, m_player, m_player_box, m_player.position());
 	// TODO: Not passing the player - instead pointer
-	m_enemy_skeleton.on_update(time_step, m_player, m_player_box, m_player.object()->position());
+	for (auto enemy : m_skeleton_list)
+	{
+		enemy->on_update(time_step, m_player, m_player_box);
+	}
 
 	// Player move restriction in the map
 	if (!(m_world_box_01.collision(m_player_box)
@@ -378,7 +371,10 @@ void example_layer::on_render()
 	engine::renderer::submit(mesh_shader, spike);
 
 	m_player.on_render(mesh_shader);
-	m_enemy_skeleton.on_render(mesh_shader, m_3d_camera);
+	for (auto enemy : m_skeleton_list)
+	{
+		enemy->on_render(mesh_shader, m_3d_camera);
+	}
 	m_enemy_mech.on_render(mesh_shader, m_3d_camera);
 
 
