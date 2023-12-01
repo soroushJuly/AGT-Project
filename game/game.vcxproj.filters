@@ -40,6 +40,9 @@
     <ClCompile Include="src\enemy_mech.cpp" />
     <ClCompile Include="src\enemy_lava.cpp" />
     <ClCompile Include="src\enemy_basic_skeleton.cpp" />
+    <ClCompile Include="src\enemies\enemy_basic_robot.cpp">
+      <Filter>enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -80,6 +83,9 @@
     <ClInclude Include="src\enemy_mech.h" />
     <ClInclude Include="src\enemy_lava.h" />
     <ClInclude Include="src\enemy_basic_skeleton.h" />
+    <ClInclude Include="src\enemies\enemy_basic_robot.h">
+      <Filter>enemies</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pickupables">
@@ -90,6 +96,9 @@
     </Filter>
     <Filter Include="HUD">
       <UniqueIdentifier>{dde3dd19-b6dc-4ab3-80c7-0803e9ac7d27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="enemies">
+      <UniqueIdentifier>{a518a568-f49e-457b-a2d4-6bc3db09a720}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -81,7 +81,6 @@ example_layer::example_layer()
 	engine::ref<engine::texture_2d> mannequin_texture =
 		engine::texture_2d::create("assets/textures/PolyAdventureTexture_01.png", true);
 	mannequin_props.textures = { mannequin_texture };
-	//mannequin_props.scale = glm::vec3(1.f / glm::max(m_skinned_mesh->size().x, glm::max(m_skinned_mesh->size().y, m_skinned_mesh->size().z)));
 	mannequin_props.scale = glm::vec3(0.6f);
 	mannequin_props.type = 0;
 	mannequin_props.velocity = glm::vec3(0.f);
@@ -106,15 +105,13 @@ example_layer::example_layer()
 	m_world_box_06.set_box(28.f, 20.f, 28.f, mannequin_props.position + glm::vec3(84.f, -10.f, 12.f));
 
 
-	// TODO: add texture for the mech 
+	// TODO: add texture for the mech (using model create? then ->textures)
 	engine::ref<engine::skinned_mesh> m_enemy_mesh_01 = engine::skinned_mesh::create("assets/models/animated/mech.fbx");
 	m_enemy_mesh_01->switch_root_movement(false);
 	m_enemy_mesh_01->switch_animation(13);
 
-	//engine::ref <engine::model> dd_model = engine::model::create("assets/models/animated/mech.fbx");
 	engine::game_object_properties mech_props;
 	mech_props.animated_mesh = m_enemy_mesh_01;
-	//mech_props.textures = { dd_model->textures() };
 	mech_props.position = glm::vec3(84.f, 0.5f, 16.f);
 	mech_props.velocity = glm::vec3(0.f);
 	mech_props.scale = glm::vec3(.6f);
@@ -133,13 +130,22 @@ example_layer::example_layer()
 	spike = engine::game_object::create(spike_props);
 
 	// Add skeletons to the map
-	for (size_t i = 0; i < 4; i++)
+	/*for (size_t i = 0; i < 5; i++)
+	{
+		for (size_t j = 0; j < 5; j++)
+		{
+			m_skeleton_list.push_back(enemy_basic_skeleton::create(glm::vec3(3.f + 3.f * (float)i, .5f, 88.f + 3.f * (float)j)));
+		}
+	}*/
+
+	// Add robots to the map
+	/*for (size_t i = 0; i < 4; i++)
 	{
 		for (size_t j = 0; j < 4; j++)
 		{
-			m_skeleton_list.push_back(enemy_basic_skeleton::create(glm::vec3(10.f + (float)i, .5f, 80.f + (float)j)));
+			m_robot_list.push_back(enemy_basic_robot::create(glm::vec3(91.f + 3.f * (float)i, .5f, 88.f + 3.f * (float)j)));
 		}
-	}
+	}*/
 
 	// Add coins in the map
 	for (size_t i = 0; i < 10; i++)
@@ -263,6 +269,11 @@ void example_layer::on_update(const engine::timestep& time_step)
 		enemy->on_update(time_step, m_player, m_player_box);
 	}
 
+	for (auto enemy : m_robot_list)
+	{
+		enemy->on_update(time_step, m_player, m_player_box);
+	}
+
 	// Player move restriction in the map
 	if (!(m_world_box_01.collision(m_player_box)
 		|| m_world_box_02.collision(m_player_box)
@@ -276,7 +287,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	}
 
 	// Stop the timer when player reaches the boss
-	if (m_world_box_06.collision(m_player_box))
+	if (m_reached_time == 0.f && m_world_box_06.collision(m_player_box))
 		m_reached_time = m_remained_time;
 
 	if (m_lava_01.collision(m_player_box)
@@ -375,6 +386,10 @@ void example_layer::on_render()
 	{
 		enemy->on_render(mesh_shader, m_3d_camera);
 	}
+	for (auto enemy : m_robot_list)
+	{
+		enemy->on_render(mesh_shader, m_3d_camera);
+	}
 	m_enemy_mech.on_render(mesh_shader, m_3d_camera);
 
 
@@ -390,7 +405,7 @@ void example_layer::on_render()
 
 	// Render text
 	m_text_manager->render_text(text_shader, std::to_string(m_player.coins()), 43.f, (float)engine::application::window().height() - 91.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
-	m_text_manager->render_text(text_shader, std::to_string(m_reached_time == 0 ? (int)m_remained_time : (int)m_reached_time) + "s", 45.f, (float)engine::application::window().height() - 135.f, 0.5f, glm::vec4(.85f, 0.85f, 0.85f, 1.f));
+	m_text_manager->render_text(text_shader, std::to_string(m_reached_time == 0.f ? (int)m_remained_time : (int)m_reached_time) + "s", 45.f, (float)engine::application::window().height() - 135.f, 0.5f, glm::vec4(.85f, 0.85f, 0.85f, 1.f));
 }
 
 void example_layer::on_event(engine::event& event)

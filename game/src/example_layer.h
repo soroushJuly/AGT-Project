@@ -4,6 +4,8 @@
 #include <enemy_basic.h>
 #include <enemy_mech.h>
 #include "enemy_lava.h"
+#include "enemy_basic_skeleton.h"
+#include "enemies/enemy_basic_robot.h"
 #include <game_intro.h>
 #include "pickup_coin.h"
 #include "pickup_heart.h"
@@ -15,7 +17,6 @@
 #include "FX/billboard.h"
 #include "FX/ring.h"
 #include "hud.h"
-#include "enemy_basic_skeleton.h"
 
 
 class pickup;
@@ -43,6 +44,7 @@ public:
 private:
 	player m_player{};
 	std::vector<engine::ref<enemy_basic_skeleton>> m_skeleton_list;
+	std::vector<engine::ref<enemy_basic_robot>> m_robot_list;
 	//enemy_basic_skeleton m_pp{ glm::vec3(2.f, 0.5f, 7.f) };
 	enemy_mech m_enemy_mech{};
 
