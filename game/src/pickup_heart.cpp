@@ -10,13 +10,10 @@ void pickup_heart::on_initialize(glm::vec3 position)
 {
 	m_position = position;
 	engine::ref<engine::heart> pickup_shape = engine::heart::create();
-	//engine::ref<engine::texture_2d> pickup_texture =
-	//	engine::texture_2d::create("assets/textures/texture_gold_3.png", false);
 	engine::game_object_properties pickup_props;
 	pickup_props.position = position;
 	pickup_props.scale = glm::vec3(.05f);
 	pickup_props.meshes = { pickup_shape->mesh() };
-	//pickup_props.textures = { pickup_texture };
 	m_pickup = pickup::create(pickup_props);
 	m_pickup->init();
 
@@ -58,17 +55,14 @@ void pickup_heart::on_render()
 			set_uniform("lighting_on", true);
 
 
-		engine::ref<engine::material> m_mannequin_material = engine::material::create(1.0f, glm::vec3(1.f, 0.1f, 0.1f),
+		engine::ref<engine::material> m_heart_material = engine::material::create(1.0f, glm::vec3(1.f, 0.1f, 0.1f),
 			glm::vec3(1.f, 0.1f, 0.1f), glm::vec3(1.f, 0.1f, 0.1f), 1.0f);
-		//std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", true);
-		m_mannequin_material->submit(mesh_shader);
-		//m_pickup->textures().at(0)->bind();
+		m_heart_material->submit(mesh_shader);
 		glm::mat4 pickup_transform(1.0f);
 		pickup_transform = glm::translate(pickup_transform, m_position);
 		pickup_transform = glm::rotate(pickup_transform, m_pickup->rotation_amount(), m_pickup->rotation_axis());
 		pickup_transform = glm::scale(pickup_transform, m_pickup->scale());
 		engine::renderer::submit(mesh_shader, m_pickup->meshes().at(0), pickup_transform);
-		//std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("has_texture", false);
 	}
 	else
 	{
@@ -97,9 +91,6 @@ void pickup_heart::on_update(glm::vec3 c, player& player, float dt, engine::ref<
 		{
 			player.add_heart();
 		}
-		//auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
-		//std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->
-		//	set_uniform("gNumPointLights", (int)0);
 	}
 };
 
