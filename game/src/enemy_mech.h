@@ -63,6 +63,7 @@ private:
 
 	// Bomb
 	engine::ref<engine::game_object> m_bomb;
+	engine::bounding_box m_bomb_box;
 	bool is_bomb{ false };
 	float m_bomb_contact_time;
 	float m_bomb_timer{ 3.f };
@@ -71,6 +72,7 @@ private:
 
 	// Rocket
 	engine::ref<engine::game_object> m_rocket;
+	engine::bounding_box m_rocket_box;
 	bool is_rocket{ false };
 	float m_rocket_max_velocity;
 	float m_rocket_timer{ 3.f };

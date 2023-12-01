@@ -54,8 +54,8 @@ example_layer::example_layer()
 		glm::ortho(0.f, (float)engine::application::window().width(), 0.f,
 			(float)engine::application::window().height()));
 
-	m_mannequin_material = engine::material::create(.8f, glm::vec3(0.1f, 0.9f, 0.9f),
-		glm::vec3(0.1f, 0.9f, 0.9f), glm::vec3(0.1f, 0.9f, 0.9f), 1.0f);
+	m_mannequin_material = engine::material::create(.8f, glm::vec3(0.1f, 0.3f, 0.3f),
+		glm::vec3(0.1f, 0.3f, 0.3f), glm::vec3(0.1f, 0.3f, 0.3f), 1.0f);
 
 	m_cross_fade = cross_fade::create("assets/textures/red.bmp", 2.0f, 1.6f, 0.9f);
 	m_ring.initialise();

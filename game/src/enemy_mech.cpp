@@ -1,7 +1,7 @@
 #include "enemy_mech.h"
 
 enemy_mech::enemy_mech() : m_instantaneous_acceleration(0.f), m_damage_timer(0.f),
-	m_contact_time(0.f), m_rocket_max_velocity(0.f), m_switch_direction_timer(0.f)
+m_contact_time(0.f), m_rocket_max_velocity(0.f), m_switch_direction_timer(0.f)
 {
 }
 
@@ -34,6 +34,8 @@ void enemy_mech::initialise(engine::ref<engine::game_object> object)
 	model_props.position = m_object->position() + glm::vec3(0.f, m_object->animated_mesh()->size().y / 2, 0.f);
 	model_props.scale = glm::vec3(.2f);
 	m_bomb = engine::game_object::create(model_props);
+	m_bomb_box.set_box(m_bomb->scale().x, m_bomb->scale().y, m_bomb->scale().z,
+		m_bomb->position());
 
 	// rocket
 	engine::ref <engine::model> rocket_model = engine::model::create("assets/models/static/Rocket.fbx");
@@ -47,6 +49,8 @@ void enemy_mech::initialise(engine::ref<engine::game_object> object)
 	rocket_model_props.scale = glm::vec3(.005f);
 	m_rocket = engine::game_object::create(rocket_model_props);
 	m_rocket->set_forward(m_object->forward());
+	m_rocket_box.set_box(m_rocket->scale().x, m_rocket->scale().y, m_rocket->scale().z,
+		m_rocket->position());
 }
 void enemy_mech::on_update(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box, glm::vec3 target_position)
 {
@@ -55,8 +59,24 @@ void enemy_mech::on_update(const engine::timestep& time_step, player& player, en
 	update_rocket(time_step, player.object()->position());
 	m_billboard->on_update(time_step);
 
+	m_enemy_box.on_update(m_object->position());
+	m_bomb_box.on_update(m_bomb->position());
+	m_rocket_box.on_update(m_rocket->position());
+
 	if (m_enemy_box.collision(m_player_box) && player.is_punching())
 		take_damage();
+	if (m_bomb_box.collision(m_player_box))
+	{
+		player.take_damage(time_step);
+		is_bomb = false;
+	}
+	if (m_rocket_box.collision(m_player_box))
+	{
+		is_rocket = false;
+		player.take_damage(time_step);
+		m_rocket->set_position(m_object->position());
+	}
+
 
 	// Turn off instantaneous forces if contact time is surpassed
 	if (glm::length(m_bomb_instantaneous_acceleration) > 0 && m_bomb_contact_time > 0.3f) {
@@ -107,8 +127,8 @@ void enemy_mech::on_update(const engine::timestep& time_step, player& player, en
 	}
 
 	const float distance = glm::length(target_position - m_object->position());
-	const float FACE_BOUND = 10.f;
-	const float BOMB_BOUND = 6.f;
+	const float FACE_BOUND = 11.f;
+	const float BOMB_BOUND = 7.f;
 	const float ROCKET_BOUND = 3.f;
 
 	// TODO: shockwave attack to send the target(enemy) backwards
@@ -134,13 +154,16 @@ void enemy_mech::on_update(const engine::timestep& time_step, player& player, en
 			m_bomb_timer = 0.f;
 		}
 		if (distance < ROCKET_BOUND)
+		{
+			m_rocket_timer = 0.f;
 			m_state = enemy_mech::ATTACK_ROCKET;
+		}
 		if (distance > BOMB_BOUND)
 			m_state = enemy_mech::FACE_TARGET;
 		break;
 	case enemy_mech::ATTACK_ROCKET:
 		face_target(target_position);
-		if (m_rocket_timer > 2.f)
+		if (m_rocket_timer > 2.5f)
 		{
 			shoot_rocket();
 			m_rocket_timer = 0.f;
@@ -164,6 +187,8 @@ void enemy_mech::on_render(engine::ref<engine::shader> mesh_shader, const engine
 	engine::renderer::submit(mesh_shader, transform_mech, m_object);
 
 	m_enemy_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_bomb_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
+	m_rocket_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
 
 	m_billboard->on_render(camera, mesh_shader);
 
@@ -227,12 +252,13 @@ void enemy_mech::update_bomb(const engine::timestep& time_step)
 void enemy_mech::shoot_rocket()
 {
 	is_rocket = true;
+	shoot();
 
 	m_rocket->set_position(m_object->position() + glm::vec3(0.f, m_object->animated_mesh()->size().y / 2, 0.f));
 	max_velocity = 2.8f;
 
 	// rocket has a force to overcome gravity => a-rocktet > a-gravity 
-	m_rocket->set_acceleration(glm::vec3(0, -2.f, 0.f));
+	m_rocket->set_acceleration(glm::vec3(0, -2.3f, 0.f));
 	m_rocket->set_velocity(m_object->forward());
 }
 

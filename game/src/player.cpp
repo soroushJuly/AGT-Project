@@ -9,7 +9,7 @@ player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0
 m_damage_timer(0.f),
 m_contact_time(0.f),
 m_coins(0),
-m_hearts(2)
+m_hearts(3)
 {}
 player::~player() {}
 
