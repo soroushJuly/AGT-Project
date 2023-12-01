@@ -2,6 +2,7 @@
 #pragma once
 #include <engine.h>
 #include <pickup.h>
+#include "player.h"
 
 class player;
 
@@ -11,7 +12,7 @@ public:
 	pickup_speed();
 	~pickup_speed();
 
-	void on_update(glm::vec3 c, float& speed, float dt, engine::ref<engine::audio_manager> audio = nullptr);
+	void on_update(glm::vec3 c, player& player, float dt, engine::ref<engine::audio_manager> audio = nullptr);
 	void on_render();
 	void on_initialize(glm::vec3 position = glm::vec3(0.f, 1.f, 0.f));
 

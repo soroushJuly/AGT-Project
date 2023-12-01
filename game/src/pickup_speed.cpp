@@ -35,6 +35,18 @@ void pickup_speed::on_initialize(glm::vec3 position)
 	m_light_emitter = engine::game_object::create(emitter_props);
 };
 
+void pickup_speed::on_update(glm::vec3 c, player& player, float dt, engine::ref<engine::audio_manager> m_audio_manager)
+{
+	if (m_pickup->update(c, dt))
+	{
+		if (m_audio_manager)
+		{
+			m_audio_manager->play("pickup");
+		}
+		player.power_up();
+	}
+};
+
 void pickup_speed::on_render()
 {
 	auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
@@ -76,18 +88,6 @@ void pickup_speed::on_render()
 	{
 		m_spot_light.Color = glm::vec3(0.f, 0.f, 0.f);
 		m_spot_light.submit(mesh_shader, 0);
-	}
-};
-
-void pickup_speed::on_update(glm::vec3 c, float& speed, float dt, engine::ref<engine::audio_manager> m_audio_manager)
-{
-	if (m_pickup->update(c, dt))
-	{
-		if (m_audio_manager)
-		{
-			m_audio_manager->play("pickup");
-		}
-		speed = speed * 2;
 	}
 };
 

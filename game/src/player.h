@@ -2,6 +2,7 @@
 #include <engine.h>
 #include "glm/gtx/rotate_vector.hpp"
 #include "FX/cross_fade.h"
+#include "FX/ring.h"
 
 class cross_fade;
 
@@ -12,6 +13,7 @@ public:
 	~player();
 	void initialise(engine::ref<engine::game_object> object, engine::ref<cross_fade> cross_fade, engine::ref<engine::audio_manager> audio_manager);
 	void on_update(const engine::timestep& time_step);
+	void on_render(const engine::ref<engine::shader> mesh_shader);
 
 	engine::ref<engine::game_object> object() const { return m_object; }
 
@@ -27,6 +29,7 @@ public:
 	void take_damage(const engine::timestep& timestep);
 	void add_heart() { ++m_hearts; };
 	void add_coin() { ++m_coins; };
+	void power_up() { m_power_up_timer = 0.f; m_power_up = 3.f; m_ring.activate(.3f, 8.f, m_object->position()); };
 
 	glm::vec3 position() { return m_object->position(); };
 	int coins() const { return m_coins; }
@@ -39,6 +42,8 @@ private:
 	int m_hearts;
 	float m_damage_timer;
 	float m_speed;
+	float m_power_up;
+	float m_power_up_timer;
 	float m_timer;
 	float m_mouse_y;
 	double y_angle_y_mouse;
@@ -46,6 +51,7 @@ private:
 
 	engine::ref<engine::audio_manager> m_audio_manager;
 	engine::ref<cross_fade> m_cross_fade;
+	ring m_ring;
 
 	glm::vec3 default_bounding{ 0.f };
 	glm::vec3 m_instantaneous_acceleration{ 0.f };

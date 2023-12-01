@@ -20,7 +20,7 @@ void ring::on_update(const engine::timestep& timestep, glm::vec3 position)
 	m_position = position;
 	m_position += glm::vec3(0.f, 0.01f, 0.f);
 	// Life decreasing on each iteration
-	m_life -= 0.5f * (float)timestep;
+	m_life -= 1.f * (float)timestep;
 	if (m_life < 0) {
 		s_active = false;
 		return;
@@ -64,10 +64,10 @@ void ring::initialise()
 	m_quad = engine::mesh::create(quad_vertices, quad_indices);
 }
 
-void ring::activate(float radius, glm::vec3 position)
+void ring::activate(float radius,float time, glm::vec3 position)
 {
 	m_position = position;
-	m_life = 5.0f;
+	m_life = time;
 	m_radius = radius;
 	s_active = true;
 

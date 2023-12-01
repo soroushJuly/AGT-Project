@@ -80,7 +80,7 @@ void pickup_heart::on_render()
 void pickup_heart::on_update(glm::vec3 c, player& player, float dt, engine::ref<engine::audio_manager> m_audio_manager)
 {
 
-	theta += 2.5 * dt;
+	theta += 2.5f * dt;
 	const float radius = 2.f * glm::length(m_pickup->scale());
 	m_pointLight.Position = glm::vec3(m_pickup->position().x + cos(theta) * radius,
 		m_pickup->position().y + glm::length(m_pickup->scale()),

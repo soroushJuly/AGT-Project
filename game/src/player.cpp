@@ -8,6 +8,8 @@
 player::player() : m_speed(0.f), m_timer(0.f), m_mouse_y(0.f), y_angle_y_mouse(0.f), x_angle_x_mouse(0.f),
 m_damage_timer(0.f),
 m_contact_time(0.f),
+m_power_up(1.f),
+m_power_up_timer(0.f),
 m_coins(0),
 m_hearts(3)
 {}
@@ -24,6 +26,7 @@ void player::initialise(engine::ref<engine::game_object> object, engine::ref<cro
 
 	m_audio_manager = audio_manager;
 	m_cross_fade = cross_fade;
+	m_ring.initialise();
 
 	default_bounding = m_object->bounding_shape();
 }
@@ -34,6 +37,15 @@ void player::on_update(const engine::timestep& time_step)
 	// be aligned with the walking direction
 	m_object->set_rotation_amount(atan2(m_object->forward().x, m_object->forward().z));
 	m_damage_timer += time_step;
+	m_power_up_timer += time_step;
+
+	// Power up
+	m_ring.on_update(time_step, m_object->position());
+	if (m_power_up_timer > 8.f)
+	{
+		m_power_up = 1.f;
+		m_power_up_timer = 0.f;
+	}
 
 	if (glm::length(m_instantaneous_acceleration) > 0 && m_contact_time > 1.f) {
 		m_instantaneous_acceleration = glm::vec3(0.f);
@@ -109,6 +121,12 @@ void player::on_update(const engine::timestep& time_step)
 	}
 }
 
+void player::on_render(const engine::ref<engine::shader> mesh_shader)
+{
+	engine::renderer::submit(mesh_shader, m_object);
+	m_ring.on_render(mesh_shader);
+}
+
 void player::turn(float angle)
 {
 	m_object->set_forward(glm::rotate(m_object->forward(), angle, glm::vec3(0.f, 1.f,
@@ -143,7 +161,7 @@ void player::jump(const engine::timestep& time_step)
 
 void player::walk(const engine::timestep& time_step)
 {
-	m_speed = 40.3f;
+	m_speed = 40.3f * m_power_up;
 	m_object->set_velocity(glm::normalize(m_object->forward()) * m_speed * (float)time_step);
 	m_instantaneous_acceleration = glm::vec3(0.f);
 
@@ -159,7 +177,7 @@ void player::walk(const engine::timestep& time_step)
 
 void player::run(const engine::timestep& time_step)
 {
-	m_speed = 117.f;
+	m_speed = 117.f * m_power_up;
 	m_object->set_velocity(glm::normalize(m_object->forward()) * m_speed * (float)time_step);
 	m_instantaneous_acceleration = glm::vec3(0.f);
 
@@ -207,7 +225,7 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 	const float SENSITIVITY = 0.04f;
 	const float CAMERA_DISTANCE_HEIGHT = 1.5;
 	// Radius around the player for camera to rotate
-	const float RADIUS = 3;
+	const float RADIUS = 3.f;
 
 	// Camera's default position
 	float camera_position_y = m_object->position().y + CAMERA_DISTANCE_HEIGHT;

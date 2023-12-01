@@ -239,7 +239,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	}
 
 	const float TIME_LIMIT = 180.f;
-	m_remained_time = TIME_LIMIT - m_play_time.total();
+	m_remained_time = TIME_LIMIT - (float)m_play_time.total();
 	if (m_reached_time == 0.f && m_remained_time < 0.f)
 		m_state = example_layer::GAME_LOST;
 
@@ -252,15 +252,12 @@ void example_layer::on_update(const engine::timestep& time_step)
 		m_player.position());
 
 	m_pickup_heart_01.on_update(m_player.position(), m_player, time_step, m_audio_manager);
-	m_pickup_speed_01.on_update(m_player.position(), m_player.speed(), time_step, m_audio_manager);
+	m_pickup_speed_01.on_update(m_player.position(), m_player, time_step, m_audio_manager);
 	//m_pickup_heart_02.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
 	for (auto coin : m_coin_list)
 	{
 		coin->on_update(m_player.position(), m_player, m_player_box, time_step, m_audio_manager);
 	}
-
-
-
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
@@ -379,12 +376,11 @@ void example_layer::on_render()
 
 	m_mannequin_material->submit(mesh_shader);
 	engine::renderer::submit(mesh_shader, spike);
-	engine::renderer::submit(mesh_shader, m_player.object());
 
+	m_player.on_render(mesh_shader);
 	m_enemy_skeleton.on_render(mesh_shader, m_3d_camera);
 	m_enemy_mech.on_render(mesh_shader, m_3d_camera);
 
-	m_ring.on_render(mesh_shader);
 
 	engine::renderer::end_scene();
 
@@ -421,10 +417,6 @@ void example_layer::on_event(engine::event& event)
 		if (e.key_code() == engine::key_codes::KEY_TAB)
 		{
 			engine::render_command::toggle_wireframe();
-		}
-		if (e.key_code() == engine::key_codes::KEY_1)
-		{
-			m_ring.activate(.3f, m_player.position());
 		}
 	}
 }

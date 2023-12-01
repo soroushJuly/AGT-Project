@@ -7,7 +7,7 @@ public:
 	ring();
 	~ring();
 	void initialise();
-	void activate(float radius, glm::vec3 position);
+	void activate(float radius, float time, glm::vec3 position);
 	void on_render(engine::ref<engine::shader> shader);
 	void on_update(const engine::timestep& timestep, glm::vec3 position);
 	bool is_active() { return s_active; }
