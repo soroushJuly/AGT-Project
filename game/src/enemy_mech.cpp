@@ -1,6 +1,7 @@
 #include "enemy_mech.h"
 
 enemy_mech::enemy_mech() : m_instantaneous_acceleration(0.f), m_damage_timer(0.f),
+m_bomb_contact_time(0.f), m_timer(0.f), m_bomb_timer{ 3.f }, m_rocket_timer{ 3.f },
 m_contact_time(0.f), m_rocket_max_velocity(0.f), m_switch_direction_timer(0.f)
 {
 }
@@ -255,7 +256,7 @@ void enemy_mech::shoot_rocket()
 	shoot();
 
 	m_rocket->set_position(m_object->position() + glm::vec3(0.f, m_object->animated_mesh()->size().y / 2, 0.f));
-	max_velocity = 2.8f;
+	m_rocket_max_velocity = 2.8f;
 
 	// rocket has a force to overcome gravity => a-rocktet > a-gravity 
 	m_rocket->set_acceleration(glm::vec3(0, -2.3f, 0.f));
@@ -266,7 +267,7 @@ void enemy_mech::update_rocket(const engine::timestep& time_step, glm::vec3 targ
 {
 	glm::vec3 target_position_2d = glm::vec3(target_position.x, m_rocket->position().y, target_position.z);
 	glm::vec3 desired_path = target_position_2d - m_rocket->position();
-	glm::vec3 desired_velocity = glm::normalize(desired_path) * max_velocity;
+	glm::vec3 desired_velocity = glm::normalize(desired_path) * m_rocket_max_velocity;
 	glm::vec3 steering = desired_velocity - m_rocket->velocity();
 
 	m_rocket->set_velocity(m_rocket->velocity() + steering + (m_rocket->acceleration()) * (float)time_step);

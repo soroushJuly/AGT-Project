@@ -45,7 +45,6 @@ private:
 	engine::ref< engine::game_object> m_object;
 	int m_health{ 5 };
 	float m_damage_timer;
-	float m_speed;
 	float m_timer;
 	bool m_is_dead{ false };
 	engine::bounding_box m_enemy_box;
@@ -54,8 +53,6 @@ private:
 	// control the patrol
 	float m_default_time{ 5.f };
 	float m_switch_direction_timer = m_default_time;
-
-	float max_velocity;
 
 	bool is_walking{ false };
 	float m_contact_time;
@@ -66,7 +63,7 @@ private:
 	engine::bounding_box m_bomb_box;
 	bool is_bomb{ false };
 	float m_bomb_contact_time;
-	float m_bomb_timer{ 3.f };
+	float m_bomb_timer;
 	glm::vec3 m_bomb_instantaneous_acceleration{ 0.f };
 	void update_bomb(const engine::timestep& time_step);
 
@@ -75,7 +72,7 @@ private:
 	engine::bounding_box m_rocket_box;
 	bool is_rocket{ false };
 	float m_rocket_max_velocity;
-	float m_rocket_timer{ 3.f };
+	float m_rocket_timer;
 	void update_rocket(const engine::timestep& time_step, glm::vec3 target_position);
 
 	//void start_damage_timer(const engine::timestep& time_step);
