@@ -54,13 +54,8 @@ private:
 	pickup_speed m_pickup_speed_01{};
 	pickup_heart m_pickup_heart_01{};
 	pickup_heart m_pickup_heart_02{};
-	pickup_coin m_pickup_coin_01{};
-	pickup_coin m_pickup_coin_02{};
-	pickup_coin m_pickup_coin_03{};
-	pickup_coin m_pickup_coin_04{};
-	pickup_coin m_pickup_coin_05{};
-	pickup_coin m_pickup_coin_06{};
-	pickup_coin m_pickup_coin_07{};
+	std::vector<engine::ref<pickup_coin>> m_coin_list;
+
 	decorations m_decorations;
 
 	

@@ -153,17 +153,25 @@ example_layer::example_layer()
 	spike_props.position = glm::vec3(0.f, .5f, 4.f);
 	spike = engine::game_object::create(spike_props);
 
+	for (size_t i = 0; i < 10; i++)
+	{
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(0.f, 1.f, 20.f + (float)i / 2.f)));
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(-2.5f, 1.f, 35.f + (float)i / 2.f)));
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(2.5f, 1.f, 35.f + (float)i / 2.f)));
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(-2.1f, 1.f, 47.f + (float)i / 2.f)));
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(2.1f, 1.f, 47.f + (float)i / 2.f)));
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(8.f + (float)i / 2.f, 1.4f, 83.f + (float)i / 2.f)));
+
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(16.f + (float)i / 2.f, 1.f, 98.f)));
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(60.f + (float)i / 2.f, 1.f, 97.f)));
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(60.f + (float)i / 2.f, 1.f, 100.f)));
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(90.f + (float)i / 2.f, 1.f, 80.f - (float)i / 2.f)));
+		m_coin_list.push_back(pickup_coin::create(glm::vec3(90.f + (float)i / 2.f, 1.f, 68.f - (float)i / 2.f)));
+	}
 	// Initialize objects
-	m_pickup_heart_01.on_initialize(glm::vec3(0.f, 1.2f, 21.f));
+	m_pickup_heart_01.on_initialize(glm::vec3(2.f, 1.2f, 21.f));
 	m_pickup_speed_01.on_initialize(glm::vec3(3.f, 1.2f, 22.f));
 	//m_pickup_heart_02.on_initialize(glm::vec3(0.f, 1.2f, 2.f));
-	m_pickup_coin_01.on_initialize(glm::vec3(0.f, 1.2f, 20.f));
-	m_pickup_coin_02.on_initialize(glm::vec3(0.f, 1.2f, 21.f));
-	m_pickup_coin_03.on_initialize(glm::vec3(0.f, 1.4f, 22.f));
-	m_pickup_coin_04.on_initialize(glm::vec3(0.f, 1.6f, 23.f));
-	m_pickup_coin_05.on_initialize(glm::vec3(0.f, 1.4f, 24.f));
-	m_pickup_coin_06.on_initialize(glm::vec3(0.f, 1.2f, 25.f));
-	m_pickup_coin_07.on_initialize(glm::vec3(0.f, 1.f, 26.f));
 
 	// Initilaise the decorations in the map.
 	m_decorations.on_initialise();
@@ -240,13 +248,10 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_pickup_heart_01.on_update(m_player.position(), m_player, time_step, m_audio_manager);
 	m_pickup_speed_01.on_update(m_player.position(), m_player.speed(), time_step, m_audio_manager);
 	//m_pickup_heart_02.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
-	m_pickup_coin_01.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
-	m_pickup_coin_02.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
-	m_pickup_coin_03.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
-	m_pickup_coin_04.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
-	m_pickup_coin_05.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
-	m_pickup_coin_06.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
-	m_pickup_coin_07.on_update(m_player.position(), m_player.coins(), time_step, m_audio_manager);
+	for (auto coin : m_coin_list)
+	{
+		coin->on_update(m_player.position(), m_player, m_player_box, time_step, m_audio_manager);
+	}
 
 
 
@@ -351,13 +356,10 @@ void example_layer::on_render()
 	m_pickup_speed_01.on_render();
 	m_pickup_heart_01.on_render();
 	//m_pickup_heart_02.on_render();
-	m_pickup_coin_01.on_render();
-	m_pickup_coin_02.on_render();
-	m_pickup_coin_03.on_render();
-	m_pickup_coin_04.on_render();
-	m_pickup_coin_05.on_render();
-	m_pickup_coin_06.on_render();
-	m_pickup_coin_07.on_render();
+	for (auto coin : m_coin_list)
+	{
+		coin->on_render(mesh_shader);
+	}
 
 	// Render all of the decorations in the map.
 	m_decorations.on_render(mesh_shader);
@@ -411,10 +413,6 @@ void example_layer::on_event(engine::event& event)
 		if (e.key_code() == engine::key_codes::KEY_1)
 		{
 			m_ring.activate(.3f, m_player.position());
-		}
-		if (e.key_code() == engine::key_codes::KEY_4)
-		{
-			m_enemy_mech.shoot_rocket();
 		}
 	}
 }

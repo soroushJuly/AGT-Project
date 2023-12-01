@@ -26,11 +26,12 @@ public:
 	void die();
 	void take_damage(const engine::timestep& timestep);
 	void add_heart() { ++m_hearts; };
+	void add_coin() { ++m_coins; };
 
 	glm::vec3 position() { return m_object->position(); };
-	int& coins() { return m_coins; }
-	int hearts() { return m_hearts; }
-	bool is_dead() { return m_is_dead; }
+	int coins() const { return m_coins; }
+	int hearts() const { return m_hearts; }
+	bool is_dead() const { return m_is_dead; }
 	float& speed() { return m_speed; }
 	bool is_punching() { return m_is_punching; }
 private:
