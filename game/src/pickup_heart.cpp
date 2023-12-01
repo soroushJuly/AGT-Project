@@ -93,7 +93,7 @@ void pickup_heart::on_update(glm::vec3 c, player& player, float dt, engine::ref<
 		{
 			m_audio_manager->play("pickup");
 		}
-		if (player.hearts() <= 3)
+		if (player.hearts() < 3)
 		{
 			player.add_heart();
 		}
