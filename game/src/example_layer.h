@@ -78,6 +78,8 @@ private:
 	engine::ref<game_intro> m_game_lost;
 	hud hud;
 	engine::timer m_play_time;
+	float m_reached_time;
+	float m_remained_time;
 
 	engine::ref<engine::skybox>			m_skybox{};
 	engine::ref<engine::game_object>	m_terrain{};

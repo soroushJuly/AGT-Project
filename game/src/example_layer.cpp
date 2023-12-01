@@ -10,7 +10,8 @@
 
 example_layer::example_layer()
 	:m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f),
-	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height())
+	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height()),
+	m_reached_time(0.f)
 {
 	// Hide the mouse and lock it inside the window
 	//engine::input::anchor_mouse(true);
@@ -237,6 +238,11 @@ void example_layer::on_update(const engine::timestep& time_step)
 		m_state = example_layer::GAME_WON;
 	}
 
+	const float TIME_LIMIT = 180.f;
+	m_remained_time = TIME_LIMIT - m_play_time.total();
+	if (m_reached_time == 0.f && m_remained_time < 0.f)
+		m_state = example_layer::GAME_LOST;
+
 	// Uncomment to roam around the map
 	//m_3d_camera.on_update(time_step);
 
@@ -278,6 +284,11 @@ void example_layer::on_update(const engine::timestep& time_step)
 	{
 		m_player.object()->set_position(pos);
 	}
+
+	// Stop the timer when player reaches the boss
+	if (m_world_box_06.collision(m_player_box))
+		m_reached_time = m_remained_time;
+
 	if (m_lava_01.collision(m_player_box)
 		|| m_lava_02.collision(m_player_box)
 		|| m_lava_03.collision(m_player_box)
@@ -314,6 +325,7 @@ void example_layer::on_render()
 		m_game_won->on_render(mesh_shader);
 	else if (m_state == example_layer::GAME_LOST)
 		m_game_lost->on_render(mesh_shader);
+
 	engine::renderer::end_scene();
 
 	engine::renderer::begin_scene(m_3d_camera, mesh_shader);
@@ -386,7 +398,7 @@ void example_layer::on_render()
 
 	// Render text
 	m_text_manager->render_text(text_shader, std::to_string(m_player.coins()), 43.f, (float)engine::application::window().height() - 91.f, 0.5f, glm::vec4(1.f, 0.85f, 0.f, 1.f));
-	m_text_manager->render_text(text_shader, std::to_string(m_play_time.total()), 45.f, (float)engine::application::window().height() - 135.f, 0.5f, glm::vec4(.36f, 0.25f, 0.2f, 1.f));
+	m_text_manager->render_text(text_shader, std::to_string(m_reached_time == 0 ? (int)m_remained_time : (int)m_reached_time) + "s", 45.f, (float)engine::application::window().height() - 135.f, 0.5f, glm::vec4(.85f, 0.85f, 0.85f, 1.f));
 }
 
 void example_layer::on_event(engine::event& event)

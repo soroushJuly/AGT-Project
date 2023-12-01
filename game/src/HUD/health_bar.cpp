@@ -29,7 +29,6 @@ void health_bar::on_update(int hearts)
 
 void health_bar::on_render(engine::ref<engine::shader> shader)
 {
-	//LOG_INFO("{}", (float)engine::application::window().width());
 	glm::mat4 transform(1.0f);
 	transform = glm::translate(transform, glm::vec3(-1.4f, .83f, .1f));
 	transform = glm::scale(transform, glm::vec3(0.35f));

@@ -60,7 +60,7 @@ void player::on_update(const engine::timestep& time_step)
 
 	if ((is_walking || is_running) && !is_jumping)
 	{
-		LOG_INFO("last");
+		//LOG_INFO("last");
 		m_object->set_velocity(glm::vec3(m_object->velocity().x, 0.f, m_object->velocity().z));
 		m_object->set_position(glm::vec3(x_position, y_position, z_position) + m_object->velocity() * (float)time_step);
 	}
@@ -183,7 +183,7 @@ void player::punch(const engine::timestep& time_step)
 		return;
 	}
 	clear_moves();
-	m_object->set_bounding_shape(m_object->bounding_shape() * 2.f);
+	m_object->set_bounding_shape(glm::vec3(m_object->bounding_shape().x * 2.5f, m_object->bounding_shape().y, m_object->bounding_shape().z * 2.f));
 	m_is_punching = true;
 	m_object->animated_mesh()->switch_animation(14);
 	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(14)->mDuration, 0.f, 1.f);
