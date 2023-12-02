@@ -7,6 +7,7 @@
 #include "enemy_basic_skeleton.h"
 #include "enemies/enemy_basic_robot.h"
 #include "enemies/enemy_spike.h"
+#include "enemies/enemy_basic_crab.h"
 #include <game_intro.h>
 #include "pickup_coin.h"
 #include "pickup_heart.h"
@@ -48,6 +49,7 @@ private:
 
 	std::vector<engine::ref<enemy_basic_skeleton>> m_skeleton_list;
 	std::vector<engine::ref<enemy_basic_robot>> m_robot_list;
+	std::vector<engine::ref<enemy_basic_crab>> m_crab_list;
 	std::vector<engine::ref<enemy_spike>> m_spike_list;
 
 

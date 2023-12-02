@@ -12,7 +12,6 @@ enemy_basic_skeleton::enemy_basic_skeleton(glm::vec3 position) : m_position(posi
 	m_enemy_mesh->switch_animation(3);
 
 	engine::game_object_properties skeleton_props;
-	std::vector<engine::ref<engine::texture_2d>> tex_vec;
 	skeleton_props.animated_mesh = m_enemy_mesh;
 	engine::ref<engine::texture_2d> skeleton_texture =
 		engine::texture_2d::create("assets/textures/Characters_Brown.png", true);

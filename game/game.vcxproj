@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="src\decorations.h" />
     <ClInclude Include="src\enemies\enemy_basic_robot.h" />
+    <ClInclude Include="src\enemies\enemy_basic_crab.h" />
     <ClInclude Include="src\enemies\enemy_spike.h" />
     <ClInclude Include="src\enemy_basic_skeleton.h" />
     <ClInclude Include="src\enemy_lava.h" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClCompile Include="src\decorations.cpp" />
     <ClCompile Include="src\enemies\enemy_basic_robot.cpp" />
+    <ClCompile Include="src\enemies\enemy_basic_crab.cpp" />
     <ClCompile Include="src\enemies\enemy_spike.cpp" />
     <ClCompile Include="src\enemy_basic_skeleton.cpp" />
     <ClCompile Include="src\enemy_lava.cpp" />

@@ -129,6 +129,7 @@ level::level()
 			m_skeleton_list.push_back(enemy_basic_skeleton::create(glm::vec3(3.f + 3.f * (float)i, .5f, 88.f + 3.f * (float)j)));
 		}
 	}*/
+	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(0.f, .5f, 15.f)));
 
 	// Add robots to the map
 	/*for (size_t i = 0; i < 4; i++)
@@ -268,11 +269,13 @@ void level::on_update(const engine::timestep& time_step)
 	{
 		enemy->on_update(time_step, m_player, m_player_box);
 	}
-
 	for (auto enemy : m_robot_list)
 	{
 		enemy->on_update(time_step, m_player, m_player_box);
 	}
+	for (auto enemy : m_crab_list)
+		enemy->on_update(time_step, m_player, m_player_box);
+
 	for (auto enemy : m_spike_list)
 	{
 		enemy->on_update(time_step, m_player, m_player_box);
@@ -394,6 +397,9 @@ void level::on_render()
 	{
 		enemy->on_render(mesh_shader, m_3d_camera);
 	}
+	for (auto enemy : m_crab_list)
+		enemy->on_render(mesh_shader, m_3d_camera);
+
 	for (auto enemy : m_spike_list)
 	{
 		enemy->on_render(mesh_shader);

@@ -46,6 +46,9 @@
     <ClCompile Include="src\enemies\enemy_spike.cpp">
       <Filter>enemies</Filter>
     </ClCompile>
+    <ClCompile Include="src\enemies\enemy_basic_crab.cpp">
+      <Filter>enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\level.h" />
@@ -90,6 +93,9 @@
       <Filter>enemies</Filter>
     </ClInclude>
     <ClInclude Include="src\enemies\enemy_spike.h">
+      <Filter>enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enemies\enemy_basic_crab.h">
       <Filter>enemies</Filter>
     </ClInclude>
   </ItemGroup>
