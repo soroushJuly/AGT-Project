@@ -27,7 +27,7 @@ enemy_basic_robot::enemy_basic_robot(glm::vec3 position) : m_position(position)
 
 	m_object->set_position(m_position);
 
-	m_enemy_basic.initialise(m_object);
+	m_enemy_basic.initialise(m_object, 4.f);
 };
 
 enemy_basic_robot::~enemy_basic_robot() {};

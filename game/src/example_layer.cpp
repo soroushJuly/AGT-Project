@@ -264,15 +264,15 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	m_enemy_mech.on_update(time_step, m_player, m_player_box, m_player.position());
 	// TODO: Not passing the player - instead pointer
-	//for (auto enemy : m_skeleton_list)
-	//{
-	//	enemy->on_update(time_step, m_player, m_player_box);
-	//}
+	for (auto enemy : m_skeleton_list)
+	{
+		enemy->on_update(time_step, m_player, m_player_box);
+	}
 
-	//for (auto enemy : m_robot_list)
-	//{
-	//	enemy->on_update(time_step, m_player, m_player_box);
-	//}
+	for (auto enemy : m_robot_list)
+	{
+		enemy->on_update(time_step, m_player, m_player_box);
+	}
 	for (auto enemy : m_spike_list)
 	{
 		enemy->on_update(time_step, m_player, m_player_box);
@@ -386,14 +386,14 @@ void example_layer::on_render()
 	//engine::renderer::submit(mesh_shader, spike);
 
 	m_player.on_render(mesh_shader);
-	//for (auto enemy : m_skeleton_list)
-	//{
-	//	enemy->on_render(mesh_shader, m_3d_camera);
-	//}
-	//for (auto enemy : m_robot_list)
-	//{
-	//	enemy->on_render(mesh_shader, m_3d_camera);
-	//}
+	for (auto enemy : m_skeleton_list)
+	{
+		enemy->on_render(mesh_shader, m_3d_camera);
+	}
+	for (auto enemy : m_robot_list)
+	{
+		enemy->on_render(mesh_shader, m_3d_camera);
+	}
 	for (auto enemy : m_spike_list)
 	{
 		enemy->on_render(mesh_shader);

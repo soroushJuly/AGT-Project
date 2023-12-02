@@ -9,9 +9,11 @@ enemy_basic::~enemy_basic()
 {
 }
 
-void enemy_basic::initialise(engine::ref<engine::game_object> object)
+void enemy_basic::initialise(engine::ref<engine::game_object> object, float wander_limit)
 {
+	m_wander_limit = wander_limit;
 	m_object = object;
+	m_first_position = m_object->position();
 	m_object->set_forward(glm::vec3(0.f, 0.f, 1.f));
 	m_object->set_velocity(glm::vec3(0.f, 0.f, 1.f));
 	//m_object->set_acceleration(0.1f * glm::vec3(m_object->forward()));
@@ -83,7 +85,10 @@ void enemy_basic::on_update(const engine::timestep& time_step, player& player, e
 		if (distance < WALK_BOUND)
 			m_state = enemy_basic::CHASE_WALK;
 		if (distance > RUN_BOUND)
+		{
+			m_first_position = m_object->position();
 			m_state = enemy_basic::WANDER;
+		}
 		break;
 	case enemy_basic::CHASE_WALK:
 		chase_enemy_walk(time_step, target_position);
@@ -219,6 +224,8 @@ void enemy_basic::wander(const engine::timestep& time_step)
 
 	// TODO: limiting the position
 	glm::vec3 position = m_object->position() + m_object->velocity() * (float)time_step;
+	if (glm::length(position - m_first_position) > m_wander_limit)
+		return;
 	m_object->set_position(position);
 }
 

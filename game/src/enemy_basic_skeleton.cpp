@@ -27,7 +27,7 @@ enemy_basic_skeleton::enemy_basic_skeleton(glm::vec3 position) : m_position(posi
 
 	m_object->set_position(m_position);
 
-	m_enemy_basic.initialise(m_object);
+	m_enemy_basic.initialise(m_object, 4.f);
 };
 
 enemy_basic_skeleton::~enemy_basic_skeleton() {};

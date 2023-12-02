@@ -22,7 +22,7 @@ public:
 	enemy_basic();
 	~enemy_basic();
 
-	void initialise(engine::ref<engine::game_object> object);
+	void initialise(engine::ref<engine::game_object> object, float wander_limit);
 	void on_update(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box, const glm::vec3& target_position);
 	void on_render(const engine::ref<engine::shader> mesh_shader, const engine::perspective_camera& camera);
 	void take_damage();
@@ -64,7 +64,8 @@ private:
 	float m_contact_time;
 	glm::vec3 m_instantaneous_acceleration{ 0.f };
 
-	//void start_damage_timer(const engine::timestep& time_step);
+	float m_wander_limit;
+	glm::vec3 m_first_position;
 	engine::bounding_box m_enemy_box;
 
 	engine::ref<billboard>				m_billboard{};
