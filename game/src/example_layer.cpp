@@ -121,14 +121,6 @@ example_layer::example_layer()
 
 	m_enemy_mech.initialise(m_mech);
 
-
-	// initiate spike
-	engine::game_object_properties spike_props;
-	engine::ref<engine::spike> spike_shape = engine::spike::create(1.f);
-	spike_props.meshes = { spike_shape->mesh() };
-	spike_props.position = glm::vec3(0.f, .5f, 4.f);
-	spike = engine::game_object::create(spike_props);
-
 	// Add skeletons to the map
 	/*for (size_t i = 0; i < 5; i++)
 	{
@@ -146,6 +138,23 @@ example_layer::example_layer()
 			m_robot_list.push_back(enemy_basic_robot::create(glm::vec3(91.f + 3.f * (float)i, .5f, 88.f + 3.f * (float)j)));
 		}
 	}*/
+
+	// Add spikes to the map
+	m_spike_list.push_back(enemy_spike::create(glm::vec3(0.f, 0.5f, 40.f), 4.f, 0.f));
+	m_spike_list.push_back(enemy_spike::create(glm::vec3(0.f, 0.5f, 70.f), 4.f, 0.f));
+	m_spike_list.push_back(enemy_spike::create(glm::vec3(42.f, 0.5f, 98.5f), 3.5f, engine::PI / 2));
+	m_spike_list.push_back(enemy_spike::create(glm::vec3(67.f, 0.5f, 98.5f), 3.5f, engine::PI / 2));
+	m_spike_list.push_back(enemy_spike::create(glm::vec3(93.6f, 0.5f, 40.f), 3.8f, 0.f));
+	m_spike_list.push_back(enemy_spike::create(glm::vec3(93.6f, 0.5f, 60.f), 3.8f, 0.f));
+
+	// TODO: jumping pads on lava
+	// TODO: add a list for lava like other enemies (makes the rendering easier)
+	m_lava_01.on_initialise(glm::vec3(0.f, 0.5f, 30.f), glm::vec3(4.5f, .01f, 1.5f));
+	m_lava_02.on_initialise(glm::vec3(0.f, 0.5f, 60.f), glm::vec3(4.5f, .01f, 1.5f));
+	m_lava_03.on_initialise(glm::vec3(35.f, 0.5f, 98.f), glm::vec3(1.5f, .01f, 4.5f));
+	m_lava_04.on_initialise(glm::vec3(55.f, 0.5f, 98.f), glm::vec3(1.5f, .01f, 4.5f));
+	m_lava_05.on_initialise(glm::vec3(93.6f, 0.5f, 50.f), glm::vec3(4.5f, .01f, 1.5f));
+	m_lava_06.on_initialise(glm::vec3(93.6f, 0.5f, 70.f), glm::vec3(4.5f, .01f, 1.5f));
 
 	// Add coins in the map
 	for (size_t i = 0; i < 10; i++)
@@ -201,15 +210,6 @@ example_layer::example_layer()
 	terrain_props_2.restitution = 0.92f;
 	m_terrain_2 = engine::game_object::create(terrain_props_2);
 
-	// TODO: jumping pads on lava
-	m_lava_01.on_initialise(glm::vec3(0.f, 0.5f, 30.f), glm::vec3(4.5f, .01f, 1.5f));
-	m_lava_02.on_initialise(glm::vec3(0.f, 0.5f, 60.f), glm::vec3(4.5f, .01f, 1.5f));
-	m_lava_03.on_initialise(glm::vec3(35.f, 0.5f, 98.f), glm::vec3(1.5f, .01f, 4.5f));
-	m_lava_04.on_initialise(glm::vec3(55.f, 0.5f, 98.f), glm::vec3(1.5f, .01f, 4.5f));
-	m_lava_05.on_initialise(glm::vec3(93.6f, 0.5f, 55.f), glm::vec3(4.5f, .01f, 1.5f));
-	m_lava_06.on_initialise(glm::vec3(93.6f, 0.5f, 70.f), glm::vec3(4.5f, .01f, 1.5f));
-
-
 	m_game_objects.push_back(m_terrain);
 	m_physics_manager = engine::bullet_manager::create(m_game_objects);
 
@@ -264,12 +264,16 @@ void example_layer::on_update(const engine::timestep& time_step)
 
 	m_enemy_mech.on_update(time_step, m_player, m_player_box, m_player.position());
 	// TODO: Not passing the player - instead pointer
-	for (auto enemy : m_skeleton_list)
-	{
-		enemy->on_update(time_step, m_player, m_player_box);
-	}
+	//for (auto enemy : m_skeleton_list)
+	//{
+	//	enemy->on_update(time_step, m_player, m_player_box);
+	//}
 
-	for (auto enemy : m_robot_list)
+	//for (auto enemy : m_robot_list)
+	//{
+	//	enemy->on_update(time_step, m_player, m_player_box);
+	//}
+	for (auto enemy : m_spike_list)
 	{
 		enemy->on_update(time_step, m_player, m_player_box);
 	}
@@ -379,16 +383,20 @@ void example_layer::on_render()
 
 
 	m_mannequin_material->submit(mesh_shader);
-	engine::renderer::submit(mesh_shader, spike);
+	//engine::renderer::submit(mesh_shader, spike);
 
 	m_player.on_render(mesh_shader);
-	for (auto enemy : m_skeleton_list)
+	//for (auto enemy : m_skeleton_list)
+	//{
+	//	enemy->on_render(mesh_shader, m_3d_camera);
+	//}
+	//for (auto enemy : m_robot_list)
+	//{
+	//	enemy->on_render(mesh_shader, m_3d_camera);
+	//}
+	for (auto enemy : m_spike_list)
 	{
-		enemy->on_render(mesh_shader, m_3d_camera);
-	}
-	for (auto enemy : m_robot_list)
-	{
-		enemy->on_render(mesh_shader, m_3d_camera);
+		enemy->on_render(mesh_shader);
 	}
 	m_enemy_mech.on_render(mesh_shader, m_3d_camera);
 

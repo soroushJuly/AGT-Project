@@ -6,6 +6,7 @@
 #include "enemy_lava.h"
 #include "enemy_basic_skeleton.h"
 #include "enemies/enemy_basic_robot.h"
+#include "enemies/enemy_spike.h"
 #include <game_intro.h>
 #include "pickup_coin.h"
 #include "pickup_heart.h"
@@ -43,10 +44,12 @@ public:
 
 private:
 	player m_player{};
+	enemy_mech m_enemy_mech{};
+
 	std::vector<engine::ref<enemy_basic_skeleton>> m_skeleton_list;
 	std::vector<engine::ref<enemy_basic_robot>> m_robot_list;
-	//enemy_basic_skeleton m_pp{ glm::vec3(2.f, 0.5f, 7.f) };
-	enemy_mech m_enemy_mech{};
+	std::vector<engine::ref<enemy_spike>> m_spike_list;
+
 
 	enemy_lava m_lava_01;
 	enemy_lava m_lava_02;

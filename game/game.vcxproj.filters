@@ -43,6 +43,9 @@
     <ClCompile Include="src\enemies\enemy_basic_robot.cpp">
       <Filter>enemies</Filter>
     </ClCompile>
+    <ClCompile Include="src\enemies\enemy_spike.cpp">
+      <Filter>enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\example_layer.h" />
@@ -84,6 +87,9 @@
     <ClInclude Include="src\enemy_lava.h" />
     <ClInclude Include="src\enemy_basic_skeleton.h" />
     <ClInclude Include="src\enemies\enemy_basic_robot.h">
+      <Filter>enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enemies\enemy_spike.h">
       <Filter>enemies</Filter>
     </ClInclude>
   </ItemGroup>
