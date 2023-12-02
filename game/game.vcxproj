@@ -147,7 +147,7 @@
     <ClInclude Include="src\HUD\health_bar.h" />
     <ClInclude Include="src\HUD\time_icon.h" />
     <ClInclude Include="src\pickup_coin.h" />
-    <ClInclude Include="src\example_layer.h" />
+    <ClInclude Include="src\level.h" />
     <ClInclude Include="src\pickup.h" />
     <ClInclude Include="src\pickup_heart.h" />
     <ClInclude Include="src\pickup_speed.h" />
@@ -162,7 +162,7 @@
     <ClCompile Include="src\enemy_lava.cpp" />
     <ClCompile Include="src\enemy_mech.cpp" />
     <ClCompile Include="src\enemy_basic.cpp" />
-    <ClCompile Include="src\example_layer.cpp" />
+    <ClCompile Include="src\level.cpp" />
     <ClCompile Include="src\FX\billboard.cpp" />
     <ClCompile Include="src\FX\cross_fade.cpp" />
     <ClCompile Include="src\FX\ring.cpp" />

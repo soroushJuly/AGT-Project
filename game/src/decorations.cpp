@@ -44,14 +44,12 @@ void decorations::on_render(const engine::ref<engine::shader> mesh_shader)
 		fence_01.on_render(mesh_shader, glm::vec3(4.2f, .5f, 26.f + (float)i * 3.f), engine::PI / 2);
 		fence_01.on_render(mesh_shader, glm::vec3(-4.2f, .5f, 26.f + (float)i * 3.f), engine::PI / 2);
 	}
-	//fence_02.on_render(mesh_shader, engine::PI / 2);
 
 	// Box 3 decorations
 	for (int i = 0; i < 13; i++)
 	{
 		tree_03.on_render(mesh_shader, glm::vec3(-4.2f, .5f, 75.f + (float)i * 2.7f), 0.f, glm::vec3(0.f, 1.f, 0.f),
 			tree_03.object()->scale() + (float)(i % 3) / 150.f);
-		//fence_01.on_render(mesh_shader, glm::vec3(-4.2f, .5f, 26.f + (float)i * 3.f), engine::PI / 2);
 	}
 	cart_01.on_render(mesh_shader, engine::PI / 4);
 

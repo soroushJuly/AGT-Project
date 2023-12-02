@@ -1,4 +1,4 @@
-#include "example_layer.h"
+#include "level.h"
 #include "platform/opengl/gl_shader.h"
 
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
@@ -8,7 +8,7 @@
 #include "pickup.h"
 #include "static_object.h"
 
-example_layer::example_layer()
+level::level()
 	:m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f),
 	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height()),
 	m_reached_time(0.f)
@@ -216,28 +216,28 @@ example_layer::example_layer()
 	m_text_manager = engine::text_manager::create();
 }
 
-example_layer::~example_layer() {}
+level::~level() {}
 
-void example_layer::on_update(const engine::timestep& time_step)
+void level::on_update(const engine::timestep& time_step)
 {
-	if (m_state == example_layer::MENU)
+	if (m_state == level::MENU)
 		return;
 	if (m_player.is_dead())
 	{
 		m_audio_manager->stop("main");
-		m_state = example_layer::GAME_LOST;
+		m_state = level::GAME_LOST;
 		return;
 	}
 	if (m_enemy_mech.is_dead())
 	{
 		m_audio_manager->stop("main");
-		m_state = example_layer::GAME_WON;
+		m_state = level::GAME_WON;
 	}
 
 	const float TIME_LIMIT = 180.f;
 	m_remained_time = TIME_LIMIT - (float)m_play_time.total();
 	if (m_reached_time == 0.f && m_remained_time < 0.f)
-		m_state = example_layer::GAME_LOST;
+		m_state = level::GAME_LOST;
 
 	// Uncomment to roam around the map
 	//m_3d_camera.on_update(time_step);
@@ -313,7 +313,7 @@ void example_layer::on_update(const engine::timestep& time_step)
 	m_audio_manager->update_with_camera(m_3d_camera);
 }
 
-void example_layer::on_render()
+void level::on_render()
 {
 	engine::render_command::clear_color({ 0.2f, 0.3f, 0.3f, 1.0f });
 	engine::render_command::clear();
@@ -324,11 +324,11 @@ void example_layer::on_render()
 
 	// Render 2D Camera
 	engine::renderer::begin_scene(m_2d_camera, mesh_shader);
-	if (m_state == example_layer::MENU)
+	if (m_state == level::MENU)
 		m_game_intro->on_render(mesh_shader);
-	else if (m_state == example_layer::GAME_WON)
+	else if (m_state == level::GAME_WON)
 		m_game_won->on_render(mesh_shader);
-	else if (m_state == example_layer::GAME_LOST)
+	else if (m_state == level::GAME_LOST)
 		m_game_lost->on_render(mesh_shader);
 
 	engine::renderer::end_scene();
@@ -416,19 +416,19 @@ void example_layer::on_render()
 	m_text_manager->render_text(text_shader, std::to_string(m_reached_time == 0.f ? (int)m_remained_time : (int)m_reached_time) + "s", 45.f, (float)engine::application::window().height() - 135.f, 0.5f, glm::vec4(.85f, 0.85f, 0.85f, 1.f));
 }
 
-void example_layer::on_event(engine::event& event)
+void level::on_event(engine::event& event)
 {
 	if (event.event_type() == engine::event_type_e::key_pressed)
 	{
 		auto& e = dynamic_cast<engine::key_pressed_event&>(event);
-		if (m_state == example_layer::MENU && e.key_code() == engine::key_codes::KEY_ENTER)
+		if (m_state == level::MENU && e.key_code() == engine::key_codes::KEY_ENTER)
 		{
-			m_state = example_layer::IN_GAME;
+			m_state = level::IN_GAME;
 			m_audio_manager->stop("menu");
 			m_audio_manager->play("main");
 			m_play_time.start();
 		}
-		if ((m_state == example_layer::GAME_LOST || m_state == example_layer::GAME_WON) && e.key_code() == engine::key_codes::KEY_ESCAPE)
+		if ((m_state == level::GAME_LOST || m_state == level::GAME_WON) && e.key_code() == engine::key_codes::KEY_ESCAPE)
 		{
 			engine::application::exit();
 		}

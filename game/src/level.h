@@ -23,7 +23,7 @@
 class pickup;
 class pickup_coin;
 
-class example_layer : public engine::layer
+class level : public engine::layer
 {
 	enum game_state
 	{
@@ -35,8 +35,8 @@ class example_layer : public engine::layer
 
 	int m_state = MENU;
 public:
-	example_layer();
-	~example_layer();
+	level();
+	~level();
 
 	void on_update(const engine::timestep& time_step) override;
 	void on_render() override;
