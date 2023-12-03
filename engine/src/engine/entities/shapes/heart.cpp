@@ -76,7 +76,7 @@ engine::heart::heart(float size) : m_size(size)
 	normals.push_back(glm::cross(heart_vertices[0].position - heart_vertices[13].position, heart_vertices[0].position - heart_vertices[14].position));
 	normals.push_back(glm::cross(heart_vertices[1].position - heart_vertices[14].position, heart_vertices[1].position - heart_vertices[15].position));
 	normals.push_back(glm::cross(heart_vertices[2].position - heart_vertices[15].position, heart_vertices[2].position - heart_vertices[16].position));
-	normals.push_back(glm::cross(heart_vertices[5].position - heart_vertices[18].position, heart_vertices[5].position - heart_vertices[13].position));
+	normals.push_back(glm::cross(heart_vertices[18].position - heart_vertices[5].position, heart_vertices[13].position - heart_vertices[5].position));
 
 	normals.push_back(glm::cross(heart_vertices[6].position - heart_vertices[19].position, heart_vertices[6].position - heart_vertices[20].position));
 	normals.push_back(glm::cross(heart_vertices[7].position - heart_vertices[20].position, heart_vertices[7].position - heart_vertices[21].position));
