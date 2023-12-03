@@ -29,6 +29,7 @@ level::level()
 	m_audio_manager->load_sound("assets/audio/little_village.wav", engine::sound_type::track, "menu");  // Royalty free music from http://www.nosoapradio.us/
 	m_audio_manager->load_sound("assets/audio/move_forward.mp3", engine::sound_type::track, "main");  // Royalty free music from http://www.nosoapradio.us/
 	m_audio_manager->play("menu");
+	m_audio_manager->volume("menu", 0.07f);
 	//m_audio_manager->pause("music");
 
 
@@ -129,20 +130,23 @@ level::level()
 			m_skeleton_list.push_back(enemy_basic_skeleton::create(glm::vec3(3.f + 3.f * (float)i, .5f, 88.f + 3.f * (float)j)));
 		}
 	}*/
-	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(0.f, .5f, 15.f)));
+
+	// TODO: these numbers should be constant floats like: MIDDLE_POINT_BOX_01
+	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(0.f, .5f, 50.f)));
+	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(0.f, .5f, 76.f)));
+	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(37.f, .5f, 98.f)));
+	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(62.f, .5f, 97.f)));
+	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(93.6f, .5f, 45.f)));
+	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(93.6f, .5f, 80.f)));
 
 	// Add robots to the map
-	/*for (size_t i = 0; i < 4; i++)
-	{
+	for (size_t i = 0; i < 4; i++)
 		for (size_t j = 0; j < 4; j++)
-		{
 			m_robot_list.push_back(enemy_basic_robot::create(glm::vec3(91.f + 3.f * (float)i, .5f, 88.f + 3.f * (float)j)));
-		}
-	}*/
 
 	// Add spikes to the map
 	m_spike_list.push_back(enemy_spike::create(glm::vec3(0.f, 0.5f, 40.f), 4.f, 0.f));
-	m_spike_list.push_back(enemy_spike::create(glm::vec3(0.f, 0.5f, 70.f), 4.f, 0.f));
+	m_spike_list.push_back(enemy_spike::create(glm::vec3(0.f, 0.5f, 67.f), 4.f, 0.f));
 	m_spike_list.push_back(enemy_spike::create(glm::vec3(42.f, 0.5f, 98.5f), 3.5f, engine::PI / 2));
 	m_spike_list.push_back(enemy_spike::create(glm::vec3(67.f, 0.5f, 98.5f), 3.5f, engine::PI / 2));
 	m_spike_list.push_back(enemy_spike::create(glm::vec3(93.6f, 0.5f, 40.f), 3.8f, 0.f));
@@ -174,12 +178,13 @@ level::level()
 		m_coin_list.push_back(pickup_coin::create(glm::vec3(90.f + (float)i / 2.f, 1.f, 68.f - (float)i / 2.f)));
 	}
 
-	// Initialize objects
-	m_pickup_heart_01.on_initialize(glm::vec3(2.f, 1.2f, 21.f));
-	m_pickup_speed_01.on_initialize(glm::vec3(3.f, 1.2f, 22.f));
+	// Initialize heart and speed-up
+	// TODO: these will be drop-downs from enemies
+	m_pickup_heart_01.on_initialize(glm::vec3(93.6f, 1.2f, 94.f));
+	m_pickup_speed_01.on_initialize(glm::vec3(10.f, 1.2f, 90.f));
 	//m_pickup_heart_02.on_initialize(glm::vec3(0.f, 1.2f, 2.f));
 
-	// Initialise the decorations in the map.
+	// Initialise all the decorations in the map.
 	m_decorations.on_initialise();
 
 	// Initialise 2D features
@@ -384,26 +389,18 @@ void level::on_render()
 	// Render all of the decorations in the map.
 	m_decorations.on_render(mesh_shader);
 
-
-	m_mannequin_material->submit(mesh_shader);
-	//engine::renderer::submit(mesh_shader, spike);
-
+	// Render the player's character and enemies
 	m_player.on_render(mesh_shader);
 	for (auto enemy : m_skeleton_list)
-	{
 		enemy->on_render(mesh_shader, m_3d_camera);
-	}
 	for (auto enemy : m_robot_list)
-	{
 		enemy->on_render(mesh_shader, m_3d_camera);
-	}
 	for (auto enemy : m_crab_list)
 		enemy->on_render(mesh_shader, m_3d_camera);
-
 	for (auto enemy : m_spike_list)
-	{
 		enemy->on_render(mesh_shader);
-	}
+
+	m_mannequin_material->submit(mesh_shader);
 	m_enemy_mech.on_render(mesh_shader, m_3d_camera);
 
 
@@ -432,6 +429,7 @@ void level::on_event(engine::event& event)
 			m_state = level::IN_GAME;
 			m_audio_manager->stop("menu");
 			m_audio_manager->play("main");
+			m_audio_manager->volume("main", 0.05f);
 			m_play_time.start();
 		}
 		if ((m_state == level::GAME_LOST || m_state == level::GAME_WON) && e.key_code() == engine::key_codes::KEY_ESCAPE)
