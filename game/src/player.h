@@ -29,7 +29,7 @@ public:
 	void take_damage(const engine::timestep& timestep);
 	void add_heart() { ++m_hearts; };
 	void add_coin() { ++m_coins; };
-	void power_up() { m_power_up_timer = 0.f; m_power_up = 2.f; m_ring.activate(.3f, 8.f, m_object->position()); };
+	void power_up() { m_power_up_timer = 0.f; m_power_up = 1.8f; m_ring.activate(.3f, 8.f, m_object->position()); };
 
 	glm::vec3 position() { return m_object->position(); };
 	int coins() const { return m_coins; }

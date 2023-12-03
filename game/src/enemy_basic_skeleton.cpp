@@ -8,10 +8,10 @@ enemy_basic_skeleton::enemy_basic_skeleton(glm::vec3 position) : m_position(posi
 	// TODO: add walking animation for the skeleton
 	std::vector<std::pair<std::string, int>> animations =
 	{
-		std::pair<std::string, int>("walk", 8),
+		std::pair<std::string, int>("walk", 3),
 		std::pair<std::string, int>("attack", 0),
-		std::pair<std::string, int>("run", 8),
-		std::pair<std::string, int>("die", 4)
+		std::pair<std::string, int>("run", 3),
+		std::pair<std::string, int>("die", 1)
 	};
 
 	// Free model from here : https://poly.pizza/m/yq5ATpujSt

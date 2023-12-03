@@ -47,17 +47,15 @@ void player::on_update(const engine::timestep& time_step)
 		m_power_up_timer = 0.f;
 	}
 
-	if (glm::length(m_instantaneous_acceleration) > 0 && m_contact_time > 1.f) {
+	if (glm::length(m_instantaneous_acceleration) > 0 && m_contact_time > .4f) {
 		m_instantaneous_acceleration = glm::vec3(0.f);
 		m_contact_time = 0.f;
-		//is_jumping = false;
 	}
 
 	m_object->set_velocity(m_object->velocity() + (m_object->acceleration() + m_instantaneous_acceleration) * (float)time_step);
 	float x_position = m_object->position().x;
 	float y_position = m_object->position().y;
 	float z_position = m_object->position().z;
-	//LOG_INFO("{}", m_object->acceleration() + m_instantaneous_acceleration);
 	if (is_jumping)
 	{
 		m_object->set_velocity(m_object->velocity() + glm::normalize(m_object->forward()) * m_speed / 20.f * (float)time_step);
@@ -65,14 +63,12 @@ void player::on_update(const engine::timestep& time_step)
 	}
 	if (y_position < 0.5f && m_object->velocity().y < 0)
 	{
-		//m_object->set_acceleration(glm::vec3(0.0f, -9.8f, 0.0f));
 		m_object->set_position(glm::vec3(m_object->position().x, 0.5f, m_object->position().z));
 		clear_moves();
 	}
 
 	if ((is_walking || is_running) && !is_jumping)
 	{
-		//LOG_INFO("last");
 		m_object->set_velocity(glm::vec3(m_object->velocity().x, 0.f, m_object->velocity().z));
 		m_object->set_position(glm::vec3(x_position, y_position, z_position) + m_object->velocity() * (float)time_step);
 	}
@@ -144,10 +140,8 @@ void player::jump(const engine::timestep& time_step)
 	{
 		clear_moves();
 		m_contact_time = 0.f;
-		//const float force_watt = 1411.f;
-		const float force_watt = 1011.f;
-		float force = force_watt;
-		float y_position = force * cos(engine::PI / 4);
+		float force = 1411.f;
+		float y_position = force * sin(engine::PI / 4);
 		float x_position = glm::normalize(m_object->forward()).x * (force / 3) * cos(engine::PI / 4);
 		float z_position = glm::normalize(m_object->forward()).z * (force / 3) * cos(engine::PI / 4);
 		glm::vec3 jump_force = glm::vec3(x_position, y_position, z_position);
@@ -161,7 +155,7 @@ void player::jump(const engine::timestep& time_step)
 
 void player::walk(const engine::timestep& time_step)
 {
-	m_speed = 40.3f * m_power_up;
+	m_speed = 35.3f * m_power_up;
 	m_object->set_velocity(glm::normalize(m_object->forward()) * m_speed * (float)time_step);
 	m_instantaneous_acceleration = glm::vec3(0.f);
 
@@ -186,6 +180,7 @@ void player::run(const engine::timestep& time_step)
 		return;
 	}
 	clear_moves();
+	//m_audio_manager->play("run");
 	is_running = true;
 	m_object->animated_mesh()->switch_animation(16);
 	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(16)->mDuration, 0.f, 2.f);

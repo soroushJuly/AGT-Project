@@ -261,7 +261,7 @@ void enemy_mech::shoot_rocket()
 	m_rocket_max_velocity = 2.8f;
 
 	// rocket has a force to overcome gravity => a-rocktet > a-gravity 
-	m_rocket->set_acceleration(glm::vec3(0, -2.3f, 0.f));
+	m_rocket->set_acceleration(glm::vec3(0, -2.7f, 0.f));
 	m_rocket->set_velocity(m_object->forward());
 }
 

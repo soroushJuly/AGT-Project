@@ -8,7 +8,7 @@ enemy_basic_robot::enemy_basic_robot(glm::vec3 position) : m_position(position)
 
 	std::vector<std::pair<std::string, int>> animations =
 	{
-		std::pair<std::string, int>("walk", 8),
+		std::pair<std::string, int>("walk", 6),
 		std::pair<std::string, int>("attack", 0),
 		std::pair<std::string, int>("run", 8),
 		std::pair<std::string, int>("die", 4)
