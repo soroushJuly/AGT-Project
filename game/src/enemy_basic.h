@@ -22,7 +22,7 @@ public:
 	enemy_basic();
 	~enemy_basic();
 
-	void initialise(engine::ref<engine::game_object> object, float wander_limit);
+	void initialise(engine::ref<engine::game_object> object, float wander_limit, std::vector<std::pair<std::string, int>> animations);
 	void on_update(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box, const glm::vec3& target_position);
 	void on_render(const engine::ref<engine::shader> mesh_shader, const engine::perspective_camera& camera);
 	void take_damage();

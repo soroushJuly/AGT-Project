@@ -9,8 +9,19 @@ enemy_basic::~enemy_basic()
 {
 }
 
-void enemy_basic::initialise(engine::ref<engine::game_object> object, float wander_limit)
+void enemy_basic::initialise(engine::ref<engine::game_object> object, float wander_limit, std::vector<std::pair<std::string, int>> animations)
 {
+	for (int i = 0; i < animations.size(); i++)
+	{
+		if (animations[i].first == "walk")
+			m_walk_animation = i;
+		else if (animations[i].first == "die")
+			m_die_animation = i;
+		else if (animations[i].first == "attack")
+			m_attack_animation = i;
+		else if (animations[i].first == "run")
+			m_run_animation = i;
+	}
 	m_wander_limit = wander_limit;
 	m_object = object;
 	m_first_position = m_object->position();
@@ -156,7 +167,6 @@ void enemy_basic::run()
 	{
 		return;
 	}
-	m_run_animation = 3;
 	m_object->animated_mesh()->switch_root_movement(true);
 	m_object->animated_mesh()->switch_animation(m_run_animation);
 	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(m_run_animation)->mDuration, 0.f, 1.65f);
@@ -168,8 +178,6 @@ void enemy_basic::walk()
 	{
 		return;
 	}
-	// TODO: add walking animation for the skeleton
-	m_walk_animation = 3;
 	m_object->animated_mesh()->switch_root_movement(true);
 	m_object->animated_mesh()->switch_animation(m_walk_animation);
 	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(m_walk_animation)->mDuration, 0.f, 1.65f);
@@ -181,7 +189,6 @@ void enemy_basic::die()
 	{
 		return;
 	}
-	m_die_animation = 1;
 	m_object->animated_mesh()->switch_root_movement(true);
 	m_object->animated_mesh()->switch_animation(m_die_animation);
 	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(m_die_animation)->mDuration, 0.f, .8f);
@@ -245,7 +252,6 @@ void enemy_basic::chase_enemy_walk(const engine::timestep& time_step, const glm:
 
 void enemy_basic::attack(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box)
 {
-	m_attack_animation = 0;
 	m_object->animated_mesh()->switch_root_movement(true);
 	m_object->animated_mesh()->switch_animation(m_attack_animation);
 

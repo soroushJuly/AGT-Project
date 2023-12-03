@@ -5,6 +5,13 @@
 
 enemy_basic_crab::enemy_basic_crab(glm::vec3 position) : m_position(position)
 {
+	std::vector<std::pair<std::string, int>> animations =
+	{
+		std::pair<std::string, int>("walk", 8),
+		std::pair<std::string, int>("attack", 0),
+		std::pair<std::string, int>("run", 8),
+		std::pair<std::string, int>("die", 4)
+	};
 
 	// Free model from here : https://poly.pizza/m/yq5ATpujSt
 	engine::ref<engine::skinned_mesh> m_enemy_mesh = engine::skinned_mesh::create("assets/models/animated/Crab.fbx");
@@ -26,7 +33,7 @@ enemy_basic_crab::enemy_basic_crab(glm::vec3 position) : m_position(position)
 
 	m_object->set_position(m_position);
 
-	m_enemy_basic.initialise(m_object, 4.f);
+	m_enemy_basic.initialise(m_object, 4.f, animations);
 };
 
 enemy_basic_crab::~enemy_basic_crab() {};
