@@ -14,13 +14,13 @@ void enemy_basic::initialise(engine::ref<engine::game_object> object, float wand
 	for (int i = 0; i < animations.size(); i++)
 	{
 		if (animations[i].first == "walk")
-			m_walk_animation = i;
+			m_walk_animation = animations[i].second;
 		else if (animations[i].first == "die")
-			m_die_animation = i;
+			m_die_animation = animations[i].second;
 		else if (animations[i].first == "attack")
-			m_attack_animation = i;
+			m_attack_animation = animations[i].second;
 		else if (animations[i].first == "run")
-			m_run_animation = i;
+			m_run_animation = animations[i].second;
 	}
 	m_wander_limit = wander_limit;
 	m_object = object;
