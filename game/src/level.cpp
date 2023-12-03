@@ -123,13 +123,13 @@ level::level()
 	m_enemy_mech.initialise(m_mech);
 
 	// Add skeletons to the map
-	/*for (size_t i = 0; i < 5; i++)
+	for (size_t i = 0; i < 4; i++)
 	{
-		for (size_t j = 0; j < 5; j++)
+		for (size_t j = 0; j < 4; j++)
 		{
 			m_skeleton_list.push_back(enemy_basic_skeleton::create(glm::vec3(3.f + 3.f * (float)i, .5f, 88.f + 3.f * (float)j)));
 		}
-	}*/
+	}
 
 	// TODO: these numbers should be constant floats like: MIDDLE_POINT_BOX_01
 	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(0.f, .5f, 50.f)));
@@ -141,7 +141,7 @@ level::level()
 
 	// Add robots to the map
 	for (size_t i = 0; i < 4; i++)
-		for (size_t j = 0; j < 4; j++)
+		for (size_t j = 0; j < 3; j++)
 			m_robot_list.push_back(enemy_basic_robot::create(glm::vec3(91.f + 3.f * (float)i, .5f, 88.f + 3.f * (float)j)));
 
 	// Add spikes to the map
@@ -188,7 +188,7 @@ level::level()
 	m_decorations.on_initialise();
 
 	// Initialise 2D features
-	m_game_intro = game_intro::create("assets/textures/intro_screen.jpg", 1.6f, 0.9f);
+	m_game_intro = game_intro::create("assets/textures/Intro_screen_01.jpg", 1.6f, 0.9f);
 	m_game_won = game_intro::create("assets/textures/game_won.png", 1.6f, 0.9f);
 	m_game_lost = game_intro::create("assets/textures/game_lost.png", 1.6f, 0.9f);
 	hud.on_initialize();
@@ -216,7 +216,7 @@ level::level()
 	terrain_props_2.restitution = 0.92f;
 	m_terrain_2 = engine::game_object::create(terrain_props_2);
 
-	m_game_objects.push_back(m_terrain);
+	m_game_objects.push_back(m_terrain_2);
 	m_physics_manager = engine::bullet_manager::create(m_game_objects);
 
 	m_text_manager = engine::text_manager::create();
@@ -230,7 +230,7 @@ void level::on_update(const engine::timestep& time_step)
 		return;
 	if (m_player.is_dead())
 	{
-		m_audio_manager->stop("main");
+		//m_audio_manager->stop("main");
 		m_state = level::GAME_LOST;
 		return;
 	}
