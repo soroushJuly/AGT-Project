@@ -33,11 +33,14 @@ void player::initialise(engine::ref<engine::game_object> object, engine::ref<cro
 void player::on_update(const engine::timestep& time_step)
 {
 	m_object->animated_mesh()->on_update(time_step);
-	// x is where he looks at in the beginning and the z is the direction it walks to we want him to
-	// be aligned with the walking direction
+	// x is where she looks at first and z is the direction she walks to
+	// we want her to be aligned with the walking direction
 	m_object->set_rotation_amount(atan2(m_object->forward().x, m_object->forward().z));
+
+	// Update timers
 	m_damage_timer += time_step;
 	m_power_up_timer += time_step;
+	m_contact_time += time_step;
 
 	// Power up
 	m_ring.on_update(time_step, m_object->position());
@@ -47,6 +50,7 @@ void player::on_update(const engine::timestep& time_step)
 		m_power_up_timer = 0.f;
 	}
 
+	// jump accelerations
 	if (glm::length(m_instantaneous_acceleration) > 0 && m_contact_time > .4f) {
 		m_instantaneous_acceleration = glm::vec3(0.f);
 		m_contact_time = 0.f;
@@ -56,47 +60,50 @@ void player::on_update(const engine::timestep& time_step)
 	float x_position = m_object->position().x;
 	float y_position = m_object->position().y;
 	float z_position = m_object->position().z;
-	if (is_jumping)
+	// during the jump
+	if (is_jumping && !m_is_dying)
 	{
 		m_object->set_velocity(m_object->velocity() + glm::normalize(m_object->forward()) * m_speed / 20.f * (float)time_step);
 		m_object->set_position(glm::vec3(x_position, y_position, z_position) + m_object->velocity() * (float)time_step);
 	}
-	if (y_position < 0.5f && m_object->velocity().y < 0)
+	// Player hits the ground after jump
+	if (y_position < 0.5f && m_object->velocity().y < 0 && !m_is_dying)
 	{
 		m_object->set_position(glm::vec3(m_object->position().x, 0.5f, m_object->position().z));
 		clear_moves();
 	}
-
-	if ((is_walking || is_running) && !is_jumping)
+	// Normal movements
+	if ((is_walking || is_running) && !is_jumping && !m_is_dying)
 	{
 		m_object->set_velocity(glm::vec3(m_object->velocity().x, 0.f, m_object->velocity().z));
 		m_object->set_position(glm::vec3(x_position, y_position, z_position) + m_object->velocity() * (float)time_step);
 	}
 
-
-	m_contact_time += time_step;
-
-	if (engine::input::key_pressed(engine::key_codes::KEY_A)) // left
-		turn(2.5f * time_step);
-	if (engine::input::key_pressed(engine::key_codes::KEY_D)) // right
-		turn(-2.5f * time_step);
-	if (engine::input::key_pressed(engine::key_codes::KEY_SPACE) && engine::input::key_pressed(engine::key_codes::KEY_W))
+	if (!m_is_dying)
 	{
-		jump(time_step);
-	}
+
+		if (engine::input::key_pressed(engine::key_codes::KEY_A)) // left
+			turn(2.5f * time_step);
+		if (engine::input::key_pressed(engine::key_codes::KEY_D)) // right
+			turn(-2.5f * time_step);
+		if (engine::input::key_pressed(engine::key_codes::KEY_SPACE) && engine::input::key_pressed(engine::key_codes::KEY_W))
+		{
+			jump(time_step);
+		}
 
 
-	if (engine::input::mouse_button_pressed(0))
-	{
-		punch(time_step);
-	}
-	else if (!m_is_punching && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
-	{
-		run(time_step);
-	}
-	else if (!m_is_punching && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W))
-	{
-		walk(time_step);
+		if (engine::input::mouse_button_pressed(0))
+		{
+			punch(time_step);
+		}
+		else if (!m_is_punching && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
+		{
+			run(time_step);
+		}
+		else if (!m_is_punching && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W))
+		{
+			walk(time_step);
+		}
 	}
 
 	if (m_timer > 0.0f)
@@ -104,7 +111,7 @@ void player::on_update(const engine::timestep& time_step)
 		m_timer -= (float)time_step;
 		if (m_timer < 0.0f)
 		{
-			if (m_hearts < 1)
+			if (m_is_dying)
 			{
 				m_is_dead = true;
 				return;
@@ -259,24 +266,25 @@ void player::take_damage(const engine::timestep& time_step)
 		m_damage_timer = 0;
 		m_audio_manager->play("damage");
 		m_cross_fade->activate();
-		if (m_hearts < 1)
+		if (m_hearts == 0)
 		{
+			m_timer = 0.2f;
 			die();
 			return;
 		}
-		m_hearts--;
+		--m_hearts;
 	}
 }
 
 void player::die()
 {
 	m_object->animated_mesh()->switch_root_movement(true);
-	if (m_timer > 0.0f)
+	if (m_timer > 0.0f && m_is_dying)
 	{
-
 		return;
 	}
 	clear_moves();
+	m_is_dying = true;
 	m_object->animated_mesh()->switch_animation(0);
-	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(0)->mDuration, 0.f, 1.f);
+	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(0)->mDuration, 0.f, 1.2f);
 }

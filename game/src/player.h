@@ -57,7 +57,7 @@ private:
 	glm::vec3 m_instantaneous_acceleration{ 0.f };
 	float m_contact_time;
 
-	bool m_is_dead{ false };
+	bool m_is_dying{ false }, m_is_dead{ false };
 	bool is_jumping{ false }, m_is_punching{ false };
 	bool is_walking{ false }, is_running{ false };
 	engine::ref< engine::game_object> m_object;
