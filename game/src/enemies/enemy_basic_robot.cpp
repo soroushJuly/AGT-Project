@@ -10,8 +10,8 @@ enemy_basic_robot::enemy_basic_robot(glm::vec3 position) : m_position(position)
 	{
 		std::pair<std::string, int>("walk", 6),
 		std::pair<std::string, int>("attack", 0),
-		std::pair<std::string, int>("run", 8),
-		std::pair<std::string, int>("die", 4)
+		std::pair<std::string, int>("run", 4),
+		std::pair<std::string, int>("die", 2)
 	};
 
 	// Free model from here : https://poly.pizza/m/yq5ATpujSt
