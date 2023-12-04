@@ -138,8 +138,6 @@ void enemy_basic::on_render(const engine::ref<engine::shader> mesh_shader, const
 	object_transform = glm::scale(object_transform, m_object->scale());
 	engine::renderer::submit(mesh_shader, object_transform, m_object);
 
-	m_enemy_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
-
 	m_billboard->on_render(camera, mesh_shader);
 }
 

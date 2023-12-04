@@ -23,15 +23,12 @@ level::level()
 	m_audio_manager->load_sound("assets/audio/coin_pick.mp3", engine::sound_type::event, "coin");
 	m_audio_manager->load_sound("assets/audio/pickup.wav", engine::sound_type::event, "pickup");
 	m_audio_manager->load_sound("assets/audio/run_mud.wav", engine::sound_type::event, "run");
-	m_audio_manager->load_sound("assets/audio/walk_mud.wav", engine::sound_type::event, "walk");
 	m_audio_manager->load_sound("assets/audio/player_hit.wav", engine::sound_type::event, "hit");
 	m_audio_manager->load_sound("assets/audio/take_damage.wav", engine::sound_type::event, "damage");
 	m_audio_manager->load_sound("assets/audio/little_village.wav", engine::sound_type::track, "menu");  // Royalty free music from http://www.nosoapradio.us/
 	m_audio_manager->load_sound("assets/audio/move_forward.mp3", engine::sound_type::track, "main");  // Royalty free music from http://www.nosoapradio.us/
 	m_audio_manager->play("menu");
 	m_audio_manager->volume("menu", 0.07f);
-	//m_audio_manager->pause("music");
-
 
 	// Initialise the shaders, materials and lights
 	auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
@@ -125,12 +122,8 @@ level::level()
 
 	// Add skeletons to the map
 	for (size_t i = 0; i < 4; i++)
-	{
 		for (size_t j = 0; j < 4; j++)
-		{
 			m_skeleton_list.push_back(enemy_basic_skeleton::create(glm::vec3(3.f + 3.f * (float)i, .5f, 88.f + 3.f * (float)j)));
-		}
-	}
 
 	// TODO: these numbers should be constant floats like: MIDDLE_POINT_BOX_01
 	m_crab_list.push_back(enemy_basic_crab::create(glm::vec3(0.f, .5f, 50.f)));
@@ -183,7 +176,6 @@ level::level()
 	// TODO: these will be drop-downs from enemies
 	m_pickup_heart_01.on_initialize(glm::vec3(93.6f, 1.2f, 94.f));
 	m_pickup_speed_01.on_initialize(glm::vec3(10.f, 1.2f, 90.f));
-	//m_pickup_heart_02.on_initialize(glm::vec3(0.f, 1.2f, 2.f));
 
 	// Initialise all the decorations in the map.
 	m_decorations.on_initialise();
@@ -227,20 +219,18 @@ level::~level() {}
 
 void level::on_update(const engine::timestep& time_step)
 {
+	// Update game state
 	if (m_state == level::MENU)
 		return;
 	if (m_player.is_dead())
 	{
-		//m_audio_manager->stop("main");
 		m_state = level::GAME_LOST;
 		return;
 	}
 	if (m_enemy_mech.is_dead())
-	{
-		m_audio_manager->stop("main");
 		m_state = level::GAME_WON;
-	}
 
+	// Time to reach the village
 	const float TIME_LIMIT = 160.f;
 	m_remained_time = TIME_LIMIT - (float)m_play_time.total();
 	if (m_reached_time == 0.f && m_remained_time < 0.f)
@@ -249,17 +239,17 @@ void level::on_update(const engine::timestep& time_step)
 	// Uncomment to roam around the map
 	//m_3d_camera.on_update(time_step);
 
+	// reset the player bounding box on punches
 	m_player_box.set_box(m_player.object()->bounding_shape().x * m_player.object()->scale().x,
 		m_player.object()->bounding_shape().y * m_player.object()->scale().x,
 		m_player.object()->bounding_shape().z * m_player.object()->scale().x,
 		m_player.position());
 
+	// Update collectables
 	m_pickup_heart_01.on_update(m_player.position(), m_player, time_step, m_audio_manager);
 	m_pickup_speed_01.on_update(m_player.position(), m_player, time_step, m_audio_manager);
 	for (auto coin : m_coin_list)
-	{
 		coin->on_update(m_player.position(), m_player, m_player_box, time_step, m_audio_manager);
-	}
 
 	m_physics_manager->dynamics_world_update(m_game_objects, double(time_step));
 
@@ -269,22 +259,15 @@ void level::on_update(const engine::timestep& time_step)
 	m_player_box.on_update(m_player.object()->position());
 
 	m_enemy_mech.on_update(time_step, m_player, m_player_box, m_player.position());
-	// TODO: Not passing the player - instead pointer
+	// TODO: Not passing the m_player - instead pointer
 	for (auto enemy : m_skeleton_list)
-	{
 		enemy->on_update(time_step, m_player, m_player_box);
-	}
 	for (auto enemy : m_robot_list)
-	{
 		enemy->on_update(time_step, m_player, m_player_box);
-	}
 	for (auto enemy : m_crab_list)
 		enemy->on_update(time_step, m_player, m_player_box);
-
 	for (auto enemy : m_spike_list)
-	{
 		enemy->on_update(time_step, m_player, m_player_box);
-	}
 
 	// Player move restriction in the map
 	if (!(m_world_box_01.collision(m_player_box)
@@ -315,6 +298,7 @@ void level::on_update(const engine::timestep& time_step)
 
 	hud.on_update(time_step, m_player.hearts());
 
+	// FX update
 	m_cross_fade->on_update(time_step);
 	m_ring.on_update(time_step, m_player.position());
 
@@ -345,18 +329,6 @@ void level::on_render()
 
 	// Set up some of the scene's parameters in the shader
 	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->set_uniform("gEyeWorldPos", m_3d_camera.position());
-	m_player_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
-
-	//m_lava_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_world_box_01.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_world_box_03.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_world_box_04.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_world_box_05.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_world_box_06.on_render(2.5f, 1.f, 1.f, mesh_shader);
-
-
-
-
 
 	// Position the skybox centred on the player and render it
 	glm::mat4 skybox_tranform(1.0f);
@@ -377,14 +349,11 @@ void level::on_render()
 	m_lava_05.on_render(mesh_shader);
 	m_lava_06.on_render(mesh_shader);
 
-	// Render Objects in the scene
+	// Render Collectables in the scene
 	m_pickup_speed_01.on_render();
 	m_pickup_heart_01.on_render();
-	//m_pickup_heart_02.on_render();
 	for (auto coin : m_coin_list)
-	{
 		coin->on_render(mesh_shader);
-	}
 
 	// Render all of the decorations in the map.
 	m_decorations.on_render(mesh_shader);
