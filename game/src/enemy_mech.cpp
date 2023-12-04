@@ -112,27 +112,24 @@ void enemy_mech::on_update(const engine::timestep& time_step, player& player, en
 	if (m_bomb->position().y - m_bomb->bounding_shape().y < y_plane && m_bomb->velocity().y < 0)
 	{
 
-		float convergenceThreshold = 0.5f;
+		// Check if the Velocity of the bomb is below a threshold. Then decide bounce or stop
+		float convergenceThreshold = 0.6f;
 		if (glm::length(m_bomb->velocity()) > convergenceThreshold) {
-			// The bomb has bounced!
 			m_bomb->restitution();
 			m_bomb->set_velocity(m_bomb->restitution() * glm::vec3(m_bomb->velocity()));
-			//m_object->set_angular_velocity(m_object->restitution() * glm::vec3(m_object->angular_velocity()));
 			m_bomb->set_velocity(glm::vec3(m_bomb->velocity().x, -m_bomb->velocity().y, m_bomb->velocity().z));
 		}
 		else {
-			// Velocity of the bomb is below a threshold. 
 			m_bomb->set_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
 			m_bomb->set_acceleration(glm::vec3(0.0f, 0.0f, 0.0f));
 			m_bomb->set_position(glm::vec3(m_bomb->position().x, m_bomb->bounding_shape().y + y_plane, m_bomb->position().z));
-			//m_object->set_angular_velocity(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	}
 
 	const float distance = glm::length(target_position - m_object->position());
-	const float FACE_BOUND = 11.f;
-	const float BOMB_BOUND = 7.f;
-	const float ROCKET_BOUND = 3.f;
+	const float FACE_BOUND = 13.f;
+	const float BOMB_BOUND = 8.2f;
+	const float ROCKET_BOUND = 3.2f;
 
 	// TODO: shockwave attack to send the target(enemy) backwards
 	switch (m_state)
@@ -166,7 +163,7 @@ void enemy_mech::on_update(const engine::timestep& time_step, player& player, en
 		break;
 	case enemy_mech::ATTACK_ROCKET:
 		face_target(target_position);
-		if (m_rocket_timer > 2.5f)
+		if (m_rocket_timer > 2.2f)
 		{
 			shoot_rocket();
 			m_rocket_timer = 0.f;

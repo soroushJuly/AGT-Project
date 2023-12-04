@@ -24,7 +24,7 @@ enemy_basic_robot::enemy_basic_robot(glm::vec3 position) : m_position(position)
 	engine::ref<engine::texture_2d> skeleton_texture =
 		engine::texture_2d::create("assets/textures/Characters_Brown.png", true);
 	skeleton_props.textures = { skeleton_texture };
-	skeleton_props.mass = 27.2f;
+	skeleton_props.mass = 37.2f;
 	skeleton_props.velocity = glm::vec3(0.f);
 	skeleton_props.scale = glm::vec3(.7f);
 	skeleton_props.bounding_shape = glm::vec3(m_enemy_mesh->size().x * skeleton_props.scale.x,

@@ -187,7 +187,7 @@ void player::run(const engine::timestep& time_step)
 		return;
 	}
 	clear_moves();
-	//m_audio_manager->play("run");
+	m_audio_manager->play("run");
 	is_running = true;
 	m_object->animated_mesh()->switch_animation(16);
 	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(16)->mDuration, 0.f, 2.f);
@@ -214,6 +214,7 @@ void player::clear_moves()
 {
 	m_object->set_velocity(glm::vec3(0.f, 0.f, 0.f));
 	m_object->set_bounding_shape(default_bounding);
+	m_audio_manager->stop("run");
 	m_is_punching = false;
 	is_running = false;
 	is_jumping = false;
