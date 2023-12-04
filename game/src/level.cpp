@@ -10,7 +10,7 @@
 
 level::level()
 	:m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f),
-	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height()),
+	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height(),45.f,0.1f,500.f),
 	m_reached_time(0.f)
 {
 	// Hide the mouse and lock it inside the window
@@ -37,10 +37,11 @@ level::level()
 	auto mesh_shader = engine::renderer::shaders_library()->get("mesh");
 	auto text_shader = engine::renderer::shaders_library()->get("text_2D");
 
-	m_directionalLight.Color = glm::vec3(1.0f, 1.0f, 0.9f);
-	m_directionalLight.AmbientIntensity = 0.38f;
+	m_directionalLight.Color = glm::vec3(1.0f, 1.0f, 0.85f);
+	m_directionalLight.AmbientIntensity = 0.6f;
 	m_directionalLight.DiffuseIntensity = 0.6f;
-	m_directionalLight.Direction = glm::normalize(glm::vec3(1.0f, -1.0f, 0.0f));
+	const float theta = engine::PI / 6;
+	m_directionalLight.Direction = glm::normalize(glm::vec3(1.0f * cos(theta), -1.0f * sin(theta), 1.0f * cos(theta) * 0.2));
 
 	// set color texture unit
 	std::dynamic_pointer_cast<engine::gl_shader>(mesh_shader)->bind();
@@ -63,7 +64,7 @@ level::level()
 	m_ring.initialise();
 
 	// Free Skybox texture from https://sketchfab.com/3d-models/free-skybox-anime-village-a25aa36a28a14c2e83285ad917947278
-	m_skybox = engine::skybox::create(50.f,
+	m_skybox = engine::skybox::create(250.f,
 		{ engine::texture_2d::create("assets/textures/skybox/skybox_front_1.png", true),
 		  engine::texture_2d::create("assets/textures/skybox/skybox_right_1.png", true),
 		  engine::texture_2d::create("assets/textures/skybox/skybox_back_1.png", true),
@@ -113,7 +114,7 @@ level::level()
 
 	engine::game_object_properties mech_props;
 	mech_props.animated_mesh = m_enemy_mesh_01;
-	mech_props.position = glm::vec3(84.f, 0.5f, 16.f);
+	mech_props.position = glm::vec3(85.f, 0.5f, 19.f);
 	mech_props.velocity = glm::vec3(0.f);
 	mech_props.scale = glm::vec3(.6f);
 	mech_props.bounding_shape = glm::vec3(m_enemy_mesh_01->size().x * mannequin_props.scale.x / 2.f,
@@ -240,7 +241,7 @@ void level::on_update(const engine::timestep& time_step)
 		m_state = level::GAME_WON;
 	}
 
-	const float TIME_LIMIT = 180.f;
+	const float TIME_LIMIT = 160.f;
 	m_remained_time = TIME_LIMIT - (float)m_play_time.total();
 	if (m_reached_time == 0.f && m_remained_time < 0.f)
 		m_state = level::GAME_LOST;
@@ -255,7 +256,6 @@ void level::on_update(const engine::timestep& time_step)
 
 	m_pickup_heart_01.on_update(m_player.position(), m_player, time_step, m_audio_manager);
 	m_pickup_speed_01.on_update(m_player.position(), m_player, time_step, m_audio_manager);
-	//m_pickup_heart_02.on_update(m_player.position(), m_player.hearts(), time_step, m_audio_manager);
 	for (auto coin : m_coin_list)
 	{
 		coin->on_update(m_player.position(), m_player, m_player_box, time_step, m_audio_manager);

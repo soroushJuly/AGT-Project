@@ -37,8 +37,6 @@
     </ClCompile>
     <ClCompile Include="src\hud.cpp" />
     <ClCompile Include="src\enemy_basic.cpp" />
-    <ClCompile Include="src\enemy_mech.cpp" />
-    <ClCompile Include="src\enemy_lava.cpp" />
     <ClCompile Include="src\enemies\enemy_basic_robot.cpp">
       <Filter>enemies</Filter>
     </ClCompile>
@@ -49,6 +47,12 @@
       <Filter>enemies</Filter>
     </ClCompile>
     <ClCompile Include="src\enemies\enemy_basic_skeleton.cpp">
+      <Filter>enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enemies\enemy_lava.cpp">
+      <Filter>enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enemies\enemy_mech.cpp">
       <Filter>enemies</Filter>
     </ClCompile>
   </ItemGroup>
@@ -88,8 +92,6 @@
     </ClInclude>
     <ClInclude Include="src\hud.h" />
     <ClInclude Include="src\enemy_basic.h" />
-    <ClInclude Include="src\enemy_mech.h" />
-    <ClInclude Include="src\enemy_lava.h" />
     <ClInclude Include="src\enemies\enemy_basic_robot.h">
       <Filter>enemies</Filter>
     </ClInclude>
@@ -100,6 +102,12 @@
       <Filter>enemies</Filter>
     </ClInclude>
     <ClInclude Include="src\enemies\enemy_basic_skeleton.h">
+      <Filter>enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enemies\enemy_lava.h">
+      <Filter>enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enemies\enemy_mech.h">
       <Filter>enemies</Filter>
     </ClInclude>
   </ItemGroup>

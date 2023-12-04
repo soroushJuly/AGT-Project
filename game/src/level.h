@@ -2,8 +2,8 @@
 #include <engine.h>
 #include <player.h>
 #include <enemy_basic.h>
-#include <enemy_mech.h>
-#include "enemy_lava.h"
+#include <enemies/enemy_mech.h>
+#include "enemies/enemy_lava.h"
 #include "enemies/enemy_basic_skeleton.h"
 #include "enemies/enemy_basic_robot.h"
 #include "enemies/enemy_spike.h"
@@ -74,7 +74,7 @@ private:
 
 	engine::bounding_box m_player_box;
 	engine::bounding_box m_skeleton_box;
-	//engine::bounding_box m_lava_box;
+
 	engine::bounding_box m_world_box_01;
 	engine::bounding_box m_world_box_02;
 	engine::bounding_box m_world_box_03;
@@ -99,7 +99,7 @@ private:
 
 	engine::ref<engine::material>		m_mannequin_material{};
 
-	engine::ref<cross_fade>							m_cross_fade{};
+	engine::ref<cross_fade>				m_cross_fade{};
 
 	engine::DirectionalLight            m_directionalLight;
 	engine::SpotLight m_spot_light;

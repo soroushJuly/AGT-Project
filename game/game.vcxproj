@@ -135,9 +135,9 @@
     <ClInclude Include="src\enemies\enemy_basic_robot.h" />
     <ClInclude Include="src\enemies\enemy_basic_crab.h" />
     <ClInclude Include="src\enemies\enemy_basic_skeleton.h" />
+    <ClInclude Include="src\enemies\enemy_lava.h" />
+    <ClInclude Include="src\enemies\enemy_mech.h" />
     <ClInclude Include="src\enemies\enemy_spike.h" />
-    <ClInclude Include="src\enemy_lava.h" />
-    <ClInclude Include="src\enemy_mech.h" />
     <ClInclude Include="src\enemy_basic.h" />
     <ClInclude Include="src\FX\billboard.h" />
     <ClInclude Include="src\FX\cross_fade.h" />
@@ -160,9 +160,9 @@
     <ClCompile Include="src\enemies\enemy_basic_robot.cpp" />
     <ClCompile Include="src\enemies\enemy_basic_crab.cpp" />
     <ClCompile Include="src\enemies\enemy_basic_skeleton.cpp" />
+    <ClCompile Include="src\enemies\enemy_lava.cpp" />
+    <ClCompile Include="src\enemies\enemy_mech.cpp" />
     <ClCompile Include="src\enemies\enemy_spike.cpp" />
-    <ClCompile Include="src\enemy_lava.cpp" />
-    <ClCompile Include="src\enemy_mech.cpp" />
     <ClCompile Include="src\enemy_basic.cpp" />
     <ClCompile Include="src\level.cpp" />
     <ClCompile Include="src\FX\billboard.cpp" />
