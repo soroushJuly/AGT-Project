@@ -4,7 +4,7 @@
 #include <enemy_basic.h>
 #include <enemy_mech.h>
 #include "enemy_lava.h"
-#include "enemy_basic_skeleton.h"
+#include "enemies/enemy_basic_skeleton.h"
 #include "enemies/enemy_basic_robot.h"
 #include "enemies/enemy_spike.h"
 #include "enemies/enemy_basic_crab.h"
