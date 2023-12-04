@@ -1,4 +1,4 @@
-#include <enemy_basic_skeleton.h>
+#include <enemies/enemy_basic_skeleton.h>
 #include "platform/opengl/gl_shader.h"
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp>
