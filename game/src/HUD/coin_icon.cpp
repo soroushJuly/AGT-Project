@@ -28,7 +28,7 @@ coin_icon::~coin_icon()
 
 void coin_icon::on_update(const engine::timestep& time_step)
 {
-	m_step += 2.5 * time_step;
+	m_step += 2.5 * (float)time_step;
 
 	if (m_step > 7.8)
 	{

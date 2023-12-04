@@ -35,10 +35,7 @@ void pickup_coin::on_update(glm::vec3 c, player& player, const engine::bounding_
 	if (m_coin_box.collision(player_box) && m_active)
 	{
 		m_active = false;
-		if (m_audio_manager)
-		{
-			m_audio_manager->play("coin");
-		}
+		m_audio_manager->play("coin");
 		player.add_coin();
 	}
 };

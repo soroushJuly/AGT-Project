@@ -7,8 +7,8 @@ engine::coin::coin() : m_size(0.02f), m_radius(0.1f)
 {
 	std::vector<engine::mesh::vertex> coin_vertices;
 	std::vector<glm::vec2> texts_coordinates;
-	const float repeat = 0.5;
-	const float repeat_sides = 0.2;
+	const float repeat = 0.5f;
+	const float repeat_sides = 0.2f;
 
 	texts_coordinates =
 	{
