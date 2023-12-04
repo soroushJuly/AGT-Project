@@ -149,8 +149,8 @@ void player::jump(const engine::timestep& time_step)
 		m_contact_time = 0.f;
 		float force = 1411.f;
 		float y_position = force * sin(engine::PI / 4);
-		float x_position = glm::normalize(m_object->forward()).x * (force / 3) * cos(engine::PI / 4);
-		float z_position = glm::normalize(m_object->forward()).z * (force / 3) * cos(engine::PI / 4);
+		float x_position = glm::normalize(m_object->forward()).x * (force / 2.8) * cos(engine::PI / 4);
+		float z_position = glm::normalize(m_object->forward()).z * (force / 2.8) * cos(engine::PI / 4);
 		glm::vec3 jump_force = glm::vec3(x_position, y_position, z_position);
 		m_instantaneous_acceleration = jump_force / m_object->mass();
 		is_jumping = true;

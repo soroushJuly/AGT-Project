@@ -45,8 +45,6 @@ void enemy_spike::on_render(const engine::ref<engine::shader> mesh_shader)
 	transform = glm::rotate(transform, m_rotation, glm::vec3(0.f, 1.f, 0.f));
 	transform = glm::scale(transform, m_object->scale());
 	engine::renderer::submit(mesh_shader, m_object);
-
-	m_spike_box.on_render(0.f, 0.f, 0.f, mesh_shader);
 };
 
 engine::ref<enemy_spike> enemy_spike::create(glm::vec3 position, float move_limit, float rotation)

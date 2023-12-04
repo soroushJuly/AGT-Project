@@ -77,7 +77,7 @@ void enemy_mech::on_update(const engine::timestep& time_step, player& player, en
 		player.take_damage(time_step);
 		m_rocket->set_position(m_object->position());
 	}
-	if (m_rocket->position().y < 0.5)
+	if (m_rocket->position().y < 0.7)
 		is_rocket = false;
 
 
@@ -189,10 +189,6 @@ void enemy_mech::on_render(engine::ref<engine::shader> mesh_shader, const engine
 	transform_mech = glm::rotate(transform_mech, m_object->rotation_amount(), glm::vec3(0.f, 1.f, 0.f));
 	engine::renderer::submit(mesh_shader, transform_mech, m_object);
 
-	m_enemy_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_bomb_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
-	m_rocket_box.on_render(2.5f, 1.f, 1.f, mesh_shader);
-
 	m_billboard->on_render(camera, mesh_shader);
 
 	if (is_bomb)
@@ -261,7 +257,7 @@ void enemy_mech::shoot_rocket()
 	m_rocket_max_velocity = 2.8f;
 
 	// rocket has a force to overcome gravity => a-rocktet > a-gravity 
-	m_rocket->set_acceleration(glm::vec3(0, -3.2f, 0.f));
+	m_rocket->set_acceleration(glm::vec3(0, -3.4f, 0.f));
 	m_rocket->set_velocity(m_object->forward());
 }
 

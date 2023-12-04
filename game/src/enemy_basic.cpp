@@ -43,7 +43,7 @@ void enemy_basic::initialise(engine::ref<engine::game_object> object, float wand
 void enemy_basic::on_update(const engine::timestep& time_step, player& player, engine::bounding_box m_player_box, const glm::vec3& target_position)
 {
 	m_object->animated_mesh()->on_update(time_step);
-	if (m_is_dead && m_timer < 0.1f)
+	if (m_is_dead)
 	{
 		return;
 	}
@@ -65,13 +65,17 @@ void enemy_basic::on_update(const engine::timestep& time_step, player& player, e
 	m_contact_time += time_step;
 	m_attack_timer += time_step;
 	m_damage_timer += time_step;
-	m_timer -= time_step;
 
 	if (m_timer > 0.0f)
 	{
 		m_timer -= (float)time_step;
 		if (m_timer < 0.0f)
 		{
+			if (m_is_dying)
+			{
+				m_is_dead = true;
+				return;
+			}
 			m_object->animated_mesh()->switch_root_movement(false);
 			m_object->animated_mesh()->switch_animation(2);
 			m_timer = 0.0f;
@@ -124,7 +128,7 @@ void enemy_basic::on_update(const engine::timestep& time_step, player& player, e
 
 void enemy_basic::on_render(const engine::ref<engine::shader> mesh_shader, const engine::perspective_camera& camera)
 {
-	if (m_is_dead && m_timer < 0.1f)
+	if (m_is_dead)
 	{
 		return;
 	}
@@ -153,12 +157,13 @@ void enemy_basic::take_damage()
 	m_damage_timer = 0.f;
 	m_instantaneous_acceleration = -(glm::normalize(glm::vec3(m_object->forward())) * 900.f) / m_object->mass();
 	m_contact_time = 0.f;
-	--m_health;
-	if (m_health < 1)
+	if (m_health == 1)
 	{
+		m_timer = 0.0f;
 		die();
-		m_is_dead = true;
+		return;
 	}
+	--m_health;
 }
 
 void enemy_basic::run()
@@ -185,13 +190,14 @@ void enemy_basic::walk()
 
 void enemy_basic::die()
 {
-	if (m_timer > 0.f)
+	m_object->animated_mesh()->switch_root_movement(true);
+	if (m_timer > 0.f && m_is_dying)
 	{
 		return;
 	}
-	m_object->animated_mesh()->switch_root_movement(true);
+	m_is_dying = true;
 	m_object->animated_mesh()->switch_animation(m_die_animation);
-	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(m_die_animation)->mDuration, 0.f, .8f);
+	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(m_die_animation)->mDuration, 0.f, .7f);
 }
 
 // TODO: take this functionality in a class

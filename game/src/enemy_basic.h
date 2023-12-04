@@ -45,6 +45,7 @@ private:
 	float m_damage_timer;
 	float m_speed;
 	bool m_is_dead{ false };
+	bool m_is_dying{ false };
 	float m_timer;
 	float m_angle{ 0.f };
 
