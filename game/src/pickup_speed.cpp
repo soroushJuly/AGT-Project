@@ -10,6 +10,7 @@ void pickup_speed::on_initialize(glm::vec3 position)
 {
 	m_position = position;
 	engine::ref<engine::arrow> pickup_shape = engine::arrow::create();
+	// Free texture from https://www.vecteezy.com/vector-art/6045836-abstract-white-and-grey-background-texture
 	engine::ref<engine::texture_2d> pickup_texture =
 		engine::texture_2d::create("assets/textures/speed.jpg", false);
 	engine::game_object_properties pickup_props;

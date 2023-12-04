@@ -11,6 +11,7 @@ enemy_basic::~enemy_basic()
 
 void enemy_basic::initialise(engine::ref<engine::game_object> object, float wander_limit, std::vector<std::pair<std::string, int>> animations)
 {
+	// For different character with enemy basic behaviour we need to find the proper animation sequence:
 	for (int i = 0; i < animations.size(); i++)
 	{
 		if (animations[i].first == "walk")
@@ -27,8 +28,6 @@ void enemy_basic::initialise(engine::ref<engine::game_object> object, float wand
 	m_first_position = m_object->position();
 	m_object->set_forward(glm::vec3(0.f, 0.f, 1.f));
 	m_object->set_velocity(glm::vec3(0.f, 0.f, 1.f));
-	//m_object->set_acceleration(0.1f * glm::vec3(m_object->forward()));
-
 
 	m_enemy_box.set_box(m_object->bounding_shape().x,
 		m_object->bounding_shape().y,
@@ -48,6 +47,7 @@ void enemy_basic::on_update(const engine::timestep& time_step, player& player, e
 		return;
 	}
 
+	// If player and enemy have collision and player is punching -> take damage
 	m_enemy_box.on_update(m_object->position());
 	if (m_enemy_box.collision(m_player_box) && player.is_punching())
 	{
@@ -85,7 +85,7 @@ void enemy_basic::on_update(const engine::timestep& time_step, player& player, e
 	const float distance = glm::length(target_position - m_object->position());
 	const float WALK_BOUND = 1.5f;
 	const float RUN_BOUND = 5.f;
-
+	// FSM
 	switch (m_state)
 	{
 	case enemy_basic::WANDER:
@@ -198,7 +198,7 @@ void enemy_basic::die()
 	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(m_die_animation)->mDuration, 0.f, .7f);
 }
 
-// TODO: take this functionality in a class
+// TODO: take this functionality in a seperate class
 void enemy_basic::wander(const engine::timestep& time_step)
 {
 	walk();
@@ -233,7 +233,7 @@ void enemy_basic::wander(const engine::timestep& time_step)
 	else
 		m_object->set_velocity(speed + (m_object->acceleration()) * (float)time_step);
 
-	// TODO: limiting the position
+	// Limiting the distance enemy can wander
 	glm::vec3 position = m_object->position() + m_object->velocity() * (float)time_step;
 	if (glm::length(position - m_first_position) > m_wander_limit)
 		return;

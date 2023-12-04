@@ -17,6 +17,7 @@ void pickup_heart::on_initialize(glm::vec3 position)
 	m_pickup = pickup::create(pickup_props);
 	m_pickup->init();
 
+	// Intialise the light that moves around the heart
 	m_pointLight.Color = glm::vec3(1.0f, 0.5f, 0.5f);
 	m_pointLight.AmbientIntensity = 0.1f;
 	m_pointLight.DiffuseIntensity = 0.1f;
@@ -66,6 +67,7 @@ void pickup_heart::on_render()
 	}
 	else
 	{
+		// If heart picked up -> turn off the light
 		m_pointLight.Color = glm::vec3(0.f, 0.f, 0.f);
 		m_pointLight.submit(mesh_shader, 0);
 	}
@@ -73,7 +75,7 @@ void pickup_heart::on_render()
 
 void pickup_heart::on_update(glm::vec3 c, player& player, float dt, engine::ref<engine::audio_manager> m_audio_manager)
 {
-
+	// Circle movement around the heart
 	theta += 2.5f * dt;
 	const float radius = 2.f * glm::length(m_pickup->scale());
 	m_pointLight.Position = glm::vec3(m_pickup->position().x + cos(theta) * radius,
