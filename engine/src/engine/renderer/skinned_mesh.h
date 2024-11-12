@@ -1,19 +1,19 @@
 /*
 
-    Copyright 2011 Etay Meiri
+	Copyright 2011 Etay Meiri
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
@@ -60,7 +60,7 @@ namespace engine {
 
 		void BoneTransform(float time);
 
-		void switch_animation(uint32_t index) { m_current_animation_index = index; m_running_time = 0.0f;}
+		void switch_animation(uint32_t index) { m_current_animation_index = index; m_running_time = 0.0f; }
 		void set_default_animation(uint32_t index) { m_default_animation_index = index; }
 		uint32_t default_animation() { return m_default_animation_index; }
 
@@ -73,6 +73,8 @@ namespace engine {
 
 		glm::vec3 size() const { return m_size; }
 		glm::vec3 offset() const { return m_offset; }
+		std::vector <ref<engine::texture_2d>> textures() const { return m_textures; }
+		void set_textures(std::vector<ref<engine::texture_2d>> textures) { m_textures = textures; }
 
 	private:
 #define NUM_BONES_PER_VEREX 4
@@ -81,7 +83,7 @@ namespace engine {
 #define SAFE_DELETE(p) if (p) { delete p; p = NULL; }
 		static const uint32_t MAX_BONES = 100;
 
-		
+
 
 		struct BoneInfo
 		{
@@ -114,7 +116,7 @@ namespace engine {
 			void AddBoneData(uint32_t BoneID, float Weight);
 		};
 
-		
+
 
 		void SetBoneTransform(uint32_t Index, const glm::mat4& Transform);
 
@@ -143,12 +145,12 @@ namespace engine {
 		void AddAnimations(const aiScene* pScene);
 
 		void ExtractRootMovement(const aiAnimation* animation);
-		
+
 		///\brief - compares the values of the vertex that is being loaded with min and max values
 		/// if any coordinate is smaller than min or bigger than max, record it as new min/max value
 		void min_max_compare(const aiVector3D& point);
 
-		
+
 
 
 
@@ -227,9 +229,9 @@ namespace engine {
 
 		bool m_update_root_offset = true;
 
-		public:
+	public:
 
-			const Assimp::Importer& importer() { return m_Importer; }
+		const Assimp::Importer& importer() { return m_Importer; }
 	};
 
 	struct Animation
