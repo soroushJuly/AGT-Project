@@ -10,7 +10,7 @@
 
 level::level()
 	:m_2d_camera(-1.6f, 1.6f, -0.9f, 0.9f),
-	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height(),45.f,0.1f,500.f),
+	m_3d_camera((float)engine::application::window().width(), (float)engine::application::window().height(), 45.f, 0.1f, 500.f),
 	m_reached_time(0.f)
 {
 	// Hide the mouse and lock it inside the window
@@ -69,28 +69,30 @@ level::level()
 		});
 
 	// Free model from here: https://poly.pizza/m/ZwF0K7WBmu
-	engine::ref<engine::skinned_mesh> m_skinned_mesh = engine::skinned_mesh::create("assets/models/animated/Adventurer.fbx");
+	engine::ref<engine::skinned_mesh> m_skinned_mesh = engine::skinned_mesh::create("assets/models/animated/warrior/warrior_animation.fbx");
 	m_skinned_mesh->switch_root_movement(false);
 	m_skinned_mesh->switch_animation(4);
+	std::vector<engine::ref<engine::texture_2d>> warrior_textures;
+	warrior_textures.push_back(engine::texture_2d::create("assets/models/animated/warrior/warrior_DefaultMaterial_BaseColor.png", true));
+	warrior_textures.push_back(engine::texture_2d::create("assets/models/animated/warrior/weapon_DefaultMaterial_BaseColor.png", true));
+	m_skinned_mesh->set_textures(warrior_textures);
 
 	engine::game_object_properties mannequin_props;
 	mannequin_props.animated_mesh = m_skinned_mesh;
-	engine::ref<engine::texture_2d> mannequin_texture =
-		engine::texture_2d::create("assets/textures/PolyAdventureTexture_01.png", true);
-	mannequin_props.textures = { mannequin_texture };
+	mannequin_props.textures = m_skinned_mesh->textures();
 	mannequin_props.scale = glm::vec3(0.6f);
 	mannequin_props.type = 0;
 	mannequin_props.velocity = glm::vec3(0.f);
 	mannequin_props.mass = 65.f;
 	mannequin_props.position = glm::vec3(0.f, 0.5, 10.f);
-	mannequin_props.bounding_shape = glm::vec3(m_skinned_mesh->size().x * mannequin_props.scale.x / 2.f,
-		m_skinned_mesh->size().y / mannequin_props.scale.x * 2.4f, m_skinned_mesh->size().x / 2.f);
+	mannequin_props.bounding_shape = glm::vec3(m_skinned_mesh->size().x * mannequin_props.scale.x / 5.4,
+		m_skinned_mesh->size().y * mannequin_props.scale.x / 2.3, m_skinned_mesh->size().z * mannequin_props.scale.x / 5.4);
 	m_mannequin = engine::game_object::create(mannequin_props);
 	m_player.initialise(m_mannequin, m_cross_fade, m_audio_manager);
 
-	m_player_box.set_box(mannequin_props.bounding_shape.x * mannequin_props.scale.x,
-		mannequin_props.bounding_shape.y * mannequin_props.scale.x,
-		mannequin_props.bounding_shape.z * mannequin_props.scale.x,
+	m_player_box.set_box(mannequin_props.bounding_shape.x,
+		mannequin_props.bounding_shape.y,
+		mannequin_props.bounding_shape.z,
 		mannequin_props.position);
 
 	// World Collision boxes
@@ -103,12 +105,17 @@ level::level()
 
 
 	// TODO: add texture for the mech (using model create? then ->textures)
-	engine::ref<engine::skinned_mesh> m_enemy_mesh_01 = engine::skinned_mesh::create("assets/models/animated/mech.fbx");
+	engine::ref<engine::skinned_mesh> m_enemy_mesh_01 = engine::skinned_mesh::create("assets/models/animated/untitled.fbx");
 	m_enemy_mesh_01->switch_root_movement(false);
 	m_enemy_mesh_01->switch_animation(13);
 
+	std::vector<engine::ref<engine::texture_2d>> mech_textures;
+	mech_textures.push_back(engine::texture_2d::create("assets/models/animated/Atlas.png", true));
+	m_enemy_mesh_01->set_textures(mech_textures);
+
 	engine::game_object_properties mech_props;
 	mech_props.animated_mesh = m_enemy_mesh_01;
+	mech_props.textures = m_enemy_mesh_01->textures();
 	mech_props.position = glm::vec3(85.f, 0.5f, 19.f);
 	mech_props.velocity = glm::vec3(0.f);
 	mech_props.scale = glm::vec3(.6f);
@@ -367,7 +374,6 @@ void level::on_render()
 	for (auto enemy : m_spike_list)
 		enemy->on_render(mesh_shader);
 
-	m_mannequin_material->submit(mesh_shader);
 	m_enemy_mech.on_render(mesh_shader, m_3d_camera);
 
 

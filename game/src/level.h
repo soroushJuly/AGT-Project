@@ -97,8 +97,6 @@ private:
 	engine::ref<engine::game_object>	m_mannequin{};
 	engine::ref<engine::game_object>	m_mech{};
 
-	engine::ref<engine::material>		m_mannequin_material{};
-
 	engine::ref<cross_fade>				m_cross_fade{};
 
 	engine::DirectionalLight            m_directionalLight;
