@@ -22,6 +22,7 @@ void player::initialise(engine::ref<engine::game_object> object, engine::ref<cro
 	m_object->set_position(glm::vec3(0.f, 0.6f, 10.f));
 	m_object->set_acceleration(glm::vec3(0.f, -9.8f, 0.f));
 	m_object->set_velocity(glm::vec3(0.f, 0.f, 0.f));
+	m_currentAnimation = 4;
 	m_object->animated_mesh()->set_default_animation(4);
 
 	m_audio_manager = audio_manager;
@@ -79,6 +80,43 @@ void player::on_update(const engine::timestep& time_step)
 		m_object->set_position(glm::vec3(x_position, y_position, z_position) + m_object->velocity() * (float)time_step);
 	}
 
+	// Animation system
+	if (engine::input::mouse_button_pressed(0))
+	{
+		m_currentAnimation = 0;
+		m_object->animated_mesh()->switch_animation(m_currentAnimation);
+		m_timer = m_object->animated_mesh()->animations().at(m_currentAnimation)->mDuration / 30;
+		is_running = is_walking = false;
+	}
+	else if (engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
+	{
+		if (!is_running && m_timer <= 0.f)
+		{
+			m_currentAnimation = 5;
+			m_object->animated_mesh()->switch_animation(m_currentAnimation);
+			is_walking = false;
+			m_audio_manager->play("run");
+		}
+	}
+	else if (engine::input::key_pressed(engine::key_codes::KEY_W))
+	{
+		m_currentAnimation = 6;
+		if (!is_walking && m_timer <= 0.f)
+		{
+			is_running = false;
+			m_object->animated_mesh()->switch_animation(m_currentAnimation);
+		}
+	}
+	else
+	{
+		if (m_currentAnimation != 4)
+		{
+			m_currentAnimation = 4;
+			m_object->animated_mesh()->switch_animation(m_object->animated_mesh()->default_animation());
+		}
+		is_running = is_walking = false;
+	}
+
 	if (!m_is_dying)
 	{
 
@@ -89,12 +127,14 @@ void player::on_update(const engine::timestep& time_step)
 		if (engine::input::key_pressed(engine::key_codes::KEY_SPACE) && engine::input::key_pressed(engine::key_codes::KEY_W))
 		{
 			jump(time_step);
+			is_running = true;
 		}
 
 
 		if (engine::input::mouse_button_pressed(0))
 		{
 			punch(time_step);
+			is_running = is_walking = false;
 		}
 		else if (!m_is_punching && !is_jumping && engine::input::key_pressed(engine::key_codes::KEY_W) && engine::input::key_pressed(engine::key_codes::KEY_LEFT_SHIFT))
 		{
@@ -118,7 +158,8 @@ void player::on_update(const engine::timestep& time_step)
 			}
 			clear_moves();
 			m_object->animated_mesh()->switch_root_movement(false);
-			m_object->animated_mesh()->switch_animation(m_object->animated_mesh()->default_animation());
+			if (!is_walking)
+				m_object->animated_mesh()->switch_animation(m_object->animated_mesh()->default_animation());
 			m_timer = 0.0f;
 		}
 	}
@@ -134,10 +175,6 @@ void player::turn(float angle)
 {
 	m_object->set_forward(glm::rotate(m_object->forward(), angle, glm::vec3(0.f, 1.f,
 		0.f)));
-}
-
-void player::turn_back(const engine::timestep& time_step)
-{
 }
 
 void player::jump(const engine::timestep& time_step)
@@ -170,10 +207,8 @@ void player::walk(const engine::timestep& time_step)
 	{
 		return;
 	}
-	clear_moves();
 	is_walking = true;
-	m_object->animated_mesh()->switch_animation(22);
-	m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(22)->mDuration, 0.f, 1.65f);
+	is_idle = false;
 }
 
 void player::run(const engine::timestep& time_step)
@@ -186,11 +221,9 @@ void player::run(const engine::timestep& time_step)
 	{
 		return;
 	}
-	clear_moves();
-	m_audio_manager->play("run");
+
 	is_running = true;
-	m_object->animated_mesh()->switch_animation(16);
-	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(16)->mDuration, 0.f, 2.f);
+	is_idle = false;
 
 }
 
@@ -205,9 +238,7 @@ void player::punch(const engine::timestep& time_step)
 	clear_moves();
 	m_object->set_bounding_shape(glm::vec3(m_object->bounding_shape().x * 2.5f, m_object->bounding_shape().y, m_object->bounding_shape().z * 2.f));
 	m_is_punching = true;
-	m_object->animated_mesh()->switch_animation(14);
-	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(14)->mDuration, 0.f, 1.f);
-
+	is_idle = false;
 }
 
 void player::clear_moves()
@@ -219,6 +250,7 @@ void player::clear_moves()
 	is_running = false;
 	is_jumping = false;
 	is_walking = false;
+	is_idle = true;
 }
 
 void player::update_camera(engine::perspective_camera& camera, const engine::timestep& time_step)
@@ -226,27 +258,27 @@ void player::update_camera(engine::perspective_camera& camera, const engine::tim
 	auto [mouse_delta_x, mouse_delta_y] = engine::input::mouse_position();
 
 	const float SENSITIVITY = 0.04f;
-	const float CAMERA_DISTANCE_HEIGHT = 1.5;
+	const float CAMERA_DISTANCE_HEIGHT = 0.5;
 	// Radius around the player for camera to rotate
-	const float RADIUS = 3.f;
+	const float RADIUS = 2.5f;
 
 	// Camera's default position
 	float camera_position_y = m_object->position().y + CAMERA_DISTANCE_HEIGHT;
-	float camera_position_x = m_object->position().x + RADIUS * glm::normalize(m_object->forward()).x;
-	float camera_position_z = m_object->position().z + RADIUS * glm::normalize(m_object->forward()).z;
+	float camera_position_x = m_object->position().x + RADIUS;
+	float camera_position_z = m_object->position().z + RADIUS;
 
 	// the camera viewpoint
-	float camera_look_x = m_object->position().x + glm::normalize(m_object->forward()).x;
-	float camera_look_z = m_object->position().z + glm::normalize(m_object->forward()).z;
-	glm::vec3 look_at = glm::vec3(camera_look_x, m_object->animated_mesh()->size().y / .5f, camera_look_z);
+	float camera_look_x = m_object->position().x;
+	float camera_look_z = m_object->position().z;
+	glm::vec3 look_at = glm::vec3(camera_look_x, m_object->animated_mesh()->size().y * m_object->scale().y / 2, camera_look_z);
 
 	// mouse movement in y direction
 	y_angle_y_mouse = y_angle_y_mouse + mouse_delta_y * SENSITIVITY * time_step;
 	m_mouse_y = RADIUS * sin(y_angle_y_mouse);
-	if (m_mouse_y < -m_object->animated_mesh()->size().y / .5f + 0.1f)
-		m_mouse_y = -m_object->animated_mesh()->size().y / .5f + 0.1f;
-	if (m_mouse_y > m_object->animated_mesh()->size().y / .5f)
-		m_mouse_y = m_object->animated_mesh()->size().y / .5f;
+	if (m_mouse_y < -m_object->animated_mesh()->size().y + 0.1f)
+		m_mouse_y = -m_object->animated_mesh()->size().y + 0.1f;
+	if (m_mouse_y > m_object->animated_mesh()->size().y)
+		m_mouse_y = m_object->animated_mesh()->size().y;
 
 	// mouse movement in x direction
 	x_angle_x_mouse = x_angle_x_mouse + mouse_delta_x * SENSITIVITY * time_step;
@@ -269,7 +301,6 @@ void player::take_damage(const engine::timestep& time_step)
 		m_cross_fade->activate();
 		if (m_hearts == 0)
 		{
-			m_timer = 0.2f;
 			die();
 			return;
 		}
@@ -286,6 +317,6 @@ void player::die()
 	}
 	clear_moves();
 	m_is_dying = true;
-	m_object->animated_mesh()->switch_animation(0);
-	m_timer = m_timer = glm::clamp((float)m_object->animated_mesh()->animations().at(0)->mDuration, 0.f, 1.2f);
+	m_object->animated_mesh()->switch_animation(2);
+	m_timer = m_object->animated_mesh()->animations().at(2)->mDuration / 30;
 }

@@ -49,6 +49,9 @@ private:
 	double y_angle_y_mouse;
 	double x_angle_x_mouse;
 
+	// 4 is Idle the default animation
+	int m_currentAnimation = 4;
+
 	engine::ref<engine::audio_manager> m_audio_manager;
 	engine::ref<cross_fade> m_cross_fade;
 	ring m_ring;
@@ -60,6 +63,7 @@ private:
 	bool m_is_dying{ false }, m_is_dead{ false };
 	bool is_jumping{ false }, m_is_punching{ false };
 	bool is_walking{ false }, is_running{ false };
+	bool is_idle{ true };
 	engine::ref< engine::game_object> m_object;
 
 	void start_damage_timer(const engine::timestep& time_step);
