@@ -1,7 +1,7 @@
 #pragma once
 #include <engine.h>
 #include "engine/entities/bounding_box.h"
-#include "player.h"
+#include "../player.h"
 
 class player;
 

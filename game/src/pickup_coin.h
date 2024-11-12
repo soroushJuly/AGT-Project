@@ -1,6 +1,6 @@
 #pragma once
 #include <engine.h>
-#include <pickup.h>
+#include "pickup.h"
 #include "engine/entities/bounding_box.h"
 #include "player.h"
 

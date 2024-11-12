@@ -1,5 +1,5 @@
 #pragma once
-#include <static_object.h>
+#include "static_object.h"
 
 // A class to render all static objects (without collisions) in the world.
 class decorations
