@@ -109,7 +109,7 @@ void player::on_update(const engine::timestep& time_step)
 	}
 	else
 	{
-		if (m_currentAnimation != 4)
+		if (m_currentAnimation != 4 && m_timer <= 0.f)
 		{
 			m_currentAnimation = 4;
 			m_object->animated_mesh()->switch_animation(m_object->animated_mesh()->default_animation());
@@ -184,7 +184,7 @@ void player::jump(const engine::timestep& time_step)
 	{
 		clear_moves();
 		m_contact_time = 0.f;
-		float force = 1411.f;
+		float force = 1511.f;
 		float y_position = force * sin(engine::PI / 4);
 		float x_position = glm::normalize(m_object->forward()).x * (force / 2.8) * cos(engine::PI / 4);
 		float z_position = glm::normalize(m_object->forward()).z * (force / 2.8) * cos(engine::PI / 4);
